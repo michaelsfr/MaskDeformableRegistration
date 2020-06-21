@@ -49,7 +49,7 @@ namespace MaskedDeformableRegistrationApp
             //    Inner structure seg
             // ################################### 
 
-            InnerTissueSegmentation innerSeg = new InnerTissueSegmentation(image1, seg1.GetOutput());
+            InnerTissueSegmentation innerSeg = new InnerTissueSegmentation(image1, seg1.GetOutput(), new SegmentationParameters());
             innerSeg.Execute();
             List<UMat> masks = innerSeg.GetOutput();
 

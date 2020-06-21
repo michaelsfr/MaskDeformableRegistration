@@ -39,31 +39,77 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             UMat lab = new UMat(), cl = new UMat(), result = new UMat();
             CvInvoke.CvtColor(input, lab, ColorConversion.Bgr2Lab);
             UMat[] splitLAB = lab.Split();
-            CvInvoke.CLAHE(splitLAB[0], clipLimit, new System.Drawing.Size(tileGridSize, tileGridSize), cl);
+            CvInvoke.CLAHE(splitLAB[0], clipLimit, new Size(tileGridSize, tileGridSize), cl);
             CvInvoke.Merge(new VectorOfUMat(cl, splitLAB[1], splitLAB[2]), result);
+            lab.Dispose();
+            cl.Dispose();
             return result;
         }
 
         public static UMat Blur(UMat input, int kernelSize, double sigma)
         {
             UMat temp = new UMat();
-            CvInvoke.GaussianBlur(input, temp, new System.Drawing.Size(kernelSize, kernelSize), sigma);
+            CvInvoke.GaussianBlur(input, temp, new Size(kernelSize, kernelSize), sigma);
+            input.Dispose();
             return temp;
         }
 
         public static UMat Sharp(UMat input)
         {
             UMat temp = new UMat();
-            CvInvoke.GaussianBlur(input, temp, new System.Drawing.Size(0, 0), 3);
+            CvInvoke.GaussianBlur(input, temp, new Size(0, 0), 3);
             CvInvoke.AddWeighted(input, 1.5, temp, -0.5, 0, temp);
+            input.Dispose();
             return temp;
+        }
+
+        public static UMat GetColorChannelAsUMat(ColorSpace colorSpace, Image<Bgr, byte> image, int channel)
+        {
+            using(Image<Bgr, byte> imageCopy = image.Clone())
+            {
+                if ((int)colorSpace >= 0 && (int)colorSpace <= 7)
+                {
+                    int cs = (int)colorSpace;
+                    return GetColorDeconvolutedChannelAsUMat(imageCopy.Bitmap, (ColorDeconvolution.KnownStain)cs, channel);
+                }
+                else
+                {
+                    ColorConversion cc = ColorConversion.Bgr2Bgra;
+                    switch (colorSpace)
+                    {
+                        case ColorSpace.HLS: cc = ColorConversion.Bgr2Hls; break;
+                        case ColorSpace.HSV: cc = ColorConversion.Bgr2Hsv; break;
+                        case ColorSpace.LAB: cc = ColorConversion.Bgr2Lab; break;
+                        case ColorSpace.LUV: cc = ColorConversion.Bgr2Luv; break;
+                        case ColorSpace.RGB: cc = ColorConversion.Bgr2Rgb; break;
+                    }
+
+                    return GetColorChannel(imageCopy.ToUMat(), cc, channel);
+                }
+            }
         }
 
         public static UMat GetColorDeconvolutedChannelAsUMat(Bitmap image, ColorDeconvolution.KnownStain stain,int channel)
         {
             Bitmap copy = (Bitmap)image.Clone();
-            Bitmap bitmap = ColorDeconvolution(copy, stain, channel);
-            UMat umat = new Image<Gray, byte>(bitmap).ToUMat();
+            Bitmap bitmap = null;
+            UMat umat = null;
+
+            try
+            {
+                bitmap = ColorDeconvolution(copy, stain, channel);
+                umat = new Image<Gray, byte>(bitmap).ToUMat();
+            } catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show(ex.Message);
+            } finally
+            {
+                if (bitmap != null)
+                {
+                    bitmap.Dispose();
+                }
+            }
+
             return umat;
         }
 
@@ -117,8 +163,18 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             UMat result = new UMat();
             //CvInvoke.Threshold(input, result, 0, 255, ThresholdType.Otsu);
             CvInvoke.Threshold(input, result, 0, 255, ThresholdType.Otsu | ThresholdType.Binary);
+            input.Dispose();
             return result;
         }
+
+        public static UMat Threshold(UMat input, int threshold)
+        {
+            UMat result = new UMat();
+            CvInvoke.Threshold(input, result, threshold, 255, ThresholdType.Binary);
+            input.Dispose();
+            return result;
+        }
+
 
         public static UMat Closing(UMat input, int kernelSize)
         {
@@ -154,46 +210,6 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             var element = CvInvoke.GetStructuringElement(ElementShape.Ellipse, new Size(kernelSize, kernelSize), new Point(-1, -1));
             CvInvoke.Dilate(input, result, element, new Point(-1, -1), 1, BorderType.Default, default(MCvScalar));
             return result;
-        }
-
-        [Obsolete]
-        public static Image<Bgr, float> KMeansClustering(Image<Bgr, byte> image, int k)
-        {
-            if (k > 4)
-                return null;
-
-            Image<Bgr, float> src = image.Convert<Bgr, float>();
-
-            Matrix<float> samples = new Matrix<float>(src.Rows * src.Cols, 1, 3);
-            Matrix<int> finalClusters = new Matrix<int>(src.Rows * src.Cols, 1);
-
-            for (int y = 0; y < src.Rows; y++)
-            {
-                for (int x = 0; x < src.Cols; x++)
-                {
-                    samples.Data[y + x * src.Rows, 0] = (float)src[y, x].Blue;
-                    samples.Data[y + x * src.Rows, 1] = (float)src[y, x].Green;
-                    samples.Data[y + x * src.Rows, 2] = (float)src[y, x].Red;
-                }
-            }
-
-            MCvTermCriteria criteria = new MCvTermCriteria(50, 0.5);
-            criteria.Type = TermCritType.Iter | TermCritType.Eps;
-
-            Matrix<Single> centers = new Matrix<Single>(k, src.Rows * src.Cols);
-            double compactness = CvInvoke.Kmeans(samples, k, finalClusters, criteria, 3, KMeansInitType.RandomCenters);
-
-            Image<Bgr, float> kMeansImage = new Image<Bgr, float>(src.Size);
-            for (int y = 0; y < src.Rows; y++)
-            {
-                for (int x = 0; x < src.Cols; x++)
-                {
-                    PointF p = new PointF(x, y);
-                    kMeansImage.Draw(new CircleF(p, 1.0f), clusterColors[finalClusters[y + x * src.Rows, 0]], 1);
-                }
-            }
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "kmeans_new.png", kMeansImage.ToUMat());
-            return kMeansImage;
         }
 
         public static Image<T, V> KMeansClustering<T, V, K>(Image<T, K> image, int k, T[] colors) where T : struct, IColor where K : new() where V : new()

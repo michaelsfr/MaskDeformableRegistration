@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
+using Emgu.CV.Util;
 
 namespace MaskedDeformableRegistrationApp.Utils
 {
@@ -123,6 +124,16 @@ namespace MaskedDeformableRegistrationApp.Utils
             sitk.Image resultImage = resampleFilter.Execute(toResize);
 
             return resultImage;
+        }
+
+        public static UMat CalculateHistogram(VectorOfMat vm, Image<Gray, byte> tempMask)
+        {
+            UMat hist = new UMat();
+            int[] channel = new int[] { 0 };
+            int[] histSize = new int[] { 32 };
+            float[] range = new float[] { 0.0f, 256.0f };
+            CvInvoke.CalcHist(vm, channel, tempMask, hist, histSize, range, false);
+            return hist;
         }
 
         public static sitk.Image ResizeImage(sitk.Image image, uint newWidth, uint newHeight)

@@ -21,19 +21,11 @@ namespace MaskedDeformableRegistrationApp.Forms
     {
         private List<string> ToRegistrate { get; set; }
 
-        private RegistrationDefaultParameters RegParams { get; set; } = RegistrationDefaultParameters.rigid;
-
-        private sitk.ParameterMap ParamMapToUse { get; set; } = null;
+        private SegmentationParameters SegmentationParameters { get; set; } = new SegmentationParameters();
+        private RegistrationParameters RegistrationParameters { get; set; } = new RegistrationParameters();
 
         private uint LargestImageWidth { get; set; } = 0;
         private uint LargestImageHeight { get; set; } = 0;
-
-        // default parameters for registration
-        uint numberOfResolutions = 10;
-        private SimilarityMetric metric = SimilarityMetric.AdvancedMeanSquares;
-        private Optimizer optimizer = Optimizer.AdaptiveStochasticGradientDescent;
-        private RegistrationStrategy registrationStrategy = RegistrationStrategy.MultiResolutionRegistration;
-        private PenaltyTerm penaltyTerm = PenaltyTerm.TransformRigidityPenalty;
 
         public RegistrationForm(List<string> filenamesToRegistrate)
         {
@@ -77,14 +69,15 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             using (StringWriter stringWriter = new StringWriter())
             {
-                Directory.CreateDirectory(Path.Combine(ApplicationContext.OutputPath, RegParams.ToString()));
+                Directory.CreateDirectory(Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString()));
                 Console.SetOut(stringWriter);
 
                 string filenameReference = ToRegistrate.First();
                 // resize fixed image
                 sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filenameReference);
                 sitk.Image resized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
-                ReadWriteUtils.WriteSitkImageAsPng(resized, Path.Combine(ApplicationContext.OutputPath, RegParams.ToString(), Path.GetFileName(filenameReference)));
+                ReadWriteUtils.WriteSitkImageAsPng(resized, 
+                    Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString(), Path.GetFileName(filenameReference)));
 
                 sitk.Image fixedMaskFull = GetWholeParticleMask(filenameReference);
 
@@ -112,9 +105,10 @@ namespace MaskedDeformableRegistrationApp.Forms
         private sitk.VectorOfParameterMap PerformRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage,
             sitk.Image fixedMask = null, sitk.Image movingMask = null)
         {
-            RigidRegistration regRigid = new RigidRegistration(fixedImage, movingImage, Path.Combine(ApplicationContext.OutputPath, RegParams.ToString()));
-            regRigid.SetDefaultParameterMap(RegParams, numberOfResolutions);
-            regRigid.SetSimilarityMetric(metric);
+            RigidRegistration regRigid = new RigidRegistration(fixedImage, movingImage, 
+                Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString()));
+            regRigid.SetDefaultParameterMap(RegistrationParameters.RegistrationType, RegistrationParameters.NumberOfResolutions);
+            regRigid.SetSimilarityMetric(RegistrationParameters.Metric);
 
             if(fixedMask != null)
             {
@@ -142,7 +136,8 @@ namespace MaskedDeformableRegistrationApp.Forms
             Bitmap bmp = segImage.GetOutput().Bitmap;
             segImage.Dispose();
 
-            ReadWriteUtils.WriteBitmapAsPng(bmp, Path.Combine(ApplicationContext.OutputPath, RegParams.ToString(), ("mask_" +Path.GetFileName(filename))));
+            ReadWriteUtils.WriteBitmapAsPng(bmp, 
+                Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString(), ("mask_" +Path.GetFileName(filename))));
 
             sitk.Image mask = ImageUtils.GetITKImageFromBitmap(bmp);
             image.Dispose();
@@ -162,7 +157,8 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void WriteTransform(string filename, sitk.VectorOfParameterMap transformParams, bool isBinary = false)
         {
             sitk.Image movingImageToTransform = ReadWriteUtils.ReadITKImageFromFile(filename, sitk.PixelIDValueEnum.sitkVectorUInt8);
-            TransformRGB trans = new TransformRGB(movingImageToTransform, transformParams, Path.Combine(ApplicationContext.OutputPath, RegParams.ToString()));
+            TransformRGB trans = new TransformRGB(movingImageToTransform, transformParams, 
+                Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString()));
 
             if(isBinary) {
                 // for binary reg set interpolation order to zero
@@ -178,14 +174,14 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonEditParameters_Click(object sender, EventArgs e)
         {
-            sitk.ParameterMap map = RegistrationUtils.GetDefaultParameterMap(RegParams);
+            sitk.ParameterMap map = RegistrationUtils.GetDefaultParameterMap(RegistrationParameters.RegistrationType);
             using (EditParametersForm paramForm = new EditParametersForm(map))
             {
                 DialogResult result = paramForm.ShowDialog();
 
                 if(result == DialogResult.OK)
                 {
-                    ParamMapToUse = paramForm.Parametermap;
+                    RegistrationParameters.ParamMapToUse = paramForm.Parametermap;
                 }
             }
         }
@@ -200,12 +196,16 @@ namespace MaskedDeformableRegistrationApp.Forms
             segImage.Execute();
             Image<Gray, byte> mask = segImage.GetOutput().Clone();
             segImage.Dispose();
-            ReadWriteUtils.WriteBitmapAsPng(mask.Bitmap, ApplicationContext.OutputPath + "TEST.png");
 
-            using (SegmentationParameterForm form = new SegmentationParameterForm(image, mask)) 
+            using (SegmentationParameterForm form = new SegmentationParameterForm(image, mask, SegmentationParameters)) 
             {
                 Cursor.Current = Cursors.Default;
-                form.ShowDialog();
+                DialogResult result = form.ShowDialog();
+
+                if(result == DialogResult.OK)
+                {
+                    SegmentationParameters = form.segmentationParameters;
+                }
             }
         }
     }

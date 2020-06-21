@@ -32,6 +32,7 @@ namespace MaskedDeformableRegistrationApp.Utils
 
     public enum PenaltyTerm
     {
+        None,
         DistancePreservingRigidityPenalty,
         TransformBendingEnergyPenalty,
         TransformRigidityPenalty,

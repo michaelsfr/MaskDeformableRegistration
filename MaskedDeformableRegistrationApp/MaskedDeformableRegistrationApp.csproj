@@ -173,11 +173,13 @@
     <Compile Include="Registration\BSplineRegistration.cs" />
     <Compile Include="Registration\IRegistration.cs" />
     <Compile Include="Registration\RegInitialization.cs" />
+    <Compile Include="Registration\RegistrationParameters.cs" />
     <Compile Include="Registration\RegistrationUtils.cs" />
     <Compile Include="Registration\RigidRegistration.cs" />
     <Compile Include="Registration\Transformation.cs" />
     <Compile Include="Segmentation\InnerTissueSegmentation.cs" />
     <Compile Include="Segmentation\ISegmentation.cs" />
+    <Compile Include="Segmentation\SegmentationParameters.cs" />
     <Compile Include="Segmentation\SegmentationUtils.cs" />
     <Compile Include="Segmentation\WholeTissueSegmentation.cs" />
     <Compile Include="Utils\Constants.cs" />

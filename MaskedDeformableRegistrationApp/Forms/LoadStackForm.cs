@@ -68,6 +68,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             openFileDialogStack.Filter = _dialogFilterStack;
             openFileDialogStack.InitialDirectory = _initDir;
+            openFileDialogStack.FileName = "";
             DialogResult result = openFileDialogStack.ShowDialog();
 
             if (result == DialogResult.OK)
@@ -98,6 +99,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             openFileDialogImages.Multiselect = true;
             openFileDialogImages.Filter = _dialogFilterImages;
             openFileDialogImages.InitialDirectory = _initDir;
+            openFileDialogImages.FileName = "";
             DialogResult result = openFileDialogImages.ShowDialog();
 
             if (result == DialogResult.OK)
