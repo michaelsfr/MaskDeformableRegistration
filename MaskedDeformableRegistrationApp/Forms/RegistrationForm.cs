@@ -32,8 +32,17 @@ namespace MaskedDeformableRegistrationApp.Forms
             InitializeComponent();
 
             ToRegistrate = filenamesToRegistrate;
+            InitializeBackgroundWorker();
         }
 
+        private void InitializeBackgroundWorker()
+        {
+            backgroundWorker1.WorkerReportsProgress = true;
+            backgroundWorker1.WorkerSupportsCancellation = true;
+            backgroundWorker1.DoWork += new DoWorkEventHandler(backgroundWorker1_DoWork);
+            backgroundWorker1.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker1_ProgressChanged);
+            backgroundWorker1.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker1_RunWorkerCompleted);
+        }
 
         private void RegistrationForm_Load(object sender, EventArgs e)
         {
@@ -67,6 +76,44 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (backgroundWorker1.IsBusy != true)
+            {
+                backgroundWorker1.RunWorkerAsync();
+            }
+
+
+            // do work part
+            
+        }
+
+        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if(e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+            }
+            else if (e.Cancelled)
+            {
+                MessageBox.Show("Registration cancelled");
+            }
+            else
+            {
+                // Show Done
+            }
+
+            // enable disable buttons
+            button1.Enabled = true;
+        }
+
+        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            // Update progress bar
+            // this.progressBar.Value = e.ProgressPercentage;
+        }
+
+        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        {
+            // todo loop and report progress
             using (StringWriter stringWriter = new StringWriter())
             {
                 Directory.CreateDirectory(Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString()));
@@ -76,7 +123,7 @@ namespace MaskedDeformableRegistrationApp.Forms
                 // resize fixed image
                 sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filenameReference);
                 sitk.Image resized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
-                ReadWriteUtils.WriteSitkImageAsPng(resized, 
+                ReadWriteUtils.WriteSitkImageAsPng(resized,
                     Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString(), Path.GetFileName(filenameReference)));
 
                 sitk.Image fixedMaskFull = GetWholeParticleMask(filenameReference);

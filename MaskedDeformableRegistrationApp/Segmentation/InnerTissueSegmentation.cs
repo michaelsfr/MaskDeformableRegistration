@@ -22,8 +22,8 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         private List<UMat> masks = new List<UMat>();
 
         SegmentationParameters segmentationParameters = null;
-        private ColorSpace colorSpace = ColorSpace.HSV;
-        private int channel = 1;
+        private ColorSpace colorSpace = ColorSpace.HaematoxylinDAB;
+        private int channel = 2;
 
         public InnerTissueSegmentation(Image<Bgr, byte> image, Image<Gray, byte> particleMask, SegmentationParameters segmentationParameters)
         {
@@ -37,6 +37,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             if (image != null)
             {
                 Image<Bgr, byte> maskedImage = new Image<Bgr, byte>(image.Width, image.Height, new Bgr(255, 255, 255));
+                ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\BIG_mask.png", maskedImage.ToUMat());
                 CvInvoke.cvCopy(image, maskedImage, particleMask);
 
                 Console.WriteLine("Image dimensions: " + image.Width + " / " + image.Height);
@@ -85,10 +86,10 @@ namespace MaskedDeformableRegistrationApp.Segmentation
 
             UMat opened = SegmentationUtils.Opening(thresholded, 10);
             UMat dilated = SegmentationUtils.Dilate(opened, 10);
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "dilated.png", dilated);
+            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\dilated.png", dilated);
             UMat inverted = new UMat();
             CvInvoke.BitwiseNot(dilated, inverted);
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "inverted.png", inverted);
+            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\inverted.png", inverted);
 
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             VectorOfVectorOfPoint contoursRelevant = new VectorOfVectorOfPoint();
@@ -97,6 +98,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
 
             int nonRelevantPixelSize = ImageUtils.GetPercentualImagePixelCount<UMat>(inverted, 0.005f);
             Console.WriteLine("Non relevant pixel size: " + nonRelevantPixelSize);
+            Console.WriteLine("Number of contours: " + contours.Size);
 
             for (int i = 0; i < contours.Size; i++)
             {
@@ -151,6 +153,9 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             CvInvoke.Subtract(particleMask, mask, mask2);
             UMat convertedMask2 = new UMat();
             mask2.ToUMat().ConvertTo(convertedMask2, DepthType.Cv32F);
+
+            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\UmatA.png", convertedMask);
+            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\UmatB.png", convertedMask2);
 
             masks.Add(convertedMask);
             masks.Add(convertedMask2);

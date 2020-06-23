@@ -18,13 +18,13 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         private Image<Bgr, byte> image;
         private Image<Gray, byte> mask;
 
-        private int maxContourSize;
+        private int minContourSize;
 
-        public WholeTissueSegmentation(Image<Bgr, byte> image, int maxContourSize)
+        public WholeTissueSegmentation(Image<Bgr, byte> image, int minContourSize)
         {
-            Console.WriteLine("Max contour size: " + maxContourSize);
+            Console.WriteLine("Max contour size: " + minContourSize);
             this.image = image.Clone();
-            this.maxContourSize = maxContourSize;
+            this.minContourSize = minContourSize;
         }
 
         public void Execute()
@@ -44,29 +44,26 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                 CvInvoke.BitwiseNot(otsu_v, otsu_v);
 
                 UMat closed = SegmentationUtils.Closing(otsu_v, 5);
+                UMat dilated = SegmentationUtils.Dilate(closed, 10);
+                ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\WHOLE_SEG.png", dilated);
 
                 VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
                 VectorOfVectorOfPoint contoursRelevant = new VectorOfVectorOfPoint();
-                CvInvoke.FindContours(closed, contours, null, RetrType.External, ChainApproxMethod.ChainApproxSimple);
+                CvInvoke.FindContours(dilated, contours, null, RetrType.External, ChainApproxMethod.ChainApproxSimple);
 
                 for(int i = 0; i < contours.Size; i++)
                 {
                     double area = CvInvoke.ContourArea(contours[i]);
-                    // todo: how to determine biggest contour/s // throw away contours that are not relevant
-                    //if(area > maxContourSize)
-                    //{
-                        Console.WriteLine(area);
+                    if(area > minContourSize)
+                    {
                         contoursRelevant.Push(contours[i]);
-                    //}
+                    }
                 }
 
                 CvInvoke.DrawContours(image, contoursRelevant, -1, new MCvScalar(0, 0, 255));
 
                 mask = new Image<Gray, Byte>(image.Width, image.Height, new Gray(0.0));
                 CvInvoke.DrawContours(mask, contoursRelevant, -1, new MCvScalar(255.0), thickness: -1);
-
-                //ImageViewer.Show(mask, "V-channel");
-
             }
         }
 

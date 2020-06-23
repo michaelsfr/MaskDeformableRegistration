@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using System.IO;
 using Emgu.CV;
 using MaskedDeformableRegistrationApp.Forms;
+using Emgu.CV.Structure;
 
 namespace MaskedDeformableRegistrationApp
 {
@@ -26,10 +27,10 @@ namespace MaskedDeformableRegistrationApp
 
             ApplicationContext.OutputPath = @"C:\reg\testdata\appTestDir\Results\";
 
-            //Application.Run(new StartupForm());
+            Application.Run(new StartupForm());
 
             //string filenameImage1 = @"C:\reg\testdata\appTestDir\Results\rigid\old\195304_0.png";
-            string filenameImage1 = @"C:\reg\testdata\bm_intra_1\195250_0.png";
+            /*string filenameImage1 = @"C:\reg\testdata\bm_intra_1\195250_0.png";
             string filenameImage2 = @"C:\reg\testdata\appTestDir\Results\rigid\old\195305_0.png";
             var image1 = ReadWriteUtils.ReadOpenCVImageFromFile(filenameImage1);
             var image2 = ReadWriteUtils.ReadOpenCVImageFromFile(filenameImage2);
@@ -38,8 +39,11 @@ namespace MaskedDeformableRegistrationApp
             //    Whole particle seg
             // ################################### 
 
-            WholeTissueSegmentation seg1 = new WholeTissueSegmentation(image1, ImageUtils.GetPercentualImagePixelCount(image1, 0.3f));
+            WholeTissueSegmentation seg1 = new WholeTissueSegmentation(image1, ImageUtils.GetPercentualImagePixelCount(image1, 0.03f));
             seg1.Execute();
+            Image<Gray, byte> wholeMask = seg1.GetOutput().Clone();
+            seg1.Dispose();
+            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "whole_mask.png", wholeMask.ToUMat());
             //var imageConverted1 = ImageUtils.GetITKImageFromBitmap(seg1.GetOutput().Bitmap);
             //WholeTissueSegmentation seg2 = new WholeTissueSegmentation(image2, ImageUtils.GetPercentualImagePixelCount(image2, 0.3f));
             //seg2.Execute();
@@ -49,7 +53,7 @@ namespace MaskedDeformableRegistrationApp
             //    Inner structure seg
             // ################################### 
 
-            InnerTissueSegmentation innerSeg = new InnerTissueSegmentation(image1, seg1.GetOutput(), new SegmentationParameters());
+            InnerTissueSegmentation innerSeg = new InnerTissueSegmentation(image1, wholeMask, new SegmentationParameters());
             innerSeg.Execute();
             List<UMat> masks = innerSeg.GetOutput();
 

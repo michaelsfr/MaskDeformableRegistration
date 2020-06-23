@@ -19,6 +19,14 @@ namespace MaskedDeformableRegistrationApp.Utils
             ImageViewer.Show(toConv, text);
         }
 
+        public static sitk.Image GetTotalDifferenceImage(sitk.Image img01, sitk.Image img02)
+        {
+            // todo: split channels and do subtraction only for grayscale image?
+            sitk.SubtractImageFilter subtractImageFilter = new sitk.SubtractImageFilter();
+            sitk.Image imgResult = subtractImageFilter.Execute(img01, img02);
+            return imgResult;
+        }
+
         public static sitk.Image GetCheckerBoard(sitk.Image img01, sitk.Image img02, uint size = 0)
         {
             Console.WriteLine(string.Format("width: Img01 [{0}] - Img02 [{1}]", img01.GetWidth(), img02.GetWidth()));

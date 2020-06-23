@@ -31,6 +31,7 @@
             this.tabControlRegistration = new System.Windows.Forms.TabControl();
             this.tabPageRigid = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.buttonSegmentationParams = new System.Windows.Forms.Button();
             this.buttonEditParameters = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -40,7 +41,7 @@
             this.radioButtonTranslation = new System.Windows.Forms.RadioButton();
             this.button1 = new System.Windows.Forms.Button();
             this.tabPageNonRigid = new System.Windows.Forms.TabPage();
-            this.buttonSegmentationParams = new System.Windows.Forms.Button();
+            this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
             this.tabControlRegistration.SuspendLayout();
             this.tabPageRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -88,6 +89,16 @@
             this.splitContainer1.Size = new System.Drawing.Size(786, 418);
             this.splitContainer1.SplitterDistance = 133;
             this.splitContainer1.TabIndex = 0;
+            // 
+            // buttonSegmentationParams
+            // 
+            this.buttonSegmentationParams.Location = new System.Drawing.Point(695, 47);
+            this.buttonSegmentationParams.Name = "buttonSegmentationParams";
+            this.buttonSegmentationParams.Size = new System.Drawing.Size(75, 23);
+            this.buttonSegmentationParams.TabIndex = 4;
+            this.buttonSegmentationParams.Text = "Seg. parms";
+            this.buttonSegmentationParams.UseVisualStyleBackColor = true;
+            this.buttonSegmentationParams.Click += new System.EventHandler(this.buttonSegmentationParams_Click);
             // 
             // buttonEditParameters
             // 
@@ -185,16 +196,6 @@
             this.tabPageNonRigid.Text = "Non rigid registration";
             this.tabPageNonRigid.UseVisualStyleBackColor = true;
             // 
-            // buttonSegmentationParams
-            // 
-            this.buttonSegmentationParams.Location = new System.Drawing.Point(695, 47);
-            this.buttonSegmentationParams.Name = "buttonSegmentationParams";
-            this.buttonSegmentationParams.Size = new System.Drawing.Size(75, 23);
-            this.buttonSegmentationParams.TabIndex = 4;
-            this.buttonSegmentationParams.Text = "Seg. parms";
-            this.buttonSegmentationParams.UseVisualStyleBackColor = true;
-            this.buttonSegmentationParams.Click += new System.EventHandler(this.buttonSegmentationParams_Click);
-            // 
             // RegistrationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -230,5 +231,6 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Button buttonEditParameters;
         private System.Windows.Forms.Button buttonSegmentationParams;
+        private System.ComponentModel.BackgroundWorker backgroundWorker1;
     }
 }

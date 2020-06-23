@@ -30,6 +30,8 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.checkBoxContourSize = new System.Windows.Forms.CheckBox();
+            this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.labelThreshold = new System.Windows.Forms.Label();
             this.trackBar1 = new System.Windows.Forms.TrackBar();
@@ -50,8 +52,6 @@
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.pictureBoxSegmentation1 = new System.Windows.Forms.PictureBox();
             this.pictureBoxSegmentation2 = new System.Windows.Forms.PictureBox();
-            this.checkBox1 = new System.Windows.Forms.CheckBox();
-            this.checkBoxContourSize = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -110,6 +110,27 @@
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Misc";
+            // 
+            // checkBoxContourSize
+            // 
+            this.checkBoxContourSize.AutoSize = true;
+            this.checkBoxContourSize.Location = new System.Drawing.Point(12, 42);
+            this.checkBoxContourSize.Name = "checkBoxContourSize";
+            this.checkBoxContourSize.Size = new System.Drawing.Size(189, 17);
+            this.checkBoxContourSize.TabIndex = 1;
+            this.checkBoxContourSize.Text = "Set contour min/max size manually";
+            this.checkBoxContourSize.UseVisualStyleBackColor = true;
+            // 
+            // checkBox1
+            // 
+            this.checkBox1.AutoSize = true;
+            this.checkBox1.Location = new System.Drawing.Point(12, 19);
+            this.checkBox1.Name = "checkBox1";
+            this.checkBox1.Size = new System.Drawing.Size(129, 17);
+            this.checkBox1.TabIndex = 0;
+            this.checkBox1.Text = "Use Kmeas-Clustering";
+            this.checkBox1.UseVisualStyleBackColor = true;
+            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // groupBox2
             // 
@@ -261,7 +282,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
             this.splitContainer2.Size = new System.Drawing.Size(612, 510);
-            this.splitContainer2.SplitterDistance = 148;
+            this.splitContainer2.SplitterDistance = 249;
             this.splitContainer2.TabIndex = 0;
             this.splitContainer2.SizeChanged += new System.EventHandler(this.splitContainer2_SizeChanged);
             // 
@@ -278,7 +299,7 @@
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.pictureBoxColorChannel);
-            this.splitContainer4.Size = new System.Drawing.Size(612, 148);
+            this.splitContainer4.Size = new System.Drawing.Size(612, 249);
             this.splitContainer4.SplitterDistance = 306;
             this.splitContainer4.TabIndex = 0;
             this.splitContainer4.SizeChanged += new System.EventHandler(this.splitContainer4_SizeChanged);
@@ -288,7 +309,7 @@
             this.pictureBoxOriginal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxOriginal.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxOriginal.Name = "pictureBoxOriginal";
-            this.pictureBoxOriginal.Size = new System.Drawing.Size(306, 148);
+            this.pictureBoxOriginal.Size = new System.Drawing.Size(306, 249);
             this.pictureBoxOriginal.TabIndex = 0;
             this.pictureBoxOriginal.TabStop = false;
             // 
@@ -297,7 +318,7 @@
             this.pictureBoxColorChannel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxColorChannel.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxColorChannel.Name = "pictureBoxColorChannel";
-            this.pictureBoxColorChannel.Size = new System.Drawing.Size(302, 148);
+            this.pictureBoxColorChannel.Size = new System.Drawing.Size(302, 249);
             this.pictureBoxColorChannel.TabIndex = 0;
             this.pictureBoxColorChannel.TabStop = false;
             // 
@@ -314,7 +335,7 @@
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.pictureBoxSegmentation2);
-            this.splitContainer3.Size = new System.Drawing.Size(612, 358);
+            this.splitContainer3.Size = new System.Drawing.Size(612, 257);
             this.splitContainer3.SplitterDistance = 307;
             this.splitContainer3.TabIndex = 0;
             this.splitContainer3.SizeChanged += new System.EventHandler(this.splitContainer3_SizeChanged);
@@ -324,7 +345,7 @@
             this.pictureBoxSegmentation1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxSegmentation1.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxSegmentation1.Name = "pictureBoxSegmentation1";
-            this.pictureBoxSegmentation1.Size = new System.Drawing.Size(307, 358);
+            this.pictureBoxSegmentation1.Size = new System.Drawing.Size(307, 257);
             this.pictureBoxSegmentation1.TabIndex = 0;
             this.pictureBoxSegmentation1.TabStop = false;
             // 
@@ -333,30 +354,9 @@
             this.pictureBoxSegmentation2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxSegmentation2.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxSegmentation2.Name = "pictureBoxSegmentation2";
-            this.pictureBoxSegmentation2.Size = new System.Drawing.Size(301, 358);
+            this.pictureBoxSegmentation2.Size = new System.Drawing.Size(301, 257);
             this.pictureBoxSegmentation2.TabIndex = 0;
             this.pictureBoxSegmentation2.TabStop = false;
-            // 
-            // checkBox1
-            // 
-            this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(12, 19);
-            this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(129, 17);
-            this.checkBox1.TabIndex = 0;
-            this.checkBox1.Text = "Use Kmeas-Clustering";
-            this.checkBox1.UseVisualStyleBackColor = true;
-            this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
-            // 
-            // checkBoxContourSize
-            // 
-            this.checkBoxContourSize.AutoSize = true;
-            this.checkBoxContourSize.Location = new System.Drawing.Point(12, 42);
-            this.checkBoxContourSize.Name = "checkBoxContourSize";
-            this.checkBoxContourSize.Size = new System.Drawing.Size(189, 17);
-            this.checkBoxContourSize.TabIndex = 1;
-            this.checkBoxContourSize.Text = "Set contour min/max size manually";
-            this.checkBoxContourSize.UseVisualStyleBackColor = true;
             // 
             // SegmentationParameterForm
             // 

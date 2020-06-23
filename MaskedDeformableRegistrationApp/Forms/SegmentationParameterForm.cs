@@ -31,6 +31,11 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void SegmentationParameterForm_Load(object sender, EventArgs e)
         {
+            splitContainer2.SplitterDistance = this.Height / 2;
+            splitContainer3.SplitterDistance = splitContainer2.Width / 2;
+            splitContainer4.SplitterDistance = splitContainer2.Width / 2;
+            splitContainer1.IsSplitterFixed = true;
+
             int[] channels = { 1, 2, 3 };
             comboBoxChannel.DataSource = channels;
             comboBoxChannel.SelectedIndex = segmentationParameters.Channel;
@@ -43,7 +48,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             labelThreshold.Text = segmentationParameters.Threshold.ToString();
 
             pictureBoxOriginal.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBoxColorChannel.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBoxColorChannel.SizeMode = PictureBoxSizeMode.AutoSize;
             pictureBoxSegmentation1.SizeMode = PictureBoxSizeMode.StretchImage;
             pictureBoxSegmentation2.SizeMode = PictureBoxSizeMode.StretchImage;
 
@@ -75,7 +80,9 @@ namespace MaskedDeformableRegistrationApp.Forms
                 seg.Execute();
                 List<UMat> result = seg.GetOutput();
                 Bitmap a = result[0].Clone().Bitmap;
+                ReadWriteUtils.WriteBitmapAsPng(a, ApplicationContext.OutputPath + "\\bitmapA.png");
                 Bitmap b = result[1].Clone().Bitmap;
+                ReadWriteUtils.WriteBitmapAsPng(b, ApplicationContext.OutputPath + "\\bitmapB.png");
                 seg.Dispose();
 
                 if(pictureBoxSegmentation1.Image != null)
