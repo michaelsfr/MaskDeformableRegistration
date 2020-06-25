@@ -14,14 +14,14 @@ using System.Windows.Forms;
 
 namespace MaskedDeformableRegistrationApp.Forms
 {
-    public partial class SegmentationParameterForm : Form
+    public partial class SegParamsNonRigidForm : Form
     {
         private Image<Bgr, byte> image = null;
         private Image<Gray, byte> mask = null;
 
         public SegmentationParameters segmentationParameters;
 
-        public SegmentationParameterForm(Image<Bgr, byte> image, Image<Gray, byte> mask, SegmentationParameters parameters)
+        public SegParamsNonRigidForm(Image<Bgr, byte> image, Image<Gray, byte> mask, SegmentationParameters parameters)
         {
             InitializeComponent();
             this.image = image;
@@ -47,10 +47,10 @@ namespace MaskedDeformableRegistrationApp.Forms
             trackBar1.Value = segmentationParameters.Threshold;
             labelThreshold.Text = segmentationParameters.Threshold.ToString();
 
-            pictureBoxOriginal.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBoxColorChannel.SizeMode = PictureBoxSizeMode.AutoSize;
-            pictureBoxSegmentation1.SizeMode = PictureBoxSizeMode.StretchImage;
-            pictureBoxSegmentation2.SizeMode = PictureBoxSizeMode.StretchImage;
+            pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBoxColorChannel.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBoxSegmentation1.SizeMode = PictureBoxSizeMode.Zoom;
+            pictureBoxSegmentation2.SizeMode = PictureBoxSizeMode.Zoom;
 
             pictureBoxOriginal.Image = image.Bitmap;
         }

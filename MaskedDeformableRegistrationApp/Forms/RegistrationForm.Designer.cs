@@ -33,6 +33,11 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.buttonEditParameters = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.radioButtonRegMasks = new System.Windows.Forms.RadioButton();
+            this.radioButtonUsefixMov = new System.Windows.Forms.RadioButton();
+            this.radioButtonUseMoving = new System.Windows.Forms.RadioButton();
+            this.radioButtonUseFixed = new System.Windows.Forms.RadioButton();
+            this.radioButtonNoMasks = new System.Windows.Forms.RadioButton();
             this.buttonSegmentationParams = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioButtonAffine = new System.Windows.Forms.RadioButton();
@@ -46,14 +51,14 @@
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.tabPageNonRigid = new System.Windows.Forms.TabPage();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
-            this.radioButtonNoMasks = new System.Windows.Forms.RadioButton();
-            this.radioButtonUseFixed = new System.Windows.Forms.RadioButton();
-            this.radioButtonUseMoving = new System.Windows.Forms.RadioButton();
-            this.radioButtonUsefixMov = new System.Windows.Forms.RadioButton();
-            this.radioButtonRegMasks = new System.Windows.Forms.RadioButton();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.radioButtonFirstFromStack = new System.Windows.Forms.RadioButton();
+            this.radioButtonLastInStack = new System.Windows.Forms.RadioButton();
+            this.radioButton3 = new System.Windows.Forms.RadioButton();
+            this.radioButtonUsePrevInStack = new System.Windows.Forms.RadioButton();
+            this.buttonEvaluation = new System.Windows.Forms.Button();
             this.tabControlRegistration.SuspendLayout();
             this.tabPageRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -70,6 +75,7 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlRegistration
@@ -80,7 +86,7 @@
             this.tabControlRegistration.Location = new System.Drawing.Point(0, 0);
             this.tabControlRegistration.Name = "tabControlRegistration";
             this.tabControlRegistration.SelectedIndex = 0;
-            this.tabControlRegistration.Size = new System.Drawing.Size(800, 359);
+            this.tabControlRegistration.Size = new System.Drawing.Size(800, 356);
             this.tabControlRegistration.TabIndex = 0;
             // 
             // tabPageRigid
@@ -89,7 +95,7 @@
             this.tabPageRigid.Location = new System.Drawing.Point(4, 22);
             this.tabPageRigid.Name = "tabPageRigid";
             this.tabPageRigid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRigid.Size = new System.Drawing.Size(792, 333);
+            this.tabPageRigid.Size = new System.Drawing.Size(792, 330);
             this.tabPageRigid.TabIndex = 0;
             this.tabPageRigid.Text = "Rigid registration";
             this.tabPageRigid.UseVisualStyleBackColor = true;
@@ -110,15 +116,15 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(786, 327);
-            this.splitContainer1.SplitterDistance = 133;
+            this.splitContainer1.Size = new System.Drawing.Size(786, 324);
+            this.splitContainer1.SplitterDistance = 131;
             this.splitContainer1.TabIndex = 0;
             // 
             // buttonEditParameters
             // 
-            this.buttonEditParameters.Location = new System.Drawing.Point(706, 99);
+            this.buttonEditParameters.Location = new System.Drawing.Point(640, 89);
             this.buttonEditParameters.Name = "buttonEditParameters";
-            this.buttonEditParameters.Size = new System.Drawing.Size(75, 23);
+            this.buttonEditParameters.Size = new System.Drawing.Size(128, 23);
             this.buttonEditParameters.TabIndex = 3;
             this.buttonEditParameters.Text = "Edit params";
             this.buttonEditParameters.UseVisualStyleBackColor = true;
@@ -139,11 +145,66 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Masking";
             // 
+            // radioButtonRegMasks
+            // 
+            this.radioButtonRegMasks.AutoSize = true;
+            this.radioButtonRegMasks.Location = new System.Drawing.Point(151, 20);
+            this.radioButtonRegMasks.Name = "radioButtonRegMasks";
+            this.radioButtonRegMasks.Size = new System.Drawing.Size(126, 17);
+            this.radioButtonRegMasks.TabIndex = 9;
+            this.radioButtonRegMasks.TabStop = true;
+            this.radioButtonRegMasks.Text = "Registration of masks";
+            this.radioButtonRegMasks.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonUsefixMov
+            // 
+            this.radioButtonUsefixMov.AutoSize = true;
+            this.radioButtonUsefixMov.Location = new System.Drawing.Point(7, 92);
+            this.radioButtonUsefixMov.Name = "radioButtonUsefixMov";
+            this.radioButtonUsefixMov.Size = new System.Drawing.Size(127, 17);
+            this.radioButtonUsefixMov.TabIndex = 8;
+            this.radioButtonUsefixMov.TabStop = true;
+            this.radioButtonUsefixMov.Text = "Use fixed and moving";
+            this.radioButtonUsefixMov.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonUseMoving
+            // 
+            this.radioButtonUseMoving.AutoSize = true;
+            this.radioButtonUseMoving.Location = new System.Drawing.Point(7, 68);
+            this.radioButtonUseMoving.Name = "radioButtonUseMoving";
+            this.radioButtonUseMoving.Size = new System.Drawing.Size(109, 17);
+            this.radioButtonUseMoving.TabIndex = 7;
+            this.radioButtonUseMoving.TabStop = true;
+            this.radioButtonUseMoving.Text = "Use moving mask";
+            this.radioButtonUseMoving.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonUseFixed
+            // 
+            this.radioButtonUseFixed.AutoSize = true;
+            this.radioButtonUseFixed.Location = new System.Drawing.Point(7, 44);
+            this.radioButtonUseFixed.Name = "radioButtonUseFixed";
+            this.radioButtonUseFixed.Size = new System.Drawing.Size(97, 17);
+            this.radioButtonUseFixed.TabIndex = 6;
+            this.radioButtonUseFixed.TabStop = true;
+            this.radioButtonUseFixed.Text = "Use fixed mask";
+            this.radioButtonUseFixed.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonNoMasks
+            // 
+            this.radioButtonNoMasks.AutoSize = true;
+            this.radioButtonNoMasks.Location = new System.Drawing.Point(7, 20);
+            this.radioButtonNoMasks.Name = "radioButtonNoMasks";
+            this.radioButtonNoMasks.Size = new System.Drawing.Size(51, 17);
+            this.radioButtonNoMasks.TabIndex = 5;
+            this.radioButtonNoMasks.TabStop = true;
+            this.radioButtonNoMasks.Text = "None";
+            this.radioButtonNoMasks.UseVisualStyleBackColor = true;
+            // 
             // buttonSegmentationParams
             // 
-            this.buttonSegmentationParams.Location = new System.Drawing.Point(202, 86);
+            this.buttonSegmentationParams.Location = new System.Drawing.Point(151, 86);
             this.buttonSegmentationParams.Name = "buttonSegmentationParams";
-            this.buttonSegmentationParams.Size = new System.Drawing.Size(75, 23);
+            this.buttonSegmentationParams.Size = new System.Drawing.Size(126, 23);
             this.buttonSegmentationParams.TabIndex = 4;
             this.buttonSegmentationParams.Text = "Seg. parms";
             this.buttonSegmentationParams.UseVisualStyleBackColor = true;
@@ -169,7 +230,6 @@
             this.radioButtonAffine.Name = "radioButtonAffine";
             this.radioButtonAffine.Size = new System.Drawing.Size(52, 17);
             this.radioButtonAffine.TabIndex = 3;
-            this.radioButtonAffine.TabStop = true;
             this.radioButtonAffine.Text = "Affine";
             this.radioButtonAffine.UseVisualStyleBackColor = true;
             // 
@@ -180,7 +240,6 @@
             this.radioButtonRigid.Name = "radioButtonRigid";
             this.radioButtonRigid.Size = new System.Drawing.Size(49, 17);
             this.radioButtonRigid.TabIndex = 2;
-            this.radioButtonRigid.TabStop = true;
             this.radioButtonRigid.Text = "Rigid";
             this.radioButtonRigid.UseVisualStyleBackColor = true;
             // 
@@ -191,13 +250,13 @@
             this.radioButtonSimilarity.Name = "radioButtonSimilarity";
             this.radioButtonSimilarity.Size = new System.Drawing.Size(65, 17);
             this.radioButtonSimilarity.TabIndex = 1;
-            this.radioButtonSimilarity.TabStop = true;
             this.radioButtonSimilarity.Text = "Similarity";
             this.radioButtonSimilarity.UseVisualStyleBackColor = true;
             // 
             // radioButtonTranslation
             // 
             this.radioButtonTranslation.AutoSize = true;
+            this.radioButtonTranslation.Checked = true;
             this.radioButtonTranslation.Location = new System.Drawing.Point(7, 20);
             this.radioButtonTranslation.Name = "radioButtonTranslation";
             this.radioButtonTranslation.Size = new System.Drawing.Size(77, 17);
@@ -214,6 +273,7 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.buttonEvaluation);
             this.splitContainer2.Panel1.Controls.Add(this.buttonStartRegistration);
             this.splitContainer2.Panel1.Controls.Add(this.buttonCancel);
             // 
@@ -221,7 +281,7 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.textBox1);
             this.splitContainer2.Panel2.Controls.Add(this.progressBar1);
-            this.splitContainer2.Size = new System.Drawing.Size(786, 190);
+            this.splitContainer2.Size = new System.Drawing.Size(786, 189);
             this.splitContainer2.SplitterDistance = 148;
             this.splitContainer2.TabIndex = 2;
             // 
@@ -265,65 +325,10 @@
             this.tabPageNonRigid.Location = new System.Drawing.Point(4, 22);
             this.tabPageNonRigid.Name = "tabPageNonRigid";
             this.tabPageNonRigid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageNonRigid.Size = new System.Drawing.Size(792, 333);
+            this.tabPageNonRigid.Size = new System.Drawing.Size(792, 330);
             this.tabPageNonRigid.TabIndex = 1;
             this.tabPageNonRigid.Text = "Non rigid registration";
             this.tabPageNonRigid.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonNoMasks
-            // 
-            this.radioButtonNoMasks.AutoSize = true;
-            this.radioButtonNoMasks.Location = new System.Drawing.Point(7, 20);
-            this.radioButtonNoMasks.Name = "radioButtonNoMasks";
-            this.radioButtonNoMasks.Size = new System.Drawing.Size(51, 17);
-            this.radioButtonNoMasks.TabIndex = 5;
-            this.radioButtonNoMasks.TabStop = true;
-            this.radioButtonNoMasks.Text = "None";
-            this.radioButtonNoMasks.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonUseFixed
-            // 
-            this.radioButtonUseFixed.AutoSize = true;
-            this.radioButtonUseFixed.Location = new System.Drawing.Point(7, 44);
-            this.radioButtonUseFixed.Name = "radioButtonUseFixed";
-            this.radioButtonUseFixed.Size = new System.Drawing.Size(97, 17);
-            this.radioButtonUseFixed.TabIndex = 6;
-            this.radioButtonUseFixed.TabStop = true;
-            this.radioButtonUseFixed.Text = "Use fixed mask";
-            this.radioButtonUseFixed.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonUseMoving
-            // 
-            this.radioButtonUseMoving.AutoSize = true;
-            this.radioButtonUseMoving.Location = new System.Drawing.Point(7, 68);
-            this.radioButtonUseMoving.Name = "radioButtonUseMoving";
-            this.radioButtonUseMoving.Size = new System.Drawing.Size(109, 17);
-            this.radioButtonUseMoving.TabIndex = 7;
-            this.radioButtonUseMoving.TabStop = true;
-            this.radioButtonUseMoving.Text = "Use moving mask";
-            this.radioButtonUseMoving.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonUsefixMov
-            // 
-            this.radioButtonUsefixMov.AutoSize = true;
-            this.radioButtonUsefixMov.Location = new System.Drawing.Point(7, 92);
-            this.radioButtonUsefixMov.Name = "radioButtonUsefixMov";
-            this.radioButtonUsefixMov.Size = new System.Drawing.Size(127, 17);
-            this.radioButtonUsefixMov.TabIndex = 8;
-            this.radioButtonUsefixMov.TabStop = true;
-            this.radioButtonUsefixMov.Text = "Use fixed and moving";
-            this.radioButtonUsefixMov.UseVisualStyleBackColor = true;
-            // 
-            // radioButtonRegMasks
-            // 
-            this.radioButtonRegMasks.AutoSize = true;
-            this.radioButtonRegMasks.Location = new System.Drawing.Point(151, 20);
-            this.radioButtonRegMasks.Name = "radioButtonRegMasks";
-            this.radioButtonRegMasks.Size = new System.Drawing.Size(126, 17);
-            this.radioButtonRegMasks.TabIndex = 9;
-            this.radioButtonRegMasks.TabStop = true;
-            this.radioButtonRegMasks.Text = "Registration of masks";
-            this.radioButtonRegMasks.UseVisualStyleBackColor = true;
             // 
             // splitContainer3
             // 
@@ -341,17 +346,8 @@
             // 
             this.splitContainer3.Panel2.Controls.Add(this.tabControlRegistration);
             this.splitContainer3.Size = new System.Drawing.Size(800, 507);
-            this.splitContainer3.SplitterDistance = 144;
+            this.splitContainer3.SplitterDistance = 147;
             this.splitContainer3.TabIndex = 1;
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Location = new System.Drawing.Point(12, 28);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(245, 104);
-            this.groupBox3.TabIndex = 0;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "groupBox3";
             // 
             // label1
             // 
@@ -361,6 +357,73 @@
             this.label1.Size = new System.Drawing.Size(137, 13);
             this.label1.TabIndex = 1;
             this.label1.Text = "General registration settings";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.radioButtonUsePrevInStack);
+            this.groupBox3.Controls.Add(this.radioButton3);
+            this.groupBox3.Controls.Add(this.radioButtonLastInStack);
+            this.groupBox3.Controls.Add(this.radioButtonFirstFromStack);
+            this.groupBox3.Location = new System.Drawing.Point(12, 28);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(245, 113);
+            this.groupBox3.TabIndex = 0;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Registration order";
+            // 
+            // radioButtonFirstFromStack
+            // 
+            this.radioButtonFirstFromStack.AutoSize = true;
+            this.radioButtonFirstFromStack.Location = new System.Drawing.Point(8, 20);
+            this.radioButtonFirstFromStack.Name = "radioButtonFirstFromStack";
+            this.radioButtonFirstFromStack.Size = new System.Drawing.Size(196, 17);
+            this.radioButtonFirstFromStack.TabIndex = 0;
+            this.radioButtonFirstFromStack.TabStop = true;
+            this.radioButtonFirstFromStack.Text = "Use first image in stack as reference";
+            this.radioButtonFirstFromStack.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonLastInStack
+            // 
+            this.radioButtonLastInStack.AutoSize = true;
+            this.radioButtonLastInStack.Location = new System.Drawing.Point(7, 44);
+            this.radioButtonLastInStack.Name = "radioButtonLastInStack";
+            this.radioButtonLastInStack.Size = new System.Drawing.Size(196, 17);
+            this.radioButtonLastInStack.TabIndex = 1;
+            this.radioButtonLastInStack.TabStop = true;
+            this.radioButtonLastInStack.Text = "Use last image in stack as reference";
+            this.radioButtonLastInStack.UseVisualStyleBackColor = true;
+            // 
+            // radioButton3
+            // 
+            this.radioButton3.AutoSize = true;
+            this.radioButton3.Location = new System.Drawing.Point(7, 68);
+            this.radioButton3.Name = "radioButton3";
+            this.radioButton3.Size = new System.Drawing.Size(210, 17);
+            this.radioButton3.TabIndex = 2;
+            this.radioButton3.TabStop = true;
+            this.radioButton3.Text = "Use middle image in stack as reference";
+            this.radioButton3.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonUsePrevInStack
+            // 
+            this.radioButtonUsePrevInStack.AutoSize = true;
+            this.radioButtonUsePrevInStack.Location = new System.Drawing.Point(8, 90);
+            this.radioButtonUsePrevInStack.Name = "radioButtonUsePrevInStack";
+            this.radioButtonUsePrevInStack.Size = new System.Drawing.Size(220, 17);
+            this.radioButtonUsePrevInStack.TabIndex = 3;
+            this.radioButtonUsePrevInStack.TabStop = true;
+            this.radioButtonUsePrevInStack.Text = "Use previous image in stack as reference";
+            this.radioButtonUsePrevInStack.UseVisualStyleBackColor = true;
+            // 
+            // buttonEvaluation
+            // 
+            this.buttonEvaluation.Location = new System.Drawing.Point(13, 151);
+            this.buttonEvaluation.Name = "buttonEvaluation";
+            this.buttonEvaluation.Size = new System.Drawing.Size(121, 23);
+            this.buttonEvaluation.TabIndex = 2;
+            this.buttonEvaluation.Text = "Evaluate Registration";
+            this.buttonEvaluation.UseVisualStyleBackColor = true;
+            this.buttonEvaluation.Click += new System.EventHandler(this.buttonEvaluation_Click);
             // 
             // RegistrationForm
             // 
@@ -391,6 +454,8 @@
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -423,5 +488,10 @@
         private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton radioButtonUsePrevInStack;
+        private System.Windows.Forms.RadioButton radioButton3;
+        private System.Windows.Forms.RadioButton radioButtonLastInStack;
+        private System.Windows.Forms.RadioButton radioButtonFirstFromStack;
+        private System.Windows.Forms.Button buttonEvaluation;
     }
 }

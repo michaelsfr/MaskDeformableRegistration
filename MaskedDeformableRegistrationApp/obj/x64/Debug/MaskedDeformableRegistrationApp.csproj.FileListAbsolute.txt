@@ -95,7 +95,6 @@ C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrat
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.LoadWSIForm.resources
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.PreSegmentationForm.resources
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.RegistrationForm.resources
-C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.SegmentationParameterForm.resources
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.StartupForm.resources
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.WSIHistoObject.resources
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Properties.Resources.resources
@@ -104,3 +103,5 @@ C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrat
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.csproj.CopyComplete
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.exe
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.pdb
+C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.SegParamsNonRigidForm.resources
+C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.SegParamsRigidForm.resources

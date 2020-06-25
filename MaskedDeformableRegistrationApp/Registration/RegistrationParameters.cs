@@ -10,9 +10,28 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     public class RegistrationParameters
     {
-        public RegistrationParameters()
+        private RegistrationParameters()
         {
 
+        }
+
+        public static RegistrationParameters GetRigidRegistrationParameters()
+        {
+            RegistrationParameters parameters = new RegistrationParameters();
+            parameters.RegistrationType = RegistrationDefaultParameters.rigid;
+            parameters.NumberOfResolutions = 10;
+            return parameters;
+        }
+
+        public static RegistrationParameters GetNonRigidRegistrationParameters()
+        {
+            RegistrationParameters parameters = new RegistrationParameters();
+            parameters.RegistrationType = RegistrationDefaultParameters.bspline;
+            parameters.NumberOfResolutions = 5;
+            parameters.Metric = SimilarityMetric.AdvancedMattesMutualInformation;
+            parameters.RegistrationStrategy = RegistrationStrategy.MultiMetricMultiResolutionRegistration;
+            parameters.PenaltyTerm = PenaltyTerm.TransformRigidityPenalty;
+            return parameters;
         }
 
         public RegistrationDefaultParameters RegistrationType { get; set; }

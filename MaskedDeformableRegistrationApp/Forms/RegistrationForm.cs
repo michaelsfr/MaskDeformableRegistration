@@ -22,8 +22,10 @@ namespace MaskedDeformableRegistrationApp.Forms
     {
         private List<string> ToRegistrate { get; set; }
 
-        private SegmentationParameters SegmentationParameters { get; set; } = new SegmentationParameters();
-        private RegistrationParameters RegistrationParameters { get; set; } = new RegistrationParameters();
+        private SegmentationParameters SegmentationParametersWholeParticle { get; set; } = new SegmentationParameters();
+        private SegmentationParameters SegmentationParametersInnerStructures { get; set; } = new SegmentationParameters();
+        private RegistrationParameters RegistrationParametersRigid { get; set; } = RegistrationParameters.GetRigidRegistrationParameters();
+        private RegistrationParameters RegistrationParametersNonRigid { get; set; } = RegistrationParameters.GetNonRigidRegistrationParameters();
 
         private uint LargestImageWidth { get; set; } = 0;
         private uint LargestImageHeight { get; set; } = 0;
@@ -34,6 +36,15 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             ToRegistrate = filenamesToRegistrate;
             InitializeBackgroundWorker();
+            InitializeButtons();
+        }
+
+        private void InitializeButtons()
+        {
+            radioButtonFirstFromStack.Checked = true;
+            radioButtonTranslation.Checked = true;
+            radioButtonNoMasks.Checked = true;
+            buttonCancel.Enabled = false;
         }
 
         private void InitializeBackgroundWorker()
@@ -47,7 +58,6 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void RegistrationForm_Load(object sender, EventArgs e)
         {
-
             foreach(string filename in ToRegistrate)
             {
                 using (FileStream file = new FileStream(filename, FileMode.Open, FileAccess.Read))
@@ -126,7 +136,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             using (StringWriter stringWriter = new StringWriter())
             {
-                Directory.CreateDirectory(Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString()));
+                Directory.CreateDirectory(Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString()));
                 Console.SetOut(stringWriter);
 
                 string filenameReference = ToRegistrate.First();
@@ -134,7 +144,7 @@ namespace MaskedDeformableRegistrationApp.Forms
                 sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filenameReference);
                 sitk.Image resized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
                 ReadWriteUtils.WriteSitkImageAsPng(resized,
-                    Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString(), Path.GetFileName(filenameReference)));
+                    Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString(), Path.GetFileName(filenameReference)));
                 worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.40), string.Format("Loaded fixed image {0}.\n", filenameReference));
 
                 sitk.Image fixedMaskFull = GetWholeParticleMask(filenameReference);
@@ -173,9 +183,9 @@ namespace MaskedDeformableRegistrationApp.Forms
             sitk.Image fixedMask = null, sitk.Image movingMask = null)
         {
             RigidRegistration regRigid = new RigidRegistration(fixedImage, movingImage, 
-                Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString()));
-            regRigid.SetDefaultParameterMap(RegistrationParameters.RegistrationType, RegistrationParameters.NumberOfResolutions);
-            regRigid.SetSimilarityMetric(RegistrationParameters.Metric);
+                Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString()));
+            regRigid.SetDefaultParameterMap(RegistrationParametersRigid.RegistrationType, RegistrationParametersRigid.NumberOfResolutions);
+            regRigid.SetSimilarityMetric(RegistrationParametersRigid.Metric);
 
             if(fixedMask != null)
             {
@@ -204,7 +214,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             segImage.Dispose();
 
             ReadWriteUtils.WriteBitmapAsPng(bmp, 
-                Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString(), ("mask_" +Path.GetFileName(filename))));
+                Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString(), ("mask_" +Path.GetFileName(filename))));
 
             sitk.Image mask = ImageUtils.GetITKImageFromBitmap(bmp);
             image.Dispose();
@@ -225,7 +235,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             sitk.Image movingImageToTransform = ReadWriteUtils.ReadITKImageFromFile(filename, sitk.PixelIDValueEnum.sitkVectorUInt8);
             TransformRGB trans = new TransformRGB(movingImageToTransform, transformParams, 
-                Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString()));
+                Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString()));
 
             if(isBinary) {
                 // for binary reg set interpolation order to zero
@@ -241,19 +251,42 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonEditParameters_Click(object sender, EventArgs e)
         {
-            sitk.ParameterMap map = RegistrationUtils.GetDefaultParameterMap(RegistrationParameters.RegistrationType);
+            sitk.ParameterMap map = RegistrationUtils.GetDefaultParameterMap(RegistrationParametersRigid.RegistrationType);
             using (EditParametersForm paramForm = new EditParametersForm(map))
             {
                 DialogResult result = paramForm.ShowDialog();
 
                 if(result == DialogResult.OK)
                 {
-                    RegistrationParameters.ParamMapToUse = paramForm.Parametermap;
+                    RegistrationParametersRigid.ParamMapToUse = paramForm.Parametermap;
                 }
             }
         }
 
         private void buttonSegmentationParams_Click(object sender, EventArgs e)
+        {
+            SegmentationParamsRigid();
+        }
+
+        private void SegmentationParamsRigid()
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile(ToRegistrate.FirstOrDefault());
+
+            using (SegParamsRigidForm form = new SegParamsRigidForm(image, SegmentationParametersInnerStructures))
+            {
+                Cursor.Current = Cursors.Default;
+                DialogResult result = form.ShowDialog();
+
+                if(result == DialogResult.OK)
+                {
+                    SegmentationParametersWholeParticle = form.segmentationParameters;
+                }
+            }
+
+        }
+
+        private void SegmentationParamsNonRigid()
         {
             Cursor.Current = Cursors.WaitCursor;
 
@@ -264,14 +297,14 @@ namespace MaskedDeformableRegistrationApp.Forms
             Image<Gray, byte> mask = segImage.GetOutput().Clone();
             segImage.Dispose();
 
-            using (SegmentationParameterForm form = new SegmentationParameterForm(image, mask, SegmentationParameters)) 
+            using (SegParamsNonRigidForm form = new SegParamsNonRigidForm(image, mask, SegmentationParametersInnerStructures))
             {
                 Cursor.Current = Cursors.Default;
                 DialogResult result = form.ShowDialog();
 
-                if(result == DialogResult.OK)
+                if (result == DialogResult.OK)
                 {
-                    SegmentationParameters = form.segmentationParameters;
+                    SegmentationParametersInnerStructures = form.segmentationParameters;
                 }
             }
         }
@@ -283,6 +316,15 @@ namespace MaskedDeformableRegistrationApp.Forms
             {
                 backgroundWorker1.CancelAsync();
             }
+        }
+
+        private void buttonEvaluation_Click(object sender, EventArgs e)
+        {
+            // TODO
+            // 1. Show metrics
+            // 2. Show TRE (reg error)
+            // 3. Show checkerboard
+            // 4. Show subtraction image
         }
     }
 }

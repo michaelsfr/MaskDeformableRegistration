@@ -150,11 +150,17 @@
     <Compile Include="Forms\RegistrationForm.Designer.cs">
       <DependentUpon>RegistrationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\SegmentationParameterForm.cs">
+    <Compile Include="Forms\SegParamsNonRigidForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\SegmentationParameterForm.Designer.cs">
-      <DependentUpon>SegmentationParameterForm.cs</DependentUpon>
+    <Compile Include="Forms\SegParamsNonRigidForm.Designer.cs">
+      <DependentUpon>SegParamsNonRigidForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\SegParamsRigidForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SegParamsRigidForm.Designer.cs">
+      <DependentUpon>SegParamsRigidForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\StartupForm.cs">
       <SubType>Form</SubType>
@@ -210,8 +216,11 @@
     <EmbeddedResource Include="Forms\RegistrationForm.resx">
       <DependentUpon>RegistrationForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SegmentationParameterForm.resx">
-      <DependentUpon>SegmentationParameterForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\SegParamsNonRigidForm.resx">
+      <DependentUpon>SegParamsNonRigidForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SegParamsRigidForm.resx">
+      <DependentUpon>SegParamsRigidForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\StartupForm.resx">
       <DependentUpon>StartupForm.cs</DependentUpon>
