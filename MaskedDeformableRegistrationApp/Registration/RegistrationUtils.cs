@@ -12,8 +12,10 @@ namespace MaskedDeformableRegistrationApp.Registration
     {
         public static sitk.ParameterMap GetDefaultParameterMap(RegistrationDefaultParameters registrationType)
         {
-            sitk.ElastixImageFilter elastix = new sitk.ElastixImageFilter();
-            return elastix.GetDefaultParameterMap(registrationType.ToString());
+            using (sitk.ElastixImageFilter elastix = new sitk.ElastixImageFilter())
+            {
+                return elastix.GetDefaultParameterMap(registrationType.ToString());
+            }            
         }
     }
 }

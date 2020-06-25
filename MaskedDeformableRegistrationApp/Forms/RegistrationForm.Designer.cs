@@ -31,23 +31,45 @@
             this.tabControlRegistration = new System.Windows.Forms.TabControl();
             this.tabPageRigid = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.buttonSegmentationParams = new System.Windows.Forms.Button();
             this.buttonEditParameters = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.buttonSegmentationParams = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.radioButtonAffine = new System.Windows.Forms.RadioButton();
             this.radioButtonRigid = new System.Windows.Forms.RadioButton();
             this.radioButtonSimilarity = new System.Windows.Forms.RadioButton();
             this.radioButtonTranslation = new System.Windows.Forms.RadioButton();
-            this.button1 = new System.Windows.Forms.Button();
+            this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.buttonStartRegistration = new System.Windows.Forms.Button();
+            this.buttonCancel = new System.Windows.Forms.Button();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.tabPageNonRigid = new System.Windows.Forms.TabPage();
             this.backgroundWorker1 = new System.ComponentModel.BackgroundWorker();
+            this.radioButtonNoMasks = new System.Windows.Forms.RadioButton();
+            this.radioButtonUseFixed = new System.Windows.Forms.RadioButton();
+            this.radioButtonUseMoving = new System.Windows.Forms.RadioButton();
+            this.radioButtonUsefixMov = new System.Windows.Forms.RadioButton();
+            this.radioButtonRegMasks = new System.Windows.Forms.RadioButton();
+            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
             this.tabControlRegistration.SuspendLayout();
             this.tabPageRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
+            this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             this.groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
+            this.splitContainer2.Panel1.SuspendLayout();
+            this.splitContainer2.Panel2.SuspendLayout();
+            this.splitContainer2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
+            this.splitContainer3.Panel1.SuspendLayout();
+            this.splitContainer3.Panel2.SuspendLayout();
+            this.splitContainer3.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlRegistration
@@ -58,7 +80,7 @@
             this.tabControlRegistration.Location = new System.Drawing.Point(0, 0);
             this.tabControlRegistration.Name = "tabControlRegistration";
             this.tabControlRegistration.SelectedIndex = 0;
-            this.tabControlRegistration.Size = new System.Drawing.Size(800, 450);
+            this.tabControlRegistration.Size = new System.Drawing.Size(800, 359);
             this.tabControlRegistration.TabIndex = 0;
             // 
             // tabPageRigid
@@ -67,7 +89,7 @@
             this.tabPageRigid.Location = new System.Drawing.Point(4, 22);
             this.tabPageRigid.Name = "tabPageRigid";
             this.tabPageRigid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRigid.Size = new System.Drawing.Size(792, 424);
+            this.tabPageRigid.Size = new System.Drawing.Size(792, 333);
             this.tabPageRigid.TabIndex = 0;
             this.tabPageRigid.Text = "Rigid registration";
             this.tabPageRigid.UseVisualStyleBackColor = true;
@@ -81,28 +103,20 @@
             // 
             // splitContainer1.Panel1
             // 
-            this.splitContainer1.Panel1.Controls.Add(this.buttonSegmentationParams);
             this.splitContainer1.Panel1.Controls.Add(this.buttonEditParameters);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox2);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
-            this.splitContainer1.Panel1.Controls.Add(this.button1);
-            this.splitContainer1.Size = new System.Drawing.Size(786, 418);
+            // 
+            // splitContainer1.Panel2
+            // 
+            this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
+            this.splitContainer1.Size = new System.Drawing.Size(786, 327);
             this.splitContainer1.SplitterDistance = 133;
             this.splitContainer1.TabIndex = 0;
             // 
-            // buttonSegmentationParams
-            // 
-            this.buttonSegmentationParams.Location = new System.Drawing.Point(695, 47);
-            this.buttonSegmentationParams.Name = "buttonSegmentationParams";
-            this.buttonSegmentationParams.Size = new System.Drawing.Size(75, 23);
-            this.buttonSegmentationParams.TabIndex = 4;
-            this.buttonSegmentationParams.Text = "Seg. parms";
-            this.buttonSegmentationParams.UseVisualStyleBackColor = true;
-            this.buttonSegmentationParams.Click += new System.EventHandler(this.buttonSegmentationParams_Click);
-            // 
             // buttonEditParameters
             // 
-            this.buttonEditParameters.Location = new System.Drawing.Point(695, 105);
+            this.buttonEditParameters.Location = new System.Drawing.Point(706, 99);
             this.buttonEditParameters.Name = "buttonEditParameters";
             this.buttonEditParameters.Size = new System.Drawing.Size(75, 23);
             this.buttonEditParameters.TabIndex = 3;
@@ -112,12 +126,28 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.radioButtonRegMasks);
+            this.groupBox2.Controls.Add(this.radioButtonUsefixMov);
+            this.groupBox2.Controls.Add(this.radioButtonUseMoving);
+            this.groupBox2.Controls.Add(this.radioButtonUseFixed);
+            this.groupBox2.Controls.Add(this.radioButtonNoMasks);
+            this.groupBox2.Controls.Add(this.buttonSegmentationParams);
             this.groupBox2.Location = new System.Drawing.Point(185, 3);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(346, 125);
+            this.groupBox2.Size = new System.Drawing.Size(283, 125);
             this.groupBox2.TabIndex = 2;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Masking";
+            // 
+            // buttonSegmentationParams
+            // 
+            this.buttonSegmentationParams.Location = new System.Drawing.Point(202, 86);
+            this.buttonSegmentationParams.Name = "buttonSegmentationParams";
+            this.buttonSegmentationParams.Size = new System.Drawing.Size(75, 23);
+            this.buttonSegmentationParams.TabIndex = 4;
+            this.buttonSegmentationParams.Text = "Seg. parms";
+            this.buttonSegmentationParams.UseVisualStyleBackColor = true;
+            this.buttonSegmentationParams.Click += new System.EventHandler(this.buttonSegmentationParams_Click);
             // 
             // groupBox1
             // 
@@ -176,42 +206,191 @@
             this.radioButtonTranslation.Text = "Translation";
             this.radioButtonTranslation.UseVisualStyleBackColor = true;
             // 
-            // button1
+            // splitContainer2
             // 
-            this.button1.Location = new System.Drawing.Point(695, 17);
-            this.button1.Name = "button1";
-            this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 0;
-            this.button1.Text = "button1";
-            this.button1.UseVisualStyleBackColor = true;
-            this.button1.Click += new System.EventHandler(this.button1_Click);
+            this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer2.Name = "splitContainer2";
+            // 
+            // splitContainer2.Panel1
+            // 
+            this.splitContainer2.Panel1.Controls.Add(this.buttonStartRegistration);
+            this.splitContainer2.Panel1.Controls.Add(this.buttonCancel);
+            // 
+            // splitContainer2.Panel2
+            // 
+            this.splitContainer2.Panel2.Controls.Add(this.textBox1);
+            this.splitContainer2.Panel2.Controls.Add(this.progressBar1);
+            this.splitContainer2.Size = new System.Drawing.Size(786, 190);
+            this.splitContainer2.SplitterDistance = 148;
+            this.splitContainer2.TabIndex = 2;
+            // 
+            // buttonStartRegistration
+            // 
+            this.buttonStartRegistration.Location = new System.Drawing.Point(13, 13);
+            this.buttonStartRegistration.Name = "buttonStartRegistration";
+            this.buttonStartRegistration.Size = new System.Drawing.Size(121, 23);
+            this.buttonStartRegistration.TabIndex = 0;
+            this.buttonStartRegistration.Text = "Start Registration";
+            this.buttonStartRegistration.UseVisualStyleBackColor = true;
+            this.buttonStartRegistration.Click += new System.EventHandler(this.buttonStartRegistration_Click);
+            // 
+            // buttonCancel
+            // 
+            this.buttonCancel.Location = new System.Drawing.Point(13, 42);
+            this.buttonCancel.Name = "buttonCancel";
+            this.buttonCancel.Size = new System.Drawing.Size(121, 23);
+            this.buttonCancel.TabIndex = 1;
+            this.buttonCancel.Text = "Cancel Registration";
+            this.buttonCancel.UseVisualStyleBackColor = true;
+            this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(20, 45);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(596, 130);
+            this.textBox1.TabIndex = 1;
+            // 
+            // progressBar1
+            // 
+            this.progressBar1.Location = new System.Drawing.Point(20, 13);
+            this.progressBar1.Name = "progressBar1";
+            this.progressBar1.Size = new System.Drawing.Size(596, 23);
+            this.progressBar1.TabIndex = 0;
             // 
             // tabPageNonRigid
             // 
             this.tabPageNonRigid.Location = new System.Drawing.Point(4, 22);
             this.tabPageNonRigid.Name = "tabPageNonRigid";
             this.tabPageNonRigid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageNonRigid.Size = new System.Drawing.Size(792, 424);
+            this.tabPageNonRigid.Size = new System.Drawing.Size(792, 333);
             this.tabPageNonRigid.TabIndex = 1;
             this.tabPageNonRigid.Text = "Non rigid registration";
             this.tabPageNonRigid.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonNoMasks
+            // 
+            this.radioButtonNoMasks.AutoSize = true;
+            this.radioButtonNoMasks.Location = new System.Drawing.Point(7, 20);
+            this.radioButtonNoMasks.Name = "radioButtonNoMasks";
+            this.radioButtonNoMasks.Size = new System.Drawing.Size(51, 17);
+            this.radioButtonNoMasks.TabIndex = 5;
+            this.radioButtonNoMasks.TabStop = true;
+            this.radioButtonNoMasks.Text = "None";
+            this.radioButtonNoMasks.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonUseFixed
+            // 
+            this.radioButtonUseFixed.AutoSize = true;
+            this.radioButtonUseFixed.Location = new System.Drawing.Point(7, 44);
+            this.radioButtonUseFixed.Name = "radioButtonUseFixed";
+            this.radioButtonUseFixed.Size = new System.Drawing.Size(97, 17);
+            this.radioButtonUseFixed.TabIndex = 6;
+            this.radioButtonUseFixed.TabStop = true;
+            this.radioButtonUseFixed.Text = "Use fixed mask";
+            this.radioButtonUseFixed.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonUseMoving
+            // 
+            this.radioButtonUseMoving.AutoSize = true;
+            this.radioButtonUseMoving.Location = new System.Drawing.Point(7, 68);
+            this.radioButtonUseMoving.Name = "radioButtonUseMoving";
+            this.radioButtonUseMoving.Size = new System.Drawing.Size(109, 17);
+            this.radioButtonUseMoving.TabIndex = 7;
+            this.radioButtonUseMoving.TabStop = true;
+            this.radioButtonUseMoving.Text = "Use moving mask";
+            this.radioButtonUseMoving.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonUsefixMov
+            // 
+            this.radioButtonUsefixMov.AutoSize = true;
+            this.radioButtonUsefixMov.Location = new System.Drawing.Point(7, 92);
+            this.radioButtonUsefixMov.Name = "radioButtonUsefixMov";
+            this.radioButtonUsefixMov.Size = new System.Drawing.Size(127, 17);
+            this.radioButtonUsefixMov.TabIndex = 8;
+            this.radioButtonUsefixMov.TabStop = true;
+            this.radioButtonUsefixMov.Text = "Use fixed and moving";
+            this.radioButtonUsefixMov.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonRegMasks
+            // 
+            this.radioButtonRegMasks.AutoSize = true;
+            this.radioButtonRegMasks.Location = new System.Drawing.Point(151, 20);
+            this.radioButtonRegMasks.Name = "radioButtonRegMasks";
+            this.radioButtonRegMasks.Size = new System.Drawing.Size(126, 17);
+            this.radioButtonRegMasks.TabIndex = 9;
+            this.radioButtonRegMasks.TabStop = true;
+            this.radioButtonRegMasks.Text = "Registration of masks";
+            this.radioButtonRegMasks.UseVisualStyleBackColor = true;
+            // 
+            // splitContainer3
+            // 
+            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
+            this.splitContainer3.Name = "splitContainer3";
+            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer3.Panel1
+            // 
+            this.splitContainer3.Panel1.Controls.Add(this.label1);
+            this.splitContainer3.Panel1.Controls.Add(this.groupBox3);
+            // 
+            // splitContainer3.Panel2
+            // 
+            this.splitContainer3.Panel2.Controls.Add(this.tabControlRegistration);
+            this.splitContainer3.Size = new System.Drawing.Size(800, 507);
+            this.splitContainer3.SplitterDistance = 144;
+            this.splitContainer3.TabIndex = 1;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Location = new System.Drawing.Point(12, 28);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(245, 104);
+            this.groupBox3.TabIndex = 0;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "groupBox3";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(12, 12);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(137, 13);
+            this.label1.TabIndex = 1;
+            this.label1.Text = "General registration settings";
             // 
             // RegistrationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 450);
-            this.Controls.Add(this.tabControlRegistration);
+            this.ClientSize = new System.Drawing.Size(800, 507);
+            this.Controls.Add(this.splitContainer3);
             this.Name = "RegistrationForm";
             this.Text = "RegistrationForm";
             this.Load += new System.EventHandler(this.RegistrationForm_Load);
             this.tabControlRegistration.ResumeLayout(false);
             this.tabPageRigid.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);
+            this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
+            this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel2.ResumeLayout(false);
+            this.splitContainer2.Panel2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
+            this.splitContainer2.ResumeLayout(false);
+            this.splitContainer3.Panel1.ResumeLayout(false);
+            this.splitContainer3.Panel1.PerformLayout();
+            this.splitContainer3.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
+            this.splitContainer3.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -222,7 +401,7 @@
         private System.Windows.Forms.TabPage tabPageRigid;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabPage tabPageNonRigid;
-        private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonStartRegistration;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioButtonAffine;
         private System.Windows.Forms.RadioButton radioButtonRigid;
@@ -232,5 +411,17 @@
         private System.Windows.Forms.Button buttonEditParameters;
         private System.Windows.Forms.Button buttonSegmentationParams;
         private System.ComponentModel.BackgroundWorker backgroundWorker1;
+        private System.Windows.Forms.SplitContainer splitContainer2;
+        private System.Windows.Forms.Button buttonCancel;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.ProgressBar progressBar1;
+        private System.Windows.Forms.RadioButton radioButtonUseFixed;
+        private System.Windows.Forms.RadioButton radioButtonNoMasks;
+        private System.Windows.Forms.RadioButton radioButtonRegMasks;
+        private System.Windows.Forms.RadioButton radioButtonUsefixMov;
+        private System.Windows.Forms.RadioButton radioButtonUseMoving;
+        private System.Windows.Forms.SplitContainer splitContainer3;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.GroupBox groupBox3;
     }
 }

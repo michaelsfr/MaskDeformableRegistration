@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -74,15 +75,14 @@ namespace MaskedDeformableRegistrationApp.Forms
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void buttonStartRegistration_Click(object sender, EventArgs e)
         {
             if (backgroundWorker1.IsBusy != true)
             {
+                buttonStartRegistration.Enabled = false;
+                buttonCancel.Enabled = true;
                 backgroundWorker1.RunWorkerAsync();
             }
-
-
-            // do work part
             
         }
 
@@ -98,22 +98,32 @@ namespace MaskedDeformableRegistrationApp.Forms
             }
             else
             {
-                // Show Done
+                MessageBox.Show("Registration done. See results and elastix log in result directory.");
             }
 
             // enable disable buttons
-            button1.Enabled = true;
+            buttonStartRegistration.Enabled = true;
+            buttonCancel.Enabled = false;
         }
 
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            // Update progress bar
-            // this.progressBar.Value = e.ProgressPercentage;
+            this.progressBar1.Value = e.ProgressPercentage;
+            if(e.UserState != null)
+            {
+                this.textBox1.AppendText(e.UserState as string);
+            }
         }
 
         private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
         {
-            // todo loop and report progress
+            string loaded = "Loaded and resized image {0}.\n";
+            string segmented = "Created mask for particle and start registration. \n";
+            string registration = "Registration done. Time consumed: {0}. For output log see {1}.\n";
+            BackgroundWorker worker = sender as BackgroundWorker;
+            float percentagePerIteration = 100/ToRegistrate.Count;
+            int percentage = 0;
+
             using (StringWriter stringWriter = new StringWriter())
             {
                 Directory.CreateDirectory(Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString()));
@@ -125,8 +135,10 @@ namespace MaskedDeformableRegistrationApp.Forms
                 sitk.Image resized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
                 ReadWriteUtils.WriteSitkImageAsPng(resized,
                     Path.Combine(ApplicationContext.OutputPath, RegistrationParameters.RegistrationType.ToString(), Path.GetFileName(filenameReference)));
+                worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.40), string.Format("Loaded fixed image {0}.\n", filenameReference));
 
                 sitk.Image fixedMaskFull = GetWholeParticleMask(filenameReference);
+                worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.50), "Created mask for fixed image.\n");
 
                 foreach (string imageFilename in ToRegistrate)
                 {
@@ -136,16 +148,24 @@ namespace MaskedDeformableRegistrationApp.Forms
                     sitk.Image movImage = ReadWriteUtils.ReadITKImageFromFile(imageFilename);
                     sitk.Image movResized = ImageUtils.ResizeImage(movImage, LargestImageWidth, LargestImageHeight);
                     ReadWriteUtils.WriteSitkImageAsPng(movResized, imageFilename);
+                    worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.1), string.Format(loaded, imageFilename));
 
                     // mask particle
                     sitk.Image movingMaskFull = GetWholeParticleMask(imageFilename);
+                    worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.1), string.Format(segmented, imageFilename));
+
+                    // registration
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
                     sitk.VectorOfParameterMap transformparams = PerformRigidRegistration(fixedMaskFull, movingMaskFull);
                     WriteTransform(imageFilename, transformparams, isBinary: true);
+                    stopWatch.Stop();
+                    string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
+                    worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.8), string.Format(registration, elapsed, "output.log"));
                     movingMaskFull.Dispose();
                 }
 
-                Console.WriteLine(stringWriter.ToString());
-                Console.WriteLine("Done.");
+                worker.ReportProgress(100, "Registration of all images done.\n");
             }
         }
 
@@ -253,6 +273,15 @@ namespace MaskedDeformableRegistrationApp.Forms
                 {
                     SegmentationParameters = form.segmentationParameters;
                 }
+            }
+        }
+
+        private void buttonCancel_Click(object sender, EventArgs e)
+        {
+            // clean up?
+            if (backgroundWorker1.WorkerSupportsCancellation == true)
+            {
+                backgroundWorker1.CancelAsync();
             }
         }
     }
