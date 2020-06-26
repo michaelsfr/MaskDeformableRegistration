@@ -25,7 +25,7 @@ namespace MaskedDeformableRegistrationApp
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            ApplicationContext.OutputPath = @"C:\reg\testdata\appTestDir\Results\";
+            //ApplicationContext.OutputPath = @"C:\reg\testdata\appTestDir\Results\";
 
             Application.Run(new StartupForm());
 

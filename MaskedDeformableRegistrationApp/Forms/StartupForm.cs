@@ -20,20 +20,16 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonWSIExtraction_Click(object sender, EventArgs e)
         {
-            using(LoadWSIForm form = new LoadWSIForm())
-            {
-                this.Hide();
-                form.ShowDialog();
-            }
+            LoadWSIForm form = new LoadWSIForm();
+            this.Hide();
+            form.ShowDialog();
         }
 
         private void buttonExistingStack_Click(object sender, EventArgs e)
         {
-            using(LoadStackForm form = new LoadStackForm())
-            {
-                this.Hide();
-                form.ShowDialog();
-            }
+            LoadStackForm form = new LoadStackForm();
+            this.Hide();
+            form.ShowDialog();
         }
 
         private void EnableButtons()

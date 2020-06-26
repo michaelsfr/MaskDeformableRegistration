@@ -141,6 +141,7 @@
             this.Controls.Add(this.radioButtonLoadStack);
             this.Name = "LoadStackForm";
             this.Text = "LoadStackForm";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LoadStackForm_FormClosed);
             this.Load += new System.EventHandler(this.LoadStackForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

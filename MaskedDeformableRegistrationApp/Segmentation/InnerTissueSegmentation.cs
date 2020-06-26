@@ -84,8 +84,8 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             }
             
 
-            UMat opened = SegmentationUtils.Opening(thresholded, 10);
-            UMat dilated = SegmentationUtils.Dilate(opened, 10);
+            UMat opened = SegmentationUtils.Opening(thresholded, 5);
+            UMat dilated = SegmentationUtils.Dilate(opened, 5);
             ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\dilated.png", dilated);
             UMat inverted = new UMat();
             CvInvoke.BitwiseNot(dilated, inverted);
@@ -94,7 +94,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             VectorOfVectorOfPoint contoursRelevant = new VectorOfVectorOfPoint();
 
-            CvInvoke.FindContours(inverted, contours, null, RetrType.External, ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.FindContours(inverted, contours, null, RetrType.Ccomp, ChainApproxMethod.ChainApproxSimple);
 
             int nonRelevantPixelSize = ImageUtils.GetPercentualImagePixelCount<UMat>(inverted, 0.005f);
             Console.WriteLine("Non relevant pixel size: " + nonRelevantPixelSize);
@@ -142,20 +142,23 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                 }
             }
 
-            CvInvoke.DrawContours(image, contoursRelevant, -1, new MCvScalar(0, 255, 0));
+            //CvInvoke.DrawContours(image, contoursRelevant, -1, new MCvScalar(0, 255, 0));
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\image_with_contours.png", image.ToUMat());
 
             Image<Gray, byte> mask = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0));
             CvInvoke.DrawContours(mask, contoursRelevant, -1, new MCvScalar(255.0), thickness: -1);
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask1_not_converted.png", mask.ToUMat());
             UMat convertedMask = new UMat();
             mask.ToUMat().ConvertTo(convertedMask, DepthType.Cv32F);
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask1_converted.png", convertedMask);
+
 
             Image<Gray, byte> mask2 = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0));
             CvInvoke.Subtract(particleMask, mask, mask2);
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask2_not_converted.png", mask2.ToUMat());
             UMat convertedMask2 = new UMat();
             mask2.ToUMat().ConvertTo(convertedMask2, DepthType.Cv32F);
-
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\UmatA.png", convertedMask);
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\UmatB.png", convertedMask2);
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask2_converted.png", convertedMask2);
 
             masks.Add(convertedMask);
             masks.Add(convertedMask2);

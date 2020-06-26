@@ -33,6 +33,7 @@
             this.treeView1 = new System.Windows.Forms.TreeView();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
+            this.label1 = new System.Windows.Forms.Label();
             this.buttonProceed = new System.Windows.Forms.Button();
             this.buttonClearList = new System.Windows.Forms.Button();
             this.buttonRemoveSlice = new System.Windows.Forms.Button();
@@ -42,7 +43,6 @@
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialog1 = new System.Windows.Forms.FolderBrowserDialog();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -124,6 +124,15 @@
             this.splitContainer2.SplitterDistance = 200;
             this.splitContainer2.TabIndex = 7;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 187);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(48, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "Preview:";
+            // 
             // buttonProceed
             // 
             this.buttonProceed.Location = new System.Drawing.Point(0, 149);
@@ -197,15 +206,6 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(427, 336);
             this.flowLayoutPanel1.TabIndex = 1;
             // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 187);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(48, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "Preview:";
-            // 
             // LoadWSIForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -214,6 +214,7 @@
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "LoadWSIForm";
             this.Text = "WSI Selection";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.LoadWSIForm_FormClosed);
             this.Load += new System.EventHandler(this.Form1_Load);
             this.groupBox1.ResumeLayout(false);
             this.splitContainer1.Panel1.ResumeLayout(false);

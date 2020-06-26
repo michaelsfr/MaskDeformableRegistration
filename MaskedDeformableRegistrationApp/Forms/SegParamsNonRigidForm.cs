@@ -31,6 +31,8 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void SegmentationParameterForm_Load(object sender, EventArgs e)
         {
+            radioButtonOtsu.Checked = true;
+
             splitContainer2.SplitterDistance = this.Height / 2;
             splitContainer3.SplitterDistance = splitContainer2.Width / 2;
             splitContainer4.SplitterDistance = splitContainer2.Width / 2;
@@ -74,25 +76,29 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             if(image != null && mask != null)
             {
+                Cursor.Current = Cursors.WaitCursor;
+
                 InnerTissueSegmentation seg = new InnerTissueSegmentation(image.Clone(), mask.Clone(), segmentationParameters);
                 seg.SetColorSpace(segmentationParameters.Colorspace);
                 seg.SetChannel(segmentationParameters.Channel);
                 seg.Execute();
                 List<UMat> result = seg.GetOutput();
-                Bitmap a = result[0].Clone().Bitmap;
-                ReadWriteUtils.WriteBitmapAsPng(a, ApplicationContext.OutputPath + "\\bitmapA.png");
-                Bitmap b = result[1].Clone().Bitmap;
-                ReadWriteUtils.WriteBitmapAsPng(b, ApplicationContext.OutputPath + "\\bitmapB.png");
+                UMat a = new UMat();
+                result[0].Clone().ConvertTo(a, Emgu.CV.CvEnum.DepthType.Cv8U);
+                UMat b = new UMat();
+                result[1].Clone().ConvertTo(b, Emgu.CV.CvEnum.DepthType.Cv8U);
                 seg.Dispose();
 
-                if(pictureBoxSegmentation1.Image != null)
+                Cursor.Current = Cursors.Default;
+
+                if (pictureBoxSegmentation1.Image != null)
                 {
                     this.Invoke(new MethodInvoker(delegate () {
                         pictureBoxSegmentation1.Image.Dispose();
                         pictureBoxSegmentation1.Image = null;
                     }));
                 }
-                pictureBoxSegmentation1.Image = a;
+                pictureBoxSegmentation1.Image = a.Bitmap;
 
                 if (pictureBoxSegmentation2.Image != null)
                 {
@@ -101,7 +107,7 @@ namespace MaskedDeformableRegistrationApp.Forms
                         pictureBoxSegmentation2.Image = null;
                     }));
                 }
-                pictureBoxSegmentation2.Image = b;
+                pictureBoxSegmentation2.Image = b.Bitmap;
             }
         }
 

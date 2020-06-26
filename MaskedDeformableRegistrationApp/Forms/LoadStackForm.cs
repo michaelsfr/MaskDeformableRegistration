@@ -136,5 +136,11 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             this.buttonProceed.Enabled = false;
         }
+
+        private void LoadStackForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Close();
+            Application.Exit();
+        }
     }
 }

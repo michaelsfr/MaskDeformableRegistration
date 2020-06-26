@@ -20,8 +20,7 @@ namespace MaskedDeformableRegistrationApp
         private const string _dialogFilter = "WSI files (*.svs)|*.svs|(*.vsf)|*.vsf|(*.ndpi)|*.ndpi";
         private const string _dirDialogFilter = "*.svs|*.vsf|*.ndpi";
 
-        // REMOVE LATER
-        private const string _initDir = @"D:\Dokumente\Master Informatik\Masterthesis\Bildmaterial\BoneMarrow\I16_4837";
+        private string _initDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 
         public LoadWSIForm()
         {
@@ -184,5 +183,12 @@ namespace MaskedDeformableRegistrationApp
             }
         }
 
+        private void LoadWSIForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Close();
+            // Back to startup form?
+            //StartupForm.ActiveForm.Visible = true;
+            Application.Exit();
+        }
     }
 }

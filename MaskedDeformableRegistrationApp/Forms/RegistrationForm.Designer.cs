@@ -695,6 +695,7 @@
             this.Controls.Add(this.splitContainer3);
             this.Name = "RegistrationForm";
             this.Text = "RegistrationForm";
+            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RegistrationForm_FormClosed);
             this.Load += new System.EventHandler(this.RegistrationForm_Load);
             this.tabControlRegistration.ResumeLayout(false);
             this.tabPageRigid.ResumeLayout(false);

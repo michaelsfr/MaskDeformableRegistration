@@ -409,5 +409,11 @@ namespace MaskedDeformableRegistrationApp.Forms
                 RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.affine;
             }
         }
+
+        private void RegistrationForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            this.Close();
+            Application.Exit();
+        }
     }
 }
