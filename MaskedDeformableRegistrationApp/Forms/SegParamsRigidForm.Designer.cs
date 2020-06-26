@@ -33,8 +33,6 @@
             this.buttonSaveParameters = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.textBoxMax = new System.Windows.Forms.TextBox();
-            this.textBoxMin = new System.Windows.Forms.TextBox();
             this.checkBoxContourSize = new System.Windows.Forms.CheckBox();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.labelThreshold = new System.Windows.Forms.Label();
@@ -49,6 +47,8 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.pictureBoxOriginal = new System.Windows.Forms.PictureBox();
             this.pictureBoxMask = new System.Windows.Forms.PictureBox();
+            this.numericUpDownMin = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownMax = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -63,6 +63,8 @@
             this.splitContainer2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginal)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMask)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMin)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMax)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -108,9 +110,9 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.numericUpDownMax);
+            this.groupBox3.Controls.Add(this.numericUpDownMin);
             this.groupBox3.Controls.Add(this.label3);
-            this.groupBox3.Controls.Add(this.textBoxMax);
-            this.groupBox3.Controls.Add(this.textBoxMin);
             this.groupBox3.Controls.Add(this.checkBoxContourSize);
             this.groupBox3.Location = new System.Drawing.Point(12, 263);
             this.groupBox3.Name = "groupBox3";
@@ -127,20 +129,6 @@
             this.label3.Size = new System.Drawing.Size(10, 13);
             this.label3.TabIndex = 4;
             this.label3.Text = "-";
-            // 
-            // textBoxMax
-            // 
-            this.textBoxMax.Location = new System.Drawing.Point(115, 43);
-            this.textBoxMax.Name = "textBoxMax";
-            this.textBoxMax.Size = new System.Drawing.Size(62, 20);
-            this.textBoxMax.TabIndex = 3;
-            // 
-            // textBoxMin
-            // 
-            this.textBoxMin.Location = new System.Drawing.Point(30, 43);
-            this.textBoxMin.Name = "textBoxMin";
-            this.textBoxMin.Size = new System.Drawing.Size(64, 20);
-            this.textBoxMin.TabIndex = 2;
             // 
             // checkBoxContourSize
             // 
@@ -290,6 +278,20 @@
             this.pictureBoxMask.TabIndex = 0;
             this.pictureBoxMask.TabStop = false;
             // 
+            // numericUpDownMin
+            // 
+            this.numericUpDownMin.Location = new System.Drawing.Point(30, 43);
+            this.numericUpDownMin.Name = "numericUpDownMin";
+            this.numericUpDownMin.Size = new System.Drawing.Size(67, 20);
+            this.numericUpDownMin.TabIndex = 5;
+            // 
+            // numericUpDownMax
+            // 
+            this.numericUpDownMax.Location = new System.Drawing.Point(113, 43);
+            this.numericUpDownMax.Name = "numericUpDownMax";
+            this.numericUpDownMax.Size = new System.Drawing.Size(64, 20);
+            this.numericUpDownMax.TabIndex = 6;
+            // 
             // SegParamsRigidForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -315,6 +317,8 @@
             this.splitContainer2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxOriginal)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxMask)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMin)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMax)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -340,7 +344,7 @@
         private System.Windows.Forms.Button buttonPreview;
         private System.Windows.Forms.Button buttonSaveParameters;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox textBoxMax;
-        private System.Windows.Forms.TextBox textBoxMin;
+        private System.Windows.Forms.NumericUpDown numericUpDownMax;
+        private System.Windows.Forms.NumericUpDown numericUpDownMin;
     }
 }

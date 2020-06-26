@@ -19,9 +19,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         protected sitk.Image movingMask = null;
         protected sitk.Image transformedImage = null;
 
-        protected string outputDirectory = null;
-
-        public RegInitialization(sitk.Image fixedImage, sitk.Image movingImage, string outputDirectory)
+        public RegInitialization(sitk.Image fixedImage, sitk.Image movingImage)
         {
 
         }

@@ -32,8 +32,13 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void InitializeButtons()
         {
-            textBoxMin.Enabled = false;
-            textBoxMax.Enabled = false;
+            ToolTip toolTip1 = new ToolTip();
+            numericUpDownMin.Enabled = false;
+            numericUpDownMin.Minimum = 0;
+            toolTip1.SetToolTip(numericUpDownMin, "Leave 0 to not specify a lower bound.");
+            numericUpDownMax.Enabled = false;
+            numericUpDownMax.Maximum = ImageUtils.GetImagePixelCount(image);
+            toolTip1.SetToolTip(numericUpDownMax, "Leave 0 to not specify an upper bound.");
             radioButtonOtsu.Checked = true;
             trackBar1.Enabled = false;
 
@@ -60,28 +65,48 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             if(image != null)
             {
-                WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, ImageUtils.GetPercentualImagePixelCount(image, 0.3f));
+                Cursor.Current = Cursors.WaitCursor;
+
+                SetSegmentationParameters();
+
+                WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, segmentationParameters);
                 segImage.Execute();
                 Image<Gray, byte> mask = segImage.GetOutput().Clone();
                 segImage.Dispose();
 
                 pictureBoxMask.Image = mask.Bitmap;
+
+                Cursor.Current = Cursors.Default;
+            }
+        }
+
+        private void SetSegmentationParameters()
+        {
+            segmentationParameters = new SegmentationParameters();
+            if (checkBoxContourSize.Checked)
+            {
+                segmentationParameters.ManualContourSizeRestriction = true;
+                segmentationParameters.MinContourSize = (int)numericUpDownMin.Value;
+                segmentationParameters.MaxContourSize = (int)numericUpDownMax.Value;
+            }
+            if (radioButtonThresholdManually.Checked)
+            {
+                segmentationParameters.UseOtsu = false;
+                segmentationParameters.Threshold = trackBar1.Value;
             }
         }
 
         private void buttonSaveParameters_Click(object sender, EventArgs e)
         {
+            SetSegmentationParameters();
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
         private void checkBoxContourSize_CheckedChanged(object sender, EventArgs e)
         {
-            if(checkBoxContourSize.Checked)
-            {
-                textBoxMin.Enabled = true;
-                textBoxMax.Enabled = true;
-            }
+            numericUpDownMin.Enabled = checkBoxContourSize.Checked;
+            numericUpDownMax.Enabled = checkBoxContourSize.Checked;
         }
 
         private void radioButtonThresholdManually_CheckedChanged(object sender, EventArgs e)

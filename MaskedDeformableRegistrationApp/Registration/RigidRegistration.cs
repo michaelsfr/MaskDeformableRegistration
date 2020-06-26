@@ -11,7 +11,9 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     class RigidRegistration : RegInitialization
     {
-        public RigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, string outputDirectory) : base(fixedImage, movingImage, outputDirectory)
+        private RegistrationParameters registrationParameters;
+
+        public RigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(fixedImage, movingImage)
         {
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
             castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
@@ -24,7 +26,11 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             this.fixedImage = tempImage1;
             this.movingImage = tempImage2;
-            this.outputDirectory = outputDirectory;
+            this.registrationParameters = parameters;
+
+            vector1.Dispose();
+            vector2.Dispose();
+            vectorFilter.Dispose();
             
             elastix = new sitk.ElastixImageFilter();
             parameterMap = elastix.GetDefaultParameterMap(RegistrationDefaultParameters.rigid.ToString(), 10);
@@ -35,12 +41,13 @@ namespace MaskedDeformableRegistrationApp.Registration
             if(fixedImage != null && movingImage != null)
             {
                 // set output dir
+                string outputDirectory = Path.Combine(ApplicationContext.OutputPath, registrationParameters.SubDirectory);
                 if(!Directory.Exists(outputDirectory))
                 {
                     Directory.CreateDirectory(outputDirectory);
                 }
                 elastix.SetOutputDirectory(outputDirectory);
-                elastix.SetLogFileName(Path.Combine(outputDirectory, "log-elastix-rigid.txt"));
+                elastix.SetLogFileName(Path.Combine(outputDirectory, registrationParameters.ElastixLogFileName));
 
                 // set image masks
                 if (fixedMask != null)
@@ -75,6 +82,9 @@ namespace MaskedDeformableRegistrationApp.Registration
                 {
                     Console.WriteLine("Exception occurred during registration: ");
                     Console.WriteLine(ex);
+                } finally
+                {
+                    elastix.Dispose();
                 }
             }
         }

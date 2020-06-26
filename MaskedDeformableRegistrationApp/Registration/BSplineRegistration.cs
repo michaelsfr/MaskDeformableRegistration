@@ -11,7 +11,9 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     internal class BSplineRegistration : RegInitialization
     {
-        public BSplineRegistration(sitk.Image fixedImage, sitk.Image movingImage, string outputDirectory) : base(fixedImage, movingImage, outputDirectory)
+        private RegistrationParameters registrationParameters;
+
+        public BSplineRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(fixedImage, movingImage)
         {
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
             castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
@@ -24,7 +26,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             this.fixedImage = tempImage1;
             this.movingImage = tempImage2;
-            this.outputDirectory = outputDirectory;
+            this.registrationParameters = parameters;
 
             elastix = new sitk.ElastixImageFilter();
             parameterMap = elastix.GetDefaultParameterMap(RegistrationDefaultParameters.bspline.ToString(), 5);
@@ -34,12 +36,14 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             if (fixedImage != null && movingImage != null)
             {
+                // set output dir
+                string outputDirectory = Path.Combine(ApplicationContext.OutputPath, registrationParameters.SubDirectory);
                 if (!Directory.Exists(outputDirectory))
                 {
                     Directory.CreateDirectory(outputDirectory);
                 }
                 elastix.SetOutputDirectory(outputDirectory);
-                elastix.SetLogFileName(Path.Combine(outputDirectory, "log-elastix-non-rigid.txt"));
+                elastix.SetLogFileName(Path.Combine(outputDirectory, registrationParameters.ElastixLogFileName));
 
                 sitk.BSplineTransformInitializerFilter bSplineTransformInitializer = new sitk.BSplineTransformInitializerFilter();
                 // todo: calculate mesh size here
@@ -71,6 +75,9 @@ namespace MaskedDeformableRegistrationApp.Registration
                 {
                     Console.WriteLine("Exception occurred during registration: ");
                     Console.WriteLine(ex);
+                } finally
+                {
+                    elastix.Dispose();
                 }
             }
         }
@@ -82,13 +89,6 @@ namespace MaskedDeformableRegistrationApp.Registration
 
         public void SetRigidyPenaltyTerm(PenaltyTerm penalty, string movingPenalizedAreas = null, string movingRigidityMask = null)
         {
-            /*string filename = null;
-            if(movingPenalizedAreas != null)
-            {
-                // 1. write image to file
-                // 2. save path to string
-            }*/
-
             foreach (var parameter in parameterMap.AsEnumerable())
             {
                 if (parameter.Key == Constants.cRegistration)
@@ -107,6 +107,8 @@ namespace MaskedDeformableRegistrationApp.Registration
                 sitk.VectorString vec = new sitk.VectorString();
                 vec.Add(movingRigidityMask);
                 parameterMap.Add(Constants.cMovingRigidityImageName, vec);
+
+                // set orthogonality / linearity / correctness
             }
 
             // set parameters for specific penalty terms

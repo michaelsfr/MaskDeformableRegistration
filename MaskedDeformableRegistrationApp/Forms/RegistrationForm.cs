@@ -43,8 +43,11 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             radioButtonFirstFromStack.Checked = true;
             radioButtonTranslation.Checked = true;
-            radioButtonNoMasks.Checked = true;
+            radioButtonAdvancedBspline.Checked = true;
+            radioButtonNoPenalties.Checked = true;
             buttonCancel.Enabled = false;
+            buttonEvaluation.Enabled = false;
+            buttonSegmentationInnerstructures.Enabled = false;
         }
 
         private void InitializeBackgroundWorker()
@@ -58,7 +61,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void RegistrationForm_Load(object sender, EventArgs e)
         {
-            foreach(string filename in ToRegistrate)
+            foreach (string filename in ToRegistrate)
             {
                 using (FileStream file = new FileStream(filename, FileMode.Open, FileAccess.Read))
                 {
@@ -69,12 +72,12 @@ namespace MaskedDeformableRegistrationApp.Forms
                         uint width = (uint)img.PhysicalDimension.Width;
                         uint height = (uint)img.PhysicalDimension.Height;
 
-                        if(LargestImageWidth < width)
+                        if (LargestImageWidth < width)
                         {
                             LargestImageWidth = width;
                         }
 
-                        if(LargestImageHeight < height)
+                        if (LargestImageHeight < height)
                         {
                             LargestImageHeight = height;
                         }
@@ -93,12 +96,12 @@ namespace MaskedDeformableRegistrationApp.Forms
                 buttonCancel.Enabled = true;
                 backgroundWorker1.RunWorkerAsync();
             }
-            
+
         }
 
         private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            if(e.Error != null)
+            if (e.Error != null)
             {
                 MessageBox.Show(e.Error.Message);
             }
@@ -109,6 +112,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             else
             {
                 MessageBox.Show("Registration done. See results and elastix log in result directory.");
+                buttonEvaluation.Enabled = true;
             }
 
             // enable disable buttons
@@ -119,7 +123,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
             this.progressBar1.Value = e.ProgressPercentage;
-            if(e.UserState != null)
+            if (e.UserState != null)
             {
                 this.textBox1.AppendText(e.UserState as string);
             }
@@ -131,7 +135,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             string segmented = "Created mask for particle and start registration. \n";
             string registration = "Registration done. Time consumed: {0}. For output log see {1}.\n";
             BackgroundWorker worker = sender as BackgroundWorker;
-            float percentagePerIteration = 100/ToRegistrate.Count;
+            float percentagePerIteration = 100 / ToRegistrate.Count;
             int percentage = 0;
 
             using (StringWriter stringWriter = new StringWriter())
@@ -142,8 +146,8 @@ namespace MaskedDeformableRegistrationApp.Forms
                 string filenameReference = ToRegistrate.First();
                 // resize fixed image
                 sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filenameReference);
-                sitk.Image resized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
-                ReadWriteUtils.WriteSitkImageAsPng(resized,
+                sitk.Image refResized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
+                ReadWriteUtils.WriteSitkImageAsPng(refResized,
                     Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString(), Path.GetFileName(filenameReference)));
                 worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.40), string.Format("Loaded fixed image {0}.\n", filenameReference));
 
@@ -167,8 +171,26 @@ namespace MaskedDeformableRegistrationApp.Forms
                     // registration
                     Stopwatch stopWatch = new Stopwatch();
                     stopWatch.Start();
-                    sitk.VectorOfParameterMap transformparams = PerformRigidRegistration(fixedMaskFull, movingMaskFull);
+
+                    // masked registration selection
+                    sitk.VectorOfParameterMap transformparams = null;
+                    if (checkBoxMaskRegistration.Checked)
+                    {
+                        transformparams = PerformRigidRegistration(fixedMaskFull, movingMaskFull);
+                    }
+                    else
+                    {
+                        if (radioButtonNoMask.Checked)
+                            transformparams = PerformRigidRegistration(refResized, movResized);
+                        else if (radioButtonOnlyFixedMask.Checked)
+                            transformparams = PerformRigidRegistration(refResized, movResized, fixedMask: fixedMaskFull);
+                        else if (radioButtonOnlyMovingMask.Checked)
+                            transformparams = PerformRigidRegistration(refResized, movResized, movingMask: movingMaskFull);
+                        else
+                            transformparams = PerformRigidRegistration(refResized, movResized, fixedMask: fixedMaskFull, movingMask: movingMaskFull);
+                    }
                     WriteTransform(imageFilename, transformparams, isBinary: true);
+
                     stopWatch.Stop();
                     string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
                     worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.8), string.Format(registration, elapsed, "output.log"));
@@ -182,17 +204,16 @@ namespace MaskedDeformableRegistrationApp.Forms
         private sitk.VectorOfParameterMap PerformRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage,
             sitk.Image fixedMask = null, sitk.Image movingMask = null)
         {
-            RigidRegistration regRigid = new RigidRegistration(fixedImage, movingImage, 
-                Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString()));
+            RigidRegistration regRigid = new RigidRegistration(fixedImage, movingImage, RegistrationParametersRigid);
             regRigid.SetDefaultParameterMap(RegistrationParametersRigid.RegistrationType, RegistrationParametersRigid.NumberOfResolutions);
             regRigid.SetSimilarityMetric(RegistrationParametersRigid.Metric);
 
-            if(fixedMask != null)
+            if (fixedMask != null)
             {
                 regRigid.SetFixedMask(fixedMask);
             }
 
-            if(movingMask != null)
+            if (movingMask != null)
             {
                 regRigid.SetMovingMask(movingMask);
             }
@@ -208,13 +229,13 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile(filename);
 
-            WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, ImageUtils.GetPercentualImagePixelCount(image, 0.3f));
+            WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, SegmentationParametersWholeParticle);
             segImage.Execute();
             Bitmap bmp = segImage.GetOutput().Bitmap;
             segImage.Dispose();
 
-            ReadWriteUtils.WriteBitmapAsPng(bmp, 
-                Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString(), ("mask_" +Path.GetFileName(filename))));
+            ReadWriteUtils.WriteBitmapAsPng(bmp,
+                Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString(), ("mask_" + Path.GetFileName(filename))));
 
             sitk.Image mask = ImageUtils.GetITKImageFromBitmap(bmp);
             image.Dispose();
@@ -225,7 +246,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void GetInnerStructureSegmentations(string filename)
         {
             Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile(filename);
-            
+
             //todo
 
             image.Dispose();
@@ -234,10 +255,11 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void WriteTransform(string filename, sitk.VectorOfParameterMap transformParams, bool isBinary = false)
         {
             sitk.Image movingImageToTransform = ReadWriteUtils.ReadITKImageFromFile(filename, sitk.PixelIDValueEnum.sitkVectorUInt8);
-            TransformRGB trans = new TransformRGB(movingImageToTransform, transformParams, 
+            TransformRGB trans = new TransformRGB(movingImageToTransform, transformParams,
                 Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString()));
 
-            if(isBinary) {
+            if (isBinary)
+            {
                 // for binary reg set interpolation order to zero
                 trans.SetInterpolationOrder(0);
             }
@@ -256,7 +278,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             {
                 DialogResult result = paramForm.ShowDialog();
 
-                if(result == DialogResult.OK)
+                if (result == DialogResult.OK)
                 {
                     RegistrationParametersRigid.ParamMapToUse = paramForm.Parametermap;
                 }
@@ -278,7 +300,7 @@ namespace MaskedDeformableRegistrationApp.Forms
                 Cursor.Current = Cursors.Default;
                 DialogResult result = form.ShowDialog();
 
-                if(result == DialogResult.OK)
+                if (result == DialogResult.OK)
                 {
                     SegmentationParametersWholeParticle = form.segmentationParameters;
                 }
@@ -292,7 +314,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile(ToRegistrate.FirstOrDefault());
 
-            WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, ImageUtils.GetPercentualImagePixelCount(image, 0.3f));
+            WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, SegmentationParametersWholeParticle);
             segImage.Execute();
             Image<Gray, byte> mask = segImage.GetOutput().Clone();
             segImage.Dispose();
@@ -325,6 +347,67 @@ namespace MaskedDeformableRegistrationApp.Forms
             // 2. Show TRE (reg error)
             // 3. Show checkerboard
             // 4. Show subtraction image
+        }
+
+        private void checkBoxMaskRegistration_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxMaskRegistration.Checked)
+            {
+                //RegistrationParametersRigid.
+            }
+        }
+
+        private void radioButtonTransformRigidity_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonTransformRigidity.Checked)
+            {
+                buttonSegmentationInnerstructures.Enabled = true;
+            }
+        }
+
+        private void radioButtonTranslation_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateRigidRegistrationType();
+        }
+
+        private void buttonSegmentationInnerstructures_Click(object sender, EventArgs e)
+        {
+            SegmentationParamsNonRigid();
+        }
+
+        private void radioButtonSimilarity_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateRigidRegistrationType();
+        }
+
+        private void radioButtonRigid_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateRigidRegistrationType();
+        }
+
+        private void radioButtonAffine_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateRigidRegistrationType();
+        }
+
+        private void UpdateRigidRegistrationType()
+        {
+            if (radioButtonTranslation.Checked)
+            {
+                RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.translation;
+            }
+            else if (radioButtonSimilarity.Checked)
+            {
+                RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.similarity;
+            }
+            else if (radioButtonRigid.Checked)
+            {
+                RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.rigid;
+            }
+            else if (radioButtonAffine.Checked)
+            {
+                RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.affine;
+            }
         }
     }
 }

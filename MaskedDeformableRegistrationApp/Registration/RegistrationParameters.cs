@@ -34,6 +34,22 @@ namespace MaskedDeformableRegistrationApp.Registration
             return parameters;
         }
 
+        private string specifiedLogFilename = null;
+        public string ElastixLogFileName {
+            get
+            {
+                if (specifiedLogFilename != null) return specifiedLogFilename;
+                else return string.Format("elastix_log_file_{0}.txt", RegistrationType.ToString());
+            }
+            set
+            {
+                specifiedLogFilename = value;
+            }
+        }
+
+
+
+        public string SubDirectory { get; set; }
         public RegistrationDefaultParameters RegistrationType { get; set; }
         public sitk.ParameterMap ParamMapToUse { get; set; } = null;
         public uint NumberOfResolutions { get; set; } = 5;

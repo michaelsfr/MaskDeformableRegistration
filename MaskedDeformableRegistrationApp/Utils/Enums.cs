@@ -14,12 +14,15 @@ namespace MaskedDeformableRegistrationApp.Utils
 
     public enum RegistrationDefaultParameters
     {
-        translation,
-        similarity,
-        rigid,
-        affine,
-        nonrigid,
-        bspline
+        translation = 0,
+        similarity = 1,
+        rigid = 2,
+        affine = 3,
+        nonrigid = 4,
+        bspline = 5,
+        diffusion = 6,
+        spline = 7,
+        recursive = 8
     }
 
     public enum SimilarityMetric

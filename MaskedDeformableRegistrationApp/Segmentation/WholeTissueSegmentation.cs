@@ -18,13 +18,12 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         private Image<Bgr, byte> image;
         private Image<Gray, byte> mask;
 
-        private int minContourSize;
+        private SegmentationParameters segmentationParameters;
 
-        public WholeTissueSegmentation(Image<Bgr, byte> image, int minContourSize)
-        {
-            Console.WriteLine("Max contour size: " + minContourSize);
+        public WholeTissueSegmentation(Image<Bgr, byte> image, SegmentationParameters parameters)
+        { 
             this.image = image.Clone();
-            this.minContourSize = minContourSize;
+            this.segmentationParameters = parameters;
         }
 
         public void Execute()
@@ -34,16 +33,25 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                 UMat temp = SegmentationUtils.IncreaseContrast(image.ToUMat(), 5.0, 8);
                 temp = SegmentationUtils.Blur(temp, 3, 1.0);
                 temp = SegmentationUtils.Sharp(temp);
-                //UMat h = SegmentationUtils.GetColorChannel(temp, ColorConversion.Bgr2Hsv, 0);
-                //UMat s = SegmentationUtils.GetColorChannel(temp, ColorConversion.Bgr2Hsv, 1);
-                UMat v = SegmentationUtils.GetColorChannel(temp, ColorConversion.Bgr2Hsv, 2);
+                Image<Bgr, byte> tempImage = new Image<Bgr, byte>(temp.Bitmap);
+                UMat uMatChannel = SegmentationUtils.GetColorChannelAsUMat(segmentationParameters.Colorspace, tempImage, segmentationParameters.Channel);
 
-                //UMat otsu_h = SegmentationUtils.ThresholdOtsu(h);
-                //UMat otsu_s = SegmentationUtils.ThresholdOtsu(s);
-                UMat otsu_v = SegmentationUtils.ThresholdOtsu(v);
-                CvInvoke.BitwiseNot(otsu_v, otsu_v);
+                UMat thresholded = null;
+                using (UMat copy = uMatChannel.Clone())
+                {
+                    if (segmentationParameters.UseOtsu)
+                    {
+                        thresholded = SegmentationUtils.ThresholdOtsu(copy);
+                    }
+                    else
+                    {
+                        thresholded = SegmentationUtils.Threshold(copy, segmentationParameters.Threshold);
+                    }
+                }
 
-                UMat closed = SegmentationUtils.Closing(otsu_v, 5);
+                CvInvoke.BitwiseNot(thresholded, thresholded);
+
+                UMat closed = SegmentationUtils.Closing(thresholded, 5);
                 UMat dilated = SegmentationUtils.Dilate(closed, 10);
                 ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\WHOLE_SEG.png", dilated);
 
@@ -51,10 +59,12 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                 VectorOfVectorOfPoint contoursRelevant = new VectorOfVectorOfPoint();
                 CvInvoke.FindContours(dilated, contours, null, RetrType.External, ChainApproxMethod.ChainApproxSimple);
 
-                for(int i = 0; i < contours.Size; i++)
+                int autoMaxPixelSize = ImageUtils.GetPercentualImagePixelCount(image, 0.03f);
+                for (int i = 0; i < contours.Size; i++)
                 {
                     double area = CvInvoke.ContourArea(contours[i]);
-                    if(area > minContourSize)
+
+                    if (IsContourRelevant(area, autoMaxPixelSize, segmentationParameters))
                     {
                         contoursRelevant.Push(contours[i]);
                     }
@@ -64,6 +74,28 @@ namespace MaskedDeformableRegistrationApp.Segmentation
 
                 mask = new Image<Gray, Byte>(image.Width, image.Height, new Gray(0.0));
                 CvInvoke.DrawContours(mask, contoursRelevant, -1, new MCvScalar(255.0), thickness: -1);
+            }
+        }
+
+        private bool IsContourRelevant(double area, int autoMaxPixelSize, SegmentationParameters segmentationParameters)
+        {
+            if (segmentationParameters.ManualContourSizeRestriction)
+            {
+                int minContour = segmentationParameters.MinContourSize;
+                int maxContour = segmentationParameters.MaxContourSize;
+
+                if (minContour == 0 && maxContour == 0)
+                    return area > autoMaxPixelSize;
+                else if (minContour != 0 && maxContour != 0)
+                    return (minContour < area) && (area < maxContour);
+                else if (minContour == 0)
+                    return area < maxContour;
+                else
+                    return area > minContour;
+            }
+            else
+            {
+                return area > autoMaxPixelSize;
             }
         }
 
