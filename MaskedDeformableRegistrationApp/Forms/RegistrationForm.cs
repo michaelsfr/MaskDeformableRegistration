@@ -42,21 +42,30 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void InitializeButtons()
         {
             radioButtonFirstFromStack.Checked = true;
+            radioButtonNoMask.Checked = true;
             radioButtonTranslation.Checked = true;
             radioButtonAdvancedBspline.Checked = true;
             radioButtonNoPenalties.Checked = true;
             buttonCancel.Enabled = false;
             buttonEvaluation.Enabled = false;
             buttonSegmentationInnerstructures.Enabled = false;
+            buttonCancelNonRigidReg.Enabled = false;
+            buttonEvaluateNonRigidReg.Enabled = false;
         }
 
         private void InitializeBackgroundWorker()
         {
-            backgroundWorker1.WorkerReportsProgress = true;
-            backgroundWorker1.WorkerSupportsCancellation = true;
-            backgroundWorker1.DoWork += new DoWorkEventHandler(backgroundWorker1_DoWork);
-            backgroundWorker1.ProgressChanged += new ProgressChangedEventHandler(backgroundWorker1_ProgressChanged);
-            backgroundWorker1.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorker1_RunWorkerCompleted);
+            backgroundWorkerRigid.WorkerReportsProgress = true;
+            backgroundWorkerRigid.WorkerSupportsCancellation = true;
+            backgroundWorkerRigid.DoWork += new DoWorkEventHandler(backgroundWorkerRigid_DoWork);
+            backgroundWorkerRigid.ProgressChanged += new ProgressChangedEventHandler(backgroundWorkerRigid_ProgressChanged);
+            backgroundWorkerRigid.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorkerRigid_RunWorkerCompleted);
+
+            backgroundWorkerNonRigid.WorkerReportsProgress = true;
+            backgroundWorkerNonRigid.WorkerSupportsCancellation = true;
+            backgroundWorkerNonRigid.DoWork += new DoWorkEventHandler(backgroundWorkerNonRigid_DoWork);
+            backgroundWorkerNonRigid.ProgressChanged += new ProgressChangedEventHandler(backgroundWorkerNonRigid_ProgressChanged);
+            backgroundWorkerNonRigid.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorkerNonRigid_RunWorkerCompleted);
         }
 
         private void RegistrationForm_Load(object sender, EventArgs e)
@@ -90,16 +99,16 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonStartRegistration_Click(object sender, EventArgs e)
         {
-            if (backgroundWorker1.IsBusy != true)
+            if (backgroundWorkerRigid.IsBusy != true)
             {
                 buttonStartRegistration.Enabled = false;
                 buttonCancel.Enabled = true;
-                backgroundWorker1.RunWorkerAsync();
+                backgroundWorkerRigid.RunWorkerAsync();
             }
 
         }
 
-        private void backgroundWorker1_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        private void backgroundWorkerRigid_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
             if (e.Error != null)
             {
@@ -120,16 +129,16 @@ namespace MaskedDeformableRegistrationApp.Forms
             buttonCancel.Enabled = false;
         }
 
-        private void backgroundWorker1_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        private void backgroundWorkerRigid_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            this.progressBar1.Value = e.ProgressPercentage;
+            this.progressBarRigid.Value = e.ProgressPercentage;
             if (e.UserState != null)
             {
-                this.textBox1.AppendText(e.UserState as string);
+                this.textBoxConsoleRigid.AppendText(e.UserState as string);
             }
         }
 
-        private void backgroundWorker1_DoWork(object sender, DoWorkEventArgs e)
+        private void backgroundWorkerRigid_DoWork(object sender, DoWorkEventArgs e)
         {
             string loaded = "Loaded and resized image {0}.\n";
             string segmented = "Created mask for particle and start registration. \n";
@@ -201,6 +210,115 @@ namespace MaskedDeformableRegistrationApp.Forms
             }
         }
 
+        private void backgroundWorkerNonRigid_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+            }
+            else if (e.Cancelled)
+            {
+                MessageBox.Show("Registration cancelled");
+            }
+            else
+            {
+                MessageBox.Show("Registration done. See results and elastix log in result directory.");
+                buttonEvaluateNonRigidReg.Enabled = true;
+            }
+
+            // enable disable buttons
+            buttonStartNonRigidRegistration.Enabled = true;
+            buttonCancelNonRigidReg.Enabled = false;
+        }
+
+        private void backgroundWorkerNonRigid_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            this.progressBarNonRigid.Value = e.ProgressPercentage;
+            if (e.UserState != null)
+            {
+                this.textBoxConsoleNonRigid.AppendText(e.UserState as string);
+            }
+        }
+
+        private void backgroundWorkerNonRigid_DoWork(object sender, DoWorkEventArgs e)
+        {
+            string loaded = "Loaded and resized image {0}.\n";
+            string segmented = "Created mask for particle and start registration. \n";
+            string registration = "Registration done. Time consumed: {0}. For output log see {1}.\n";
+            BackgroundWorker worker = sender as BackgroundWorker;
+            float percentagePerIteration = 100 / ToRegistrate.Count;
+            int percentage = 0;
+
+            using (StringWriter stringWriter = new StringWriter())
+            {
+                Directory.CreateDirectory(Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString()));
+                Console.SetOut(stringWriter);
+
+                string filenameReference = ToRegistrate.First();
+                // resize fixed image
+                sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filenameReference);
+                sitk.Image refResized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
+                ReadWriteUtils.WriteSitkImageAsPng(refResized,
+                    Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString(), Path.GetFileName(filenameReference)));
+                worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.40), string.Format("Loaded fixed image {0}.\n", filenameReference));
+
+                sitk.Image fixedMaskFull = GetWholeParticleMask(filenameReference);
+                worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.50), "Created mask for fixed image.\n");
+
+                foreach (string imageFilename in ToRegistrate)
+                {
+                    if (imageFilename == filenameReference) continue;
+
+                    // resize moving image
+                    sitk.Image movImage = ReadWriteUtils.ReadITKImageFromFile(imageFilename);
+                    sitk.Image movResized = ImageUtils.ResizeImage(movImage, LargestImageWidth, LargestImageHeight);
+                    ReadWriteUtils.WriteSitkImageAsPng(movResized, imageFilename);
+                    worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.1), string.Format(loaded, imageFilename));
+
+                    // mask particle
+                    sitk.Image movingMaskFull = GetWholeParticleMask(imageFilename);
+                    worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.1), string.Format(segmented, imageFilename));
+
+                    // registration
+                    Stopwatch stopWatch = new Stopwatch();
+                    stopWatch.Start();
+
+                    // masked registration selection
+                    sitk.VectorOfParameterMap transformparams = RunRegistration(PerformNonRigidRegistration, refResized, movResized, fixedMaskFull, movingMaskFull);
+                    WriteTransform(imageFilename, transformparams, isBinary: true);
+
+                    stopWatch.Stop();
+                    string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
+                    worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.8), string.Format(registration, elapsed, "output.log"));
+                    movingMaskFull.Dispose();
+                }
+
+                worker.ReportProgress(100, "Registration of all images done.\n");
+            }
+        }
+
+        private sitk.VectorOfParameterMap RunRegistration(Func<sitk.Image, sitk.Image, sitk.Image, sitk.Image, sitk.VectorOfParameterMap> registrationFunc, 
+            sitk.Image fixedImage, sitk.Image movingImage, sitk.Image fixedMask = null, sitk.Image movingMask = null)
+        {
+            sitk.VectorOfParameterMap transformparams = null;
+            if (checkBoxMaskRegistration.Checked)
+            {
+                transformparams = registrationFunc(fixedMask, movingMask, null, null);
+            }
+            else
+            {
+                if (radioButtonNoMask.Checked)
+                    transformparams = registrationFunc(fixedImage, movingImage, null, null);
+                else if (radioButtonOnlyFixedMask.Checked)
+                    transformparams = registrationFunc(fixedImage, movingImage, fixedMask, null);
+                else if (radioButtonOnlyMovingMask.Checked)
+                    transformparams = registrationFunc(fixedImage, movingImage, null, movingMask);
+                else
+                    transformparams = registrationFunc(fixedImage, movingImage, fixedMask, movingMask);
+            }
+            return transformparams;
+        }
+
         private sitk.VectorOfParameterMap PerformRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage,
             sitk.Image fixedMask = null, sitk.Image movingMask = null)
         {
@@ -221,6 +339,39 @@ namespace MaskedDeformableRegistrationApp.Forms
             regRigid.Execute();
             sitk.VectorOfParameterMap transformparams = regRigid.GetTransformationFile();
             regRigid.Dispose();
+
+            return transformparams;
+        }
+
+        private sitk.VectorOfParameterMap PerformNonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage,
+            sitk.Image fixedMask = null, sitk.Image movingMask = null)
+        {
+            // TODO
+            // make this generic for rigid and non rigid registration
+            // registration can be handled through the registration parameters!
+            NonRigidRegistration nonRigidRegistration = new NonRigidRegistration(fixedImage, movingImage, RegistrationParametersNonRigid);
+            nonRigidRegistration.SetDefaultParameterMap(RegistrationParametersNonRigid.RegistrationType, RegistrationParametersNonRigid.NumberOfResolutions);
+            nonRigidRegistration.SetSimilarityMetric(RegistrationParametersNonRigid.Metric);
+
+            if(radioButtonTransformRigidity.Checked)
+            {
+                // todo
+                //nonRigidRegistration.SetRigidyPenaltyTerm(PenaltyTerm.TransformRigidityPenalty, )
+            }
+
+            if (fixedMask != null)
+            {
+                nonRigidRegistration.SetFixedMask(fixedMask);
+            }
+
+            if (movingMask != null)
+            {
+                nonRigidRegistration.SetMovingMask(movingMask);
+            }
+
+            nonRigidRegistration.Execute();
+            sitk.VectorOfParameterMap transformparams = nonRigidRegistration.GetTransformationFile();
+            nonRigidRegistration.Dispose();
 
             return transformparams;
         }
@@ -334,9 +485,9 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             // clean up?
-            if (backgroundWorker1.WorkerSupportsCancellation == true)
+            if (backgroundWorkerRigid.WorkerSupportsCancellation == true)
             {
-                backgroundWorker1.CancelAsync();
+                backgroundWorkerRigid.CancelAsync();
             }
         }
 
@@ -414,6 +565,60 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             this.Close();
             Application.Exit();
+        }
+
+        private void radioButtonAdvancedBspline_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateNonRigidRegistrationType();
+        }
+
+        private void radioButtonBsplineDiffusion_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateNonRigidRegistrationType();
+        }
+
+        private void radioButtonKernelSpline_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateNonRigidRegistrationType();
+        }
+
+        private void radioButtonSplineRecursive_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdateNonRigidRegistrationType();
+        }
+
+        private void UpdateNonRigidRegistrationType()
+        {
+            if (radioButtonAdvancedBspline.Checked)
+            {
+                RegistrationParametersNonRigid.RegistrationType = RegistrationDefaultParameters.bspline;
+            }
+            else if (radioButtonBsplineDiffusion.Checked)
+            {
+                RegistrationParametersNonRigid.RegistrationType = RegistrationDefaultParameters.diffusion;
+            }
+            else if (radioButtonKernelSpline.Checked)
+            {
+                RegistrationParametersNonRigid.RegistrationType = RegistrationDefaultParameters.spline;
+            }
+            else if (radioButtonSplineRecursive.Checked)
+            {
+                RegistrationParametersNonRigid.RegistrationType = RegistrationDefaultParameters.recursive;
+            }
+        }
+
+        private void buttonEditParamsNonRigid_Click(object sender, EventArgs e)
+        {
+            sitk.ParameterMap map = RegistrationUtils.GetDefaultParameterMap(RegistrationParametersNonRigid.RegistrationType);
+            using (EditParametersForm paramForm = new EditParametersForm(map))
+            {
+                DialogResult result = paramForm.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    RegistrationParametersNonRigid.ParamMapToUse = paramForm.Parametermap;
+                }
+            }
         }
     }
 }

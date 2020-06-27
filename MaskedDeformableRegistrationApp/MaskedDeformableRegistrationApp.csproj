@@ -176,7 +176,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Registration\BSplineRegistration.cs" />
+    <Compile Include="Registration\NonRigidRegistration.cs" />
     <Compile Include="Registration\IRegistration.cs" />
     <Compile Include="Registration\RegInitialization.cs" />
     <Compile Include="Registration\RegistrationParameters.cs" />

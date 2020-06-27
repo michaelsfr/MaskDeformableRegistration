@@ -9,11 +9,11 @@ using sitk = itk.simple;
 
 namespace MaskedDeformableRegistrationApp.Registration
 {
-    internal class BSplineRegistration : RegInitialization
+    internal class NonRigidRegistration : RegInitialization
     {
         private RegistrationParameters registrationParameters;
 
-        public BSplineRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(fixedImage, movingImage)
+        public NonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(fixedImage, movingImage)
         {
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
             castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
