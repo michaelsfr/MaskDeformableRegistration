@@ -49,11 +49,11 @@ namespace MaskedDeformableRegistrationApp.Registration
             this.Penaltyterm = PenaltyTerm.TransformBendingEnergyPenalty;
         }
 
-        public void SetDistancePreservingRigidityPenalty(sitk.Image rigidSegments, int[] penaltyGridSpacingInVoxels)
+        public void SetDistancePreservingRigidityPenalty(string coefficientMap, int[] penaltyGridSpacingInVoxels)
         {
             this.Penaltyterm = PenaltyTerm.DistancePreservingRigidityPenalty;
             // see: https://elastix.lumc.nl/doxygen/classelastix_1_1DistancePreservingRigidityPenalty.html
-            this.CoefficientMap = rigidSegments;
+            this.CoefficientMapFilename = coefficientMap;
             this.PenaltyGridSpacingInVoxels = penaltyGridSpacingInVoxels;
         }
 
@@ -82,9 +82,10 @@ namespace MaskedDeformableRegistrationApp.Registration
 
         // non rigid parameters
         public PenaltyTerm Penaltyterm { get; set; } = PenaltyTerm.None;
-        public sitk.Image WholeParticleSegment { get; set; } = null;
+        public sitk.Image WholeParticleSegmentFixed { get; set; } = null;
+        public sitk.Image WholeParticleSegmentMoving { get; set; } = null;
         public sitk.Image InnerStructureSegement { get; set; } = null;
-        public sitk.Image CoefficientMap { get; set; } = null;
+        public string CoefficientMapFilename { get; set; } = null;
         public int[] Orthogonality { get; set; }
         public int[] Linearity { get; set; }
         public int[] Correctness { get; set; }

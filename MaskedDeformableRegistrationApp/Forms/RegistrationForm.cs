@@ -258,11 +258,11 @@ namespace MaskedDeformableRegistrationApp.Forms
                 // resize fixed image
                 sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filenameReference);
                 sitk.Image refResized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
-                ReadWriteUtils.WriteSitkImageAsPng(refResized,
-                    Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString(), Path.GetFileName(filenameReference)));
+                //ReadWriteUtils.WriteSitkImageAsPng(refResized,
+                //    Path.Combine(ApplicationContext.OutputPath, RegistrationParametersRigid.RegistrationType.ToString(), Path.GetFileName(filenameReference)));
                 worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.40), string.Format("Loaded fixed image {0}.\n", filenameReference));
 
-                sitk.Image fixedMaskFull = GetWholeParticleMask(filenameReference);
+                //sitk.Image fixedMaskFull = GetWholeParticleMask(filenameReference);
                 worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.50), "Created mask for fixed image.\n");
 
                 foreach (string imageFilename in ToRegistrate)
@@ -276,7 +276,8 @@ namespace MaskedDeformableRegistrationApp.Forms
                     worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.1), string.Format(loaded, imageFilename));
 
                     // mask particle
-                    sitk.Image movingMaskFull = GetWholeParticleMask(imageFilename);
+                    //sitk.Image movingMaskFull = GetWholeParticleMask(imageFilename);
+                    //RegistrationParametersNonRigid.WholeParticleSegmentMoving = movingMaskFull;
                     worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.1), string.Format(segmented, imageFilename));
 
                     // registration
@@ -284,13 +285,14 @@ namespace MaskedDeformableRegistrationApp.Forms
                     stopWatch.Start();
 
                     // masked registration selection
-                    sitk.VectorOfParameterMap transformparams = RunRegistration(PerformNonRigidRegistration, refResized, movResized, fixedMaskFull, movingMaskFull);
+                    //sitk.VectorOfParameterMap transformparams = RunRegistration(PerformNonRigidRegistration, refResized, movResized);
+                    sitk.VectorOfParameterMap transformparams = PerformNonRigidRegistration(refResized, movResized, imageFilename);
                     WriteTransform(imageFilename, transformparams, isBinary: true);
 
                     stopWatch.Stop();
                     string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
                     worker.ReportProgress(percentage += (int)(percentagePerIteration * 0.8), string.Format(registration, elapsed, "output.log"));
-                    movingMaskFull.Dispose();
+                    //movingMaskFull.Dispose();
                 }
 
                 worker.ReportProgress(100, "Registration of all images done.\n");
@@ -343,7 +345,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             return transformparams;
         }
 
-        private sitk.VectorOfParameterMap PerformNonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage,
+        private sitk.VectorOfParameterMap PerformNonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, string movingImageFilename,
             sitk.Image fixedMask = null, sitk.Image movingMask = null)
         {
             // TODO
@@ -355,8 +357,9 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             if(radioButtonTransformRigidity.Checked)
             {
-                // todo
-                //nonRigidRegistration.SetRigidyPenaltyTerm(PenaltyTerm.TransformRigidityPenalty, )
+                string coefficientMapFilename = GetInnerStructureSegmentations(movingImageFilename);
+
+                nonRigidRegistration.SetRigidyPenaltyTerm(PenaltyTerm.TransformRigidityPenalty, movingRigidityMask: coefficientMapFilename);
             }
 
             if (fixedMask != null)
@@ -394,13 +397,21 @@ namespace MaskedDeformableRegistrationApp.Forms
             return mask;
         }
 
-        private void GetInnerStructureSegmentations(string filename)
+        private string GetInnerStructureSegmentations(string filename)
         {
             Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile(filename);
 
-            //todo
+            WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, SegmentationParametersWholeParticle);
+            segImage.Execute();
+            Image<Gray, byte> wholeMask = segImage.GetOutput().Clone();
+            segImage.Dispose();
 
-            image.Dispose();
+            InnerTissueSegmentation innerSegImage = new InnerTissueSegmentation(image, wholeMask, SegmentationParametersInnerStructures);
+            innerSegImage.Execute();
+            UMat coefficientMap = innerSegImage.GetCoefficientMatrix();
+            string filenameCoefficientMap = ApplicationContext.OutputPath + "coefficientMap.png";
+            ReadWriteUtils.WriteUMatToFile(filenameCoefficientMap, coefficientMap);
+            return filenameCoefficientMap;
         }
 
         private void WriteTransform(string filename, sitk.VectorOfParameterMap transformParams, bool isBinary = false)

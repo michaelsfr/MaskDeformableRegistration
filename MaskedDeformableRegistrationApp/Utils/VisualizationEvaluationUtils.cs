@@ -11,7 +11,7 @@ using sitk = itk.simple;
 
 namespace MaskedDeformableRegistrationApp.Utils
 {
-    public static class VisualizationUtils
+    public static class VisualizationEvaluationUtils
     {
         public static void ShowUMat(UMat mat, string text = "")
         {
@@ -81,6 +81,25 @@ namespace MaskedDeformableRegistrationApp.Utils
                 g.DrawLine(penGray, s, e);
             }
             return histo;
+        }
+
+        public static sitk.Image CreateLabelMapImage(sitk.Image img)
+        {
+            sitk.BinaryImageToLabelMapFilter binaryImageToLabel = new sitk.BinaryImageToLabelMapFilter();
+            sitk.Image temp = binaryImageToLabel.Execute(img);
+
+            sitk.LabelMapToLabelImageFilter labelMapToLabel = new sitk.LabelMapToLabelImageFilter();
+            sitk.Image result = labelMapToLabel.Execute(temp);
+
+            temp.Dispose();
+            return result;
+        }
+
+        public static sitk.LabelStatisticsImageFilter GetLabelStatisticsForImage(sitk.Image img, sitk.Image labelImage)
+        {
+            sitk.LabelStatisticsImageFilter labelStatisticsImageFilter = new sitk.LabelStatisticsImageFilter();
+            labelStatisticsImageFilter.Execute(img, labelImage);
+            return labelStatisticsImageFilter;
         }
     }
 }
