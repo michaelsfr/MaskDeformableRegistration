@@ -37,7 +37,6 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             if (image != null)
             {
                 Image<Bgr, byte> maskedImage = new Image<Bgr, byte>(image.Width, image.Height, new Bgr(255, 255, 255));
-                ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\BIG_mask.png", maskedImage.ToUMat());
                 CvInvoke.cvCopy(image, maskedImage, particleMask);
 
                 Console.WriteLine("Image dimensions: " + image.Width + " / " + image.Height);
@@ -148,16 +147,21 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             Image<Gray, byte> mask = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0));
             CvInvoke.DrawContours(mask, contoursRelevant, -1, new MCvScalar(255.0), thickness: -1);
             //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask1_not_converted.png", mask.ToUMat());
+            UMat inv1 = new UMat();
+            CvInvoke.BitwiseNot(mask, inv1);
             UMat convertedMask = new UMat();
-            mask.ToUMat().ConvertTo(convertedMask, DepthType.Cv32F);
+            inv1.ConvertTo(convertedMask, DepthType.Cv32F);
             //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask1_converted.png", convertedMask);
 
 
             Image<Gray, byte> mask2 = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0));
             CvInvoke.Subtract(particleMask, mask, mask2);
+            UMat inv2 = new UMat();
+            CvInvoke.BitwiseNot(mask2, inv2);
             //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask2_not_converted.png", mask2.ToUMat());
             UMat convertedMask2 = new UMat();
-            mask2.ToUMat().ConvertTo(convertedMask2, DepthType.Cv32F);
+            inv2.ConvertTo(convertedMask2, DepthType.Cv32F);
+            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask2_not_converted.png", convertedMask2);
             //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask2_converted.png", convertedMask2);
 
             masks.Add(convertedMask);
@@ -182,14 +186,14 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         public UMat GetCoefficientMatrix()
         {
             UMat mat = null;
-            double sc = 0.0;
+            double sc = 0.5;
             foreach(UMat m in masks)
             {
                 Console.WriteLine("SC " + sc);
                 if (mat == null)
                 {
                     mat = new UMat(m.Size, DepthType.Cv32F, m.NumberOfChannels);
-                    mat.SetTo(new MCvScalar(1.0));
+                    mat.SetTo(new MCvScalar(0.0));
                 }
                 
                 UMat nMat = new UMat();
@@ -198,7 +202,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                 VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
                 CvInvoke.FindContours(nMat, contours, null, RetrType.Ccomp, ChainApproxMethod.ChainApproxSimple);
                 CvInvoke.DrawContours(mat, contours, -1, new MCvScalar(sc), thickness: -1);
-                sc += 0.5;
+                sc -= 0.5;
             }
 
             return mat;

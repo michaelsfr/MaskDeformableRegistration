@@ -34,14 +34,14 @@ namespace MaskedDeformableRegistrationApp.Registration
             return parameters;
         }
 
-        public void SetTransformPenaltyTerm(sitk.Image coefficientMap, int[] orthogonality, int[] linearity, int[] correctness)
+        public void SetTransformPenaltyTerm(string coefficientMapFilename, int orthonormality = 1, int linearity = 1, int properness = 1)
         {
             this.Penaltyterm = PenaltyTerm.TransformRigidityPenalty;
             // see: https://elastix.lumc.nl/doxygen/classelastix_1_1TransformRigidityPenalty.html
-            this.CoefficientMap = coefficientMap;
-            this.Orthogonality = orthogonality;
-            this.Linearity = linearity;
-            this.Correctness = correctness;
+            this.CoefficientMapFilename = coefficientMapFilename;
+            this.OrthonormalityConditionWeight = orthonormality;
+            this.LinearityConditionWeight  = linearity;
+            this.PropernessConditionWeight = properness;
         }
 
         public void SetTransformBendingEnergy()
@@ -70,7 +70,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 specifiedLogFilename = value;
             }
         }
-        public string SubDirectory { get; set; }
+        public string SubDirectory { get; set; } = "";
 
         // rigid and non rigid parameters
         public RegistrationDefaultParameters RegistrationType { get; set; }
@@ -82,13 +82,10 @@ namespace MaskedDeformableRegistrationApp.Registration
 
         // non rigid parameters
         public PenaltyTerm Penaltyterm { get; set; } = PenaltyTerm.None;
-        public sitk.Image WholeParticleSegmentFixed { get; set; } = null;
-        public sitk.Image WholeParticleSegmentMoving { get; set; } = null;
-        public sitk.Image InnerStructureSegement { get; set; } = null;
         public string CoefficientMapFilename { get; set; } = null;
-        public int[] Orthogonality { get; set; }
-        public int[] Linearity { get; set; }
-        public int[] Correctness { get; set; }
+        public int OrthonormalityConditionWeight { get; set; }
+        public int LinearityConditionWeight  { get; set; }
+        public int PropernessConditionWeight { get; set; }
         public int[] PenaltyGridSpacingInVoxels { get; set; }
     }
 }

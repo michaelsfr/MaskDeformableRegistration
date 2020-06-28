@@ -108,6 +108,9 @@ namespace MaskedDeformableRegistrationApp.Utils
 
         public static sitk.Image ResizeImage(sitk.Image toResize, sitk.Image referenceImage)
         {
+            if (toResize.GetWidth() == referenceImage.GetWidth() && toResize.GetHeight() == referenceImage.GetHeight())
+                return toResize;
+
             uint width = toResize.GetWidth() < referenceImage.GetWidth() ? referenceImage.GetWidth() : toResize.GetWidth();
             uint height = toResize.GetHeight() < referenceImage.GetHeight() ? referenceImage.GetHeight() : toResize.GetHeight();
             sitk.VectorUInt32 vec = new sitk.VectorUInt32();
@@ -138,6 +141,9 @@ namespace MaskedDeformableRegistrationApp.Utils
 
         public static sitk.Image ResizeImage(sitk.Image image, uint newWidth, uint newHeight)
         {
+            if (image.GetWidth() == newWidth && image.GetHeight() == newHeight)
+                return image;
+
             sitk.VectorUInt32 vec = new sitk.VectorUInt32();
             vec.Add(newWidth);
             vec.Add(newHeight);

@@ -33,6 +33,14 @@ namespace MaskedDeformableRegistrationApp.Utils
             CvInvoke.Imwrite(filename, image);
         }
 
+        public static sitk.Image RescaleImageToFloat(sitk.Image img)
+        {
+            sitk.RescaleIntensityImageFilter filter = new sitk.RescaleIntensityImageFilter();
+            filter.SetOutputMinimum(0);
+            filter.SetOutputMaximum(1);
+            return filter.Execute(img);
+        }
+
         public static sitk.Image ReadITKImageFromFile(string file)
         {
             return sitk.SimpleITK.ReadImage(file);
@@ -59,15 +67,15 @@ namespace MaskedDeformableRegistrationApp.Utils
             }
         }
 
-        public static void WriteSitkImageAsPng(sitk.Image img, string outputFileName)
+        public static void WriteSitkImage(sitk.Image img, string outputFileName)
         {
             sitk.ImageFileWriter writer = new sitk.ImageFileWriter();
             writer.SetFileName(outputFileName);
             writer.Execute(img);
             writer.Dispose();
-            img.Dispose();
+            //img.Dispose();
         }
-
+        
         public static Dictionary<string, string> GetParameterDictionaryFromFile(string filename)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();

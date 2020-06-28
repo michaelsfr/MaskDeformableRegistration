@@ -293,18 +293,18 @@
             this.buttonCancel.UseVisualStyleBackColor = true;
             this.buttonCancel.Click += new System.EventHandler(this.buttonCancel_Click);
             // 
-            // textBox1
+            // textBoxConsoleRigid
             // 
             this.textBoxConsoleRigid.Location = new System.Drawing.Point(20, 45);
             this.textBoxConsoleRigid.Multiline = true;
-            this.textBoxConsoleRigid.Name = "textBox1";
+            this.textBoxConsoleRigid.Name = "textBoxConsoleRigid";
             this.textBoxConsoleRigid.Size = new System.Drawing.Size(596, 130);
             this.textBoxConsoleRigid.TabIndex = 1;
             // 
-            // progressBar1
+            // progressBarRigid
             // 
             this.progressBarRigid.Location = new System.Drawing.Point(20, 13);
-            this.progressBarRigid.Name = "progressBar1";
+            this.progressBarRigid.Name = "progressBarRigid";
             this.progressBarRigid.Size = new System.Drawing.Size(596, 23);
             this.progressBarRigid.TabIndex = 0;
             // 
@@ -514,6 +514,7 @@
             this.buttonStartNonRigidRegistration.TabIndex = 0;
             this.buttonStartNonRigidRegistration.Text = "Start Registration";
             this.buttonStartNonRigidRegistration.UseVisualStyleBackColor = true;
+            this.buttonStartNonRigidRegistration.Click += new System.EventHandler(this.buttonStartNonRigidRegistration_Click);
             // 
             // buttonCancelNonRigidReg
             // 
@@ -524,18 +525,18 @@
             this.buttonCancelNonRigidReg.Text = "Cancel Registration";
             this.buttonCancelNonRigidReg.UseVisualStyleBackColor = true;
             // 
-            // textBox2
+            // textBoxConsoleNonRigid
             // 
             this.textBoxConsoleNonRigid.Location = new System.Drawing.Point(20, 45);
             this.textBoxConsoleNonRigid.Multiline = true;
-            this.textBoxConsoleNonRigid.Name = "textBox2";
+            this.textBoxConsoleNonRigid.Name = "textBoxConsoleNonRigid";
             this.textBoxConsoleNonRigid.Size = new System.Drawing.Size(596, 130);
             this.textBoxConsoleNonRigid.TabIndex = 1;
             // 
-            // progressBar2
+            // progressBarNonRigid
             // 
             this.progressBarNonRigid.Location = new System.Drawing.Point(20, 13);
-            this.progressBarNonRigid.Name = "progressBar2";
+            this.progressBarNonRigid.Name = "progressBarNonRigid";
             this.progressBarNonRigid.Size = new System.Drawing.Size(596, 23);
             this.progressBarNonRigid.TabIndex = 0;
             // 

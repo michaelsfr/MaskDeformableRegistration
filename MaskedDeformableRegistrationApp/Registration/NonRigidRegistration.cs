@@ -43,7 +43,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                     Directory.CreateDirectory(outputDirectory);
                 }
                 elastix.SetOutputDirectory(outputDirectory);
-                elastix.SetLogFileName(Path.Combine(outputDirectory, registrationParameters.ElastixLogFileName));
+                elastix.SetLogFileName(outputDirectory + registrationParameters.ElastixLogFileName);
 
                 sitk.BSplineTransformInitializerFilter bSplineTransformInitializer = new sitk.BSplineTransformInitializerFilter();
                 // todo: calculate mesh size here
@@ -77,7 +77,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                     Console.WriteLine(ex);
                 } finally
                 {
-                    elastix.Dispose();
+                    //elastix.Dispose();
                 }
             }
         }
@@ -104,6 +104,13 @@ namespace MaskedDeformableRegistrationApp.Registration
             if (penalty == PenaltyTerm.TransformRigidityPenalty
                   && movingRigidityMask != null)
             {
+                sitk.Image img = ReadWriteUtils.ReadITKImageFromFile(movingRigidityMask);
+                sitk.Image img02 = ReadWriteUtils.RescaleImageToFloat(img);
+                ReadWriteUtils.WriteSitkImage(img02, movingRigidityMask);
+                img.Dispose();
+                img02.Dispose();
+
+
                 sitk.VectorString vec = new sitk.VectorString();
                 vec.Add(movingRigidityMask);
                 parameterMap.Add(Constants.cMovingRigidityImageName, vec);

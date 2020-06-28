@@ -53,7 +53,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
 
                 UMat closed = SegmentationUtils.Closing(thresholded, 5);
                 UMat dilated = SegmentationUtils.Dilate(closed, 10);
-                ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\WHOLE_SEG.png", dilated);
+                //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\dilated.png", dilated);
 
                 VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
                 VectorOfVectorOfPoint contoursRelevant = new VectorOfVectorOfPoint();

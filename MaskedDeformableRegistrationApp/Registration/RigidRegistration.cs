@@ -84,7 +84,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                     Console.WriteLine(ex);
                 } finally
                 {
-                    elastix.Dispose();
+                    //elastix.Dispose();
                 }
             }
         }
