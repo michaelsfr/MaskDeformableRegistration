@@ -11,7 +11,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     internal class NonRigidRegistration : RegInitialization
     {
-        public NonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
+        public NonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, sitk.ParameterMap parameterMap, RegistrationParameters parameters) : base(parameters, parameterMap)
         {
             // cast images to from pixel type uint to float
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
@@ -28,7 +28,10 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             // initiate elastix and set default registration params
             elastix = new sitk.ElastixImageFilter();
-            parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+            if(parameterMap == null)
+            {
+                parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+            }
 
             // set output dir and log file
             outputDirectory = Path.Combine(ApplicationContext.OutputPath, registrationParameters.SubDirectory);
@@ -44,7 +47,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             SetParameters();
         }
 
-        public NonRigidRegistration(RegistrationParameters parameters) : base(parameters)
+        public NonRigidRegistration(RegistrationParameters parameters) : base(parameters, null)
         {
             elastix = new sitk.ElastixImageFilter();
             parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
@@ -101,13 +104,13 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             } else if (registrationParameters.RegistrationType == RegistrationDefaultParameters.diffusion)
             {
-
+                // todo
             } else if (registrationParameters.RegistrationType == RegistrationDefaultParameters.spline)
             {
-
+                // todo
             } else if (registrationParameters.RegistrationType == RegistrationDefaultParameters.recursive)
             {
-                
+                // todo
             }
 
             SetPenaltyTerm();
@@ -163,8 +166,14 @@ namespace MaskedDeformableRegistrationApp.Registration
             }
 
             // add weight for metric / penalty
-            AddParameter(Constants.cMetric0Weight, "1.0");
-            AddParameter(Constants.cMetric1Weight, "1.0");
+            if(!parameterMap.ContainsKey(Constants.cMetric0Weight))
+            {
+                AddParameter(Constants.cMetric0Weight, "1.0");
+            }
+            if (!parameterMap.ContainsKey(Constants.cMetric1Weight))
+            {
+                AddParameter(Constants.cMetric1Weight, "1.0");
+            }
         }
     }
 }

@@ -104,6 +104,8 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             if (backgroundWorkerRigid.IsBusy != true)
             {
+                textBoxConsoleRigid.Clear();
+                progressBarRigid.Value = 0;
                 buttonStartRegistration.Enabled = false;
                 buttonCancel.Enabled = true;
                 backgroundWorkerRigid.RunWorkerAsync();
@@ -137,8 +139,16 @@ namespace MaskedDeformableRegistrationApp.Forms
             this.progressBarRigid.Value = e.ProgressPercentage;
             if (e.UserState != null)
             {
-                this.textBoxConsoleRigid.AppendText(e.UserState as string);
+                AppendLine(textBoxConsoleRigid, e.UserState as string);
             }
+        }
+
+        public void AppendLine(TextBox source, string value)
+        {
+            if (source.Text.Length == 0)
+                source.Text = value;
+            else
+                source.AppendText("\r\n" + value);
         }
 
         private void backgroundWorkerRigid_DoWork(object sender, DoWorkEventArgs e)
@@ -239,7 +249,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             this.progressBarNonRigid.Value = e.ProgressPercentage;
             if (e.UserState != null)
             {
-                this.textBoxConsoleNonRigid.AppendText(e.UserState as string);
+                AppendLine(this.textBoxConsoleNonRigid, e.UserState as string);
             }
         }
 
@@ -327,7 +337,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         private sitk.VectorOfParameterMap PerformRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage,
             sitk.Image fixedMask = null, sitk.Image movingMask = null)
         {
-            RigidRegistration regRigid = new RigidRegistration(fixedImage, movingImage, RegistrationParametersRigid);
+            RigidRegistration regRigid = new RigidRegistration(fixedImage, movingImage, EditedMapRigid, RegistrationParametersRigid);
             regRigid.SetDefaultParameterMap(RegistrationParametersRigid.RegistrationType, RegistrationParametersRigid.NumberOfResolutions);
 
             if (fixedMask != null)
@@ -350,17 +360,17 @@ namespace MaskedDeformableRegistrationApp.Forms
         private sitk.VectorOfParameterMap PerformNonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, string movingImageFilename,
             sitk.Image fixedMask = null, sitk.Image movingMask = null)
         {
-            // TODO
-            // make this generic for rigid and non rigid registration
-            // registration can be handled through the registration parameters!
-            NonRigidRegistration nonRigidRegistration = new NonRigidRegistration(fixedImage, movingImage, RegistrationParametersNonRigid);
-            nonRigidRegistration.SetDefaultParameterMap(RegistrationParametersNonRigid.RegistrationType, RegistrationParametersNonRigid.NumberOfResolutions);
-
-            if(radioButtonTransformRigidity.Checked)
+            if (radioButtonTransformRigidity.Checked)
             {
                 string coefficientMapFilename = GetInnerStructureSegmentations(movingImageFilename);
                 RegistrationParametersNonRigid.CoefficientMapFilename = coefficientMapFilename;
             }
+
+            // TODO
+            // make this generic for rigid and non rigid registration
+            // registration can be handled through the registration parameters!
+            NonRigidRegistration nonRigidRegistration = new NonRigidRegistration(fixedImage, movingImage, EditedMapNonRigid, RegistrationParametersNonRigid);
+            //nonRigidRegistration.SetDefaultParameterMap(RegistrationParametersNonRigid.RegistrationType, RegistrationParametersNonRigid.NumberOfResolutions);
 
             if (fixedMask != null)
             {
@@ -408,9 +418,24 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             InnerTissueSegmentation innerSegImage = new InnerTissueSegmentation(image, wholeMask, SegmentationParametersInnerStructures);
             innerSegImage.Execute();
-            UMat coefficientMap = innerSegImage.GetCoefficientMatrix();
+
             string filenameCoefficientMap = Path.Combine(ApplicationContext.OutputPath, RegistrationParametersNonRigid.SubDirectory) + "\\coefficientMap.png";
-            ReadWriteUtils.WriteUMatToFile(filenameCoefficientMap, coefficientMap);
+            ReadWriteUtils.WriteUMatToFile(filenameCoefficientMap, innerSegImage.GetOutput().FirstOrDefault());
+
+            sitk.Image img = ReadWriteUtils.ReadITKImageFromFile(filenameCoefficientMap);
+            sitk.CastImageFilter castFilter = new sitk.CastImageFilter();
+            castFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkFloat32);
+            img = castFilter.Execute(img);
+            sitk.RescaleIntensityImageFilter filter = new sitk.RescaleIntensityImageFilter();
+            filter.SetOutputMinimum(0.0);
+            filter.SetOutputMaximum(1.0);
+            sitk.Image coefficientMap = filter.Execute(img);
+
+            filenameCoefficientMap = Path.Combine(ApplicationContext.OutputPath, RegistrationParametersNonRigid.SubDirectory) + "\\coefficientMap.mhd";
+            ReadWriteUtils.WriteSitkImage(coefficientMap, filenameCoefficientMap);
+            /*//UMat coefficientMap = innerSegImage.GetCoefficientMatrix();
+            string filenameCoefficientMap = Path.Combine(ApplicationContext.OutputPath, RegistrationParametersNonRigid.SubDirectory) + "\\coefficientMap.png";
+            //ReadWriteUtils.WriteUMatToFile(filenameCoefficientMap, coefficientMap);*/
             return filenameCoefficientMap;
         }
 
@@ -429,6 +454,8 @@ namespace MaskedDeformableRegistrationApp.Forms
             trans.Execute();
             string resultFilename = Path.GetFileNameWithoutExtension(filename) + ".png";
             trans.WriteTransformedImage(resultFilename);
+            sitk.Image deformationField = trans.GetTranform();
+            ReadWriteUtils.WriteSitkImage(deformationField, ApplicationContext.OutputPath + "\\deformationField.mhd");
             trans.Dispose();
             movingImageToTransform.Dispose();
         }
@@ -626,7 +653,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonEditParamsNonRigid_Click(object sender, EventArgs e)
         {
-            if (EditedMapNonRigid != null) {
+            if (EditedMapNonRigid == null) {
                 using (NonRigidRegistration reg = new NonRigidRegistration(RegistrationParametersNonRigid))
                 {
                     EditedMapNonRigid = reg.GetParameterMap();
@@ -653,6 +680,8 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             if (!backgroundWorkerNonRigid.IsBusy)
             {
+                textBoxConsoleNonRigid.Clear();
+                progressBarNonRigid.Value = 0;
                 buttonStartNonRigidRegistration.Enabled = false;
                 buttonCancelNonRigidReg.Enabled = true;
                 backgroundWorkerNonRigid.RunWorkerAsync();

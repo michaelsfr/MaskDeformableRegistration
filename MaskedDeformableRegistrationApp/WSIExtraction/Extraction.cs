@@ -23,12 +23,12 @@ namespace MaskedDeformableRegistrationApp.WSIExtraction
 
             CvInvoke.CvtColor(image, gray, ColorConversion.Bgr2Gray);
             CvInvoke.Threshold(gray, gray, threshold, 255, ThresholdType.BinaryInv);
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\test1.png", gray.ToUMat());
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\debug1.png", gray.ToUMat());
             //gray = gray.Erode(7);
             gray = gray.Dilate(7);
             gray = FillHoles(gray);
             CvInvoke.CvtColor(gray, image_debug, ColorConversion.Gray2Bgr);
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\test2.png", gray.ToUMat());
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\debug2.png", gray.ToUMat());
 
             using (VectorOfVectorOfPoint contoursVector = new VectorOfVectorOfPoint())
             {
