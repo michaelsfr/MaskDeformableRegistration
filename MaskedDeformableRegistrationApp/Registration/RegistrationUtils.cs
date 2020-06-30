@@ -10,31 +10,31 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     public static class RegistrationUtils
     {
-        public static sitk.ParameterMap GetDefaultParameterMap(RegistrationDefaultParameters registrationType)
+        public static sitk.ParameterMap GetDefaultParameterMap(RegistrationDefaultParameters type)
         {
-            if ((int)registrationType < 4)
+            if ((int)type < 4)
             {
                 // rigid registration types
-                if (registrationType == RegistrationDefaultParameters.similarity)
+                if (type == RegistrationDefaultParameters.similarity)
                 {
                     sitk.ParameterMap parameterMap = GetParameterMap(RegistrationDefaultParameters.translation);
                     parameterMap["Transform"][0] = "SimilarityTransform";
                     return parameterMap;
                 } else
                 {
-                    return GetParameterMap(registrationType);
+                    return GetParameterMap(type);
                 }
             } else
             {
                 // non rigid registration types
-                if(registrationType == RegistrationDefaultParameters.spline 
-                    || registrationType == RegistrationDefaultParameters.bspline
-                    || registrationType == RegistrationDefaultParameters.nonrigid)
-                    return GetParameterMap(registrationType);
+                if(type == RegistrationDefaultParameters.spline 
+                    || type == RegistrationDefaultParameters.bspline
+                    || type == RegistrationDefaultParameters.nonrigid)
+                    return GetParameterMap(type);
                 else
                 {
                     sitk.ParameterMap parameterMap = GetParameterMap(RegistrationDefaultParameters.nonrigid);
-                    if(registrationType == RegistrationDefaultParameters.diffusion)
+                    if(type == RegistrationDefaultParameters.diffusion)
                     {
                         parameterMap["Transform"][0] = "BSplineTransformWithDiffusion";
                         // default parameters for bspline diffusion registration
@@ -54,7 +54,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                         parameterMap.Add("UseMovingSegmentation", GetVectorString("false"));
                         parameterMap.Add("MovingSegmentationFileName", GetVectorString("filename"));
                         return parameterMap;
-                    } else if(registrationType == RegistrationDefaultParameters.recursive)
+                    } else if(type == RegistrationDefaultParameters.recursive)
                     {
                         parameterMap["Transform"][0] = "RecursiveBSplineTransform";
                         parameterMap.Add("PassiveEdgeWidth", GetVectorString("0"));
@@ -84,5 +84,6 @@ namespace MaskedDeformableRegistrationApp.Registration
                 return elastix.GetDefaultParameterMap(registrationType.ToString());
             }
         }
+
     }
 }

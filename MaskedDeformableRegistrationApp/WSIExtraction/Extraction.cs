@@ -2,6 +2,7 @@
 using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.Util;
+using MaskedDeformableRegistrationApp.Utils;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -22,10 +23,12 @@ namespace MaskedDeformableRegistrationApp.WSIExtraction
 
             CvInvoke.CvtColor(image, gray, ColorConversion.Bgr2Gray);
             CvInvoke.Threshold(gray, gray, threshold, 255, ThresholdType.BinaryInv);
-            gray = gray.Erode(2);
+            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\test1.png", gray.ToUMat());
+            //gray = gray.Erode(7);
             gray = gray.Dilate(7);
             gray = FillHoles(gray);
             CvInvoke.CvtColor(gray, image_debug, ColorConversion.Gray2Bgr);
+            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\test2.png", gray.ToUMat());
 
             using (VectorOfVectorOfPoint contoursVector = new VectorOfVectorOfPoint())
             {

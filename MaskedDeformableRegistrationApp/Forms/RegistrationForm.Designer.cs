@@ -32,9 +32,9 @@
             this.tabPageRigid = new System.Windows.Forms.TabPage();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.buttonEditParameters = new System.Windows.Forms.Button();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBoxMiscRigid = new System.Windows.Forms.GroupBox();
             this.checkBoxMaskRegistration = new System.Windows.Forms.CheckBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.groupBoxTransformationRigid = new System.Windows.Forms.GroupBox();
             this.radioButtonAffine = new System.Windows.Forms.RadioButton();
             this.radioButtonRigid = new System.Windows.Forms.RadioButton();
             this.radioButtonSimilarity = new System.Windows.Forms.RadioButton();
@@ -48,17 +48,17 @@
             this.tabPageNonRigid = new System.Windows.Forms.TabPage();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
             this.buttonEditParamsNonRigid = new System.Windows.Forms.Button();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.groupBoxPenalty = new System.Windows.Forms.GroupBox();
             this.radioButtonDistancePreserving = new System.Windows.Forms.RadioButton();
             this.radioButtonBendEnergy = new System.Windows.Forms.RadioButton();
             this.radioButtonTransformRigidity = new System.Windows.Forms.RadioButton();
             this.radioButtonNoPenalties = new System.Windows.Forms.RadioButton();
-            this.buttonSegmentationInnerstructures = new System.Windows.Forms.Button();
-            this.groupBox5 = new System.Windows.Forms.GroupBox();
+            this.groupBoxTransformationNonRigid = new System.Windows.Forms.GroupBox();
             this.radioButtonSplineRecursive = new System.Windows.Forms.RadioButton();
             this.radioButtonKernelSpline = new System.Windows.Forms.RadioButton();
             this.radioButtonBsplineDiffusion = new System.Windows.Forms.RadioButton();
             this.radioButtonAdvancedBspline = new System.Windows.Forms.RadioButton();
+            this.buttonSegmentationInnerstructures = new System.Windows.Forms.Button();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.buttonEvaluateNonRigidReg = new System.Windows.Forms.Button();
             this.buttonStartNonRigidRegistration = new System.Windows.Forms.Button();
@@ -68,26 +68,27 @@
             this.buttonSegmentationParams = new System.Windows.Forms.Button();
             this.backgroundWorkerRigid = new System.ComponentModel.BackgroundWorker();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.groupBox6 = new System.Windows.Forms.GroupBox();
+            this.groupBoxMaskingGeneral = new System.Windows.Forms.GroupBox();
             this.radioButtonFIxedAndMovingMask = new System.Windows.Forms.RadioButton();
             this.radioButtonOnlyMovingMask = new System.Windows.Forms.RadioButton();
             this.radioButtonOnlyFixedMask = new System.Windows.Forms.RadioButton();
             this.radioButtonNoMask = new System.Windows.Forms.RadioButton();
             this.label1 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.groupBoxRegOrder = new System.Windows.Forms.GroupBox();
             this.radioButtonUsePrevInStack = new System.Windows.Forms.RadioButton();
             this.radioButtonMiddleStack = new System.Windows.Forms.RadioButton();
             this.radioButtonLastInStack = new System.Windows.Forms.RadioButton();
             this.radioButtonFirstFromStack = new System.Windows.Forms.RadioButton();
             this.backgroundWorkerNonRigid = new System.ComponentModel.BackgroundWorker();
+            this.tabPageManual = new System.Windows.Forms.TabPage();
             this.tabControlRegistration.SuspendLayout();
             this.tabPageRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
+            this.groupBoxMiscRigid.SuspendLayout();
+            this.groupBoxTransformationRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).BeginInit();
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
@@ -97,8 +98,8 @@
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
-            this.groupBox4.SuspendLayout();
-            this.groupBox5.SuspendLayout();
+            this.groupBoxPenalty.SuspendLayout();
+            this.groupBoxTransformationNonRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
             this.splitContainer5.Panel1.SuspendLayout();
             this.splitContainer5.Panel2.SuspendLayout();
@@ -107,19 +108,20 @@
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
             this.splitContainer3.SuspendLayout();
-            this.groupBox6.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.groupBoxMaskingGeneral.SuspendLayout();
+            this.groupBoxRegOrder.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlRegistration
             // 
             this.tabControlRegistration.Controls.Add(this.tabPageRigid);
             this.tabControlRegistration.Controls.Add(this.tabPageNonRigid);
+            this.tabControlRegistration.Controls.Add(this.tabPageManual);
             this.tabControlRegistration.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlRegistration.Location = new System.Drawing.Point(0, 0);
             this.tabControlRegistration.Name = "tabControlRegistration";
             this.tabControlRegistration.SelectedIndex = 0;
-            this.tabControlRegistration.Size = new System.Drawing.Size(800, 356);
+            this.tabControlRegistration.Size = new System.Drawing.Size(685, 348);
             this.tabControlRegistration.TabIndex = 0;
             // 
             // tabPageRigid
@@ -128,7 +130,7 @@
             this.tabPageRigid.Location = new System.Drawing.Point(4, 22);
             this.tabPageRigid.Name = "tabPageRigid";
             this.tabPageRigid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRigid.Size = new System.Drawing.Size(792, 330);
+            this.tabPageRigid.Size = new System.Drawing.Size(677, 322);
             this.tabPageRigid.TabIndex = 0;
             this.tabPageRigid.Text = "Rigid registration";
             this.tabPageRigid.UseVisualStyleBackColor = true;
@@ -143,35 +145,35 @@
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.Controls.Add(this.buttonEditParameters);
-            this.splitContainer1.Panel1.Controls.Add(this.groupBox2);
-            this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
+            this.splitContainer1.Panel1.Controls.Add(this.groupBoxMiscRigid);
+            this.splitContainer1.Panel1.Controls.Add(this.groupBoxTransformationRigid);
             // 
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(786, 324);
-            this.splitContainer1.SplitterDistance = 131;
+            this.splitContainer1.Size = new System.Drawing.Size(671, 316);
+            this.splitContainer1.SplitterDistance = 133;
             this.splitContainer1.TabIndex = 0;
             // 
             // buttonEditParameters
             // 
-            this.buttonEditParameters.Location = new System.Drawing.Point(640, 89);
+            this.buttonEditParameters.Location = new System.Drawing.Point(526, 83);
             this.buttonEditParameters.Name = "buttonEditParameters";
-            this.buttonEditParameters.Size = new System.Drawing.Size(128, 23);
+            this.buttonEditParameters.Size = new System.Drawing.Size(128, 41);
             this.buttonEditParameters.TabIndex = 3;
-            this.buttonEditParameters.Text = "Edit params";
+            this.buttonEditParameters.Text = "Edit registration parameters";
             this.buttonEditParameters.UseVisualStyleBackColor = true;
             this.buttonEditParameters.Click += new System.EventHandler(this.buttonEditParameters_Click);
             // 
-            // groupBox2
+            // groupBoxMiscRigid
             // 
-            this.groupBox2.Controls.Add(this.checkBoxMaskRegistration);
-            this.groupBox2.Location = new System.Drawing.Point(185, 4);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(174, 125);
-            this.groupBox2.TabIndex = 2;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Misc";
+            this.groupBoxMiscRigid.Controls.Add(this.checkBoxMaskRegistration);
+            this.groupBoxMiscRigid.Location = new System.Drawing.Point(185, 3);
+            this.groupBoxMiscRigid.Name = "groupBoxMiscRigid";
+            this.groupBoxMiscRigid.Size = new System.Drawing.Size(174, 125);
+            this.groupBoxMiscRigid.TabIndex = 2;
+            this.groupBoxMiscRigid.TabStop = false;
+            this.groupBoxMiscRigid.Text = "Misc";
             // 
             // checkBoxMaskRegistration
             // 
@@ -184,18 +186,18 @@
             this.checkBoxMaskRegistration.UseVisualStyleBackColor = true;
             this.checkBoxMaskRegistration.CheckedChanged += new System.EventHandler(this.checkBoxMaskRegistration_CheckedChanged);
             // 
-            // groupBox1
+            // groupBoxTransformationRigid
             // 
-            this.groupBox1.Controls.Add(this.radioButtonAffine);
-            this.groupBox1.Controls.Add(this.radioButtonRigid);
-            this.groupBox1.Controls.Add(this.radioButtonSimilarity);
-            this.groupBox1.Controls.Add(this.radioButtonTranslation);
-            this.groupBox1.Location = new System.Drawing.Point(5, 3);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(174, 125);
-            this.groupBox1.TabIndex = 1;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Transformation";
+            this.groupBoxTransformationRigid.Controls.Add(this.radioButtonAffine);
+            this.groupBoxTransformationRigid.Controls.Add(this.radioButtonRigid);
+            this.groupBoxTransformationRigid.Controls.Add(this.radioButtonSimilarity);
+            this.groupBoxTransformationRigid.Controls.Add(this.radioButtonTranslation);
+            this.groupBoxTransformationRigid.Location = new System.Drawing.Point(5, 3);
+            this.groupBoxTransformationRigid.Name = "groupBoxTransformationRigid";
+            this.groupBoxTransformationRigid.Size = new System.Drawing.Size(174, 125);
+            this.groupBoxTransformationRigid.TabIndex = 1;
+            this.groupBoxTransformationRigid.TabStop = false;
+            this.groupBoxTransformationRigid.Text = "Transformation";
             // 
             // radioButtonAffine
             // 
@@ -259,13 +261,13 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.textBoxConsoleRigid);
             this.splitContainer2.Panel2.Controls.Add(this.progressBarRigid);
-            this.splitContainer2.Size = new System.Drawing.Size(786, 189);
-            this.splitContainer2.SplitterDistance = 148;
+            this.splitContainer2.Size = new System.Drawing.Size(671, 179);
+            this.splitContainer2.SplitterDistance = 146;
             this.splitContainer2.TabIndex = 2;
             // 
             // buttonEvaluation
             // 
-            this.buttonEvaluation.Location = new System.Drawing.Point(13, 151);
+            this.buttonEvaluation.Location = new System.Drawing.Point(13, 141);
             this.buttonEvaluation.Name = "buttonEvaluation";
             this.buttonEvaluation.Size = new System.Drawing.Size(121, 23);
             this.buttonEvaluation.TabIndex = 2;
@@ -298,14 +300,14 @@
             this.textBoxConsoleRigid.Location = new System.Drawing.Point(20, 45);
             this.textBoxConsoleRigid.Multiline = true;
             this.textBoxConsoleRigid.Name = "textBoxConsoleRigid";
-            this.textBoxConsoleRigid.Size = new System.Drawing.Size(596, 130);
+            this.textBoxConsoleRigid.Size = new System.Drawing.Size(505, 119);
             this.textBoxConsoleRigid.TabIndex = 1;
             // 
             // progressBarRigid
             // 
             this.progressBarRigid.Location = new System.Drawing.Point(20, 13);
             this.progressBarRigid.Name = "progressBarRigid";
-            this.progressBarRigid.Size = new System.Drawing.Size(596, 23);
+            this.progressBarRigid.Size = new System.Drawing.Size(505, 23);
             this.progressBarRigid.TabIndex = 0;
             // 
             // tabPageNonRigid
@@ -314,7 +316,7 @@
             this.tabPageNonRigid.Location = new System.Drawing.Point(4, 22);
             this.tabPageNonRigid.Name = "tabPageNonRigid";
             this.tabPageNonRigid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageNonRigid.Size = new System.Drawing.Size(792, 330);
+            this.tabPageNonRigid.Size = new System.Drawing.Size(677, 322);
             this.tabPageNonRigid.TabIndex = 1;
             this.tabPageNonRigid.Text = "Non rigid registration";
             this.tabPageNonRigid.UseVisualStyleBackColor = true;
@@ -329,39 +331,39 @@
             // splitContainer4.Panel1
             // 
             this.splitContainer4.Panel1.Controls.Add(this.buttonEditParamsNonRigid);
-            this.splitContainer4.Panel1.Controls.Add(this.groupBox4);
-            this.splitContainer4.Panel1.Controls.Add(this.groupBox5);
+            this.splitContainer4.Panel1.Controls.Add(this.groupBoxPenalty);
+            this.splitContainer4.Panel1.Controls.Add(this.groupBoxTransformationNonRigid);
+            this.splitContainer4.Panel1.Controls.Add(this.buttonSegmentationInnerstructures);
             // 
             // splitContainer4.Panel2
             // 
             this.splitContainer4.Panel2.Controls.Add(this.splitContainer5);
-            this.splitContainer4.Size = new System.Drawing.Size(786, 324);
-            this.splitContainer4.SplitterDistance = 131;
+            this.splitContainer4.Size = new System.Drawing.Size(671, 316);
+            this.splitContainer4.SplitterDistance = 134;
             this.splitContainer4.TabIndex = 1;
             // 
             // buttonEditParamsNonRigid
             // 
-            this.buttonEditParamsNonRigid.Location = new System.Drawing.Point(640, 89);
+            this.buttonEditParamsNonRigid.Location = new System.Drawing.Point(525, 71);
             this.buttonEditParamsNonRigid.Name = "buttonEditParamsNonRigid";
-            this.buttonEditParamsNonRigid.Size = new System.Drawing.Size(128, 23);
+            this.buttonEditParamsNonRigid.Size = new System.Drawing.Size(128, 41);
             this.buttonEditParamsNonRigid.TabIndex = 3;
-            this.buttonEditParamsNonRigid.Text = "Edit params";
+            this.buttonEditParamsNonRigid.Text = "Edit registration parameters";
             this.buttonEditParamsNonRigid.UseVisualStyleBackColor = true;
             this.buttonEditParamsNonRigid.Click += new System.EventHandler(this.buttonEditParamsNonRigid_Click);
             // 
-            // groupBox4
+            // groupBoxPenalty
             // 
-            this.groupBox4.Controls.Add(this.radioButtonDistancePreserving);
-            this.groupBox4.Controls.Add(this.radioButtonBendEnergy);
-            this.groupBox4.Controls.Add(this.radioButtonTransformRigidity);
-            this.groupBox4.Controls.Add(this.radioButtonNoPenalties);
-            this.groupBox4.Controls.Add(this.buttonSegmentationInnerstructures);
-            this.groupBox4.Location = new System.Drawing.Point(185, 3);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(287, 125);
-            this.groupBox4.TabIndex = 2;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Penalty";
+            this.groupBoxPenalty.Controls.Add(this.radioButtonDistancePreserving);
+            this.groupBoxPenalty.Controls.Add(this.radioButtonBendEnergy);
+            this.groupBoxPenalty.Controls.Add(this.radioButtonTransformRigidity);
+            this.groupBoxPenalty.Controls.Add(this.radioButtonNoPenalties);
+            this.groupBoxPenalty.Location = new System.Drawing.Point(185, 3);
+            this.groupBoxPenalty.Name = "groupBoxPenalty";
+            this.groupBoxPenalty.Size = new System.Drawing.Size(159, 125);
+            this.groupBoxPenalty.TabIndex = 2;
+            this.groupBoxPenalty.TabStop = false;
+            this.groupBoxPenalty.Text = "Penalty";
             // 
             // radioButtonDistancePreserving
             // 
@@ -373,6 +375,7 @@
             this.radioButtonDistancePreserving.TabStop = true;
             this.radioButtonDistancePreserving.Text = "Distance Preserving";
             this.radioButtonDistancePreserving.UseVisualStyleBackColor = true;
+            this.radioButtonDistancePreserving.CheckedChanged += new System.EventHandler(this.radioButtonDistancePreserving_CheckedChanged);
             // 
             // radioButtonBendEnergy
             // 
@@ -384,6 +387,7 @@
             this.radioButtonBendEnergy.TabStop = true;
             this.radioButtonBendEnergy.Text = "Bending Energy";
             this.radioButtonBendEnergy.UseVisualStyleBackColor = true;
+            this.radioButtonBendEnergy.CheckedChanged += new System.EventHandler(this.radioButtonBendEnergy_CheckedChanged);
             // 
             // radioButtonTransformRigidity
             // 
@@ -407,29 +411,20 @@
             this.radioButtonNoPenalties.TabStop = true;
             this.radioButtonNoPenalties.Text = "None";
             this.radioButtonNoPenalties.UseVisualStyleBackColor = true;
+            this.radioButtonNoPenalties.CheckedChanged += new System.EventHandler(this.radioButtonNoPenalties_CheckedChanged);
             // 
-            // buttonSegmentationInnerstructures
+            // groupBoxTransformationNonRigid
             // 
-            this.buttonSegmentationInnerstructures.Location = new System.Drawing.Point(155, 14);
-            this.buttonSegmentationInnerstructures.Name = "buttonSegmentationInnerstructures";
-            this.buttonSegmentationInnerstructures.Size = new System.Drawing.Size(126, 47);
-            this.buttonSegmentationInnerstructures.TabIndex = 4;
-            this.buttonSegmentationInnerstructures.Text = "Adjust segmentation for inner structures";
-            this.buttonSegmentationInnerstructures.UseVisualStyleBackColor = true;
-            this.buttonSegmentationInnerstructures.Click += new System.EventHandler(this.buttonSegmentationInnerstructures_Click);
-            // 
-            // groupBox5
-            // 
-            this.groupBox5.Controls.Add(this.radioButtonSplineRecursive);
-            this.groupBox5.Controls.Add(this.radioButtonKernelSpline);
-            this.groupBox5.Controls.Add(this.radioButtonBsplineDiffusion);
-            this.groupBox5.Controls.Add(this.radioButtonAdvancedBspline);
-            this.groupBox5.Location = new System.Drawing.Point(5, 3);
-            this.groupBox5.Name = "groupBox5";
-            this.groupBox5.Size = new System.Drawing.Size(174, 125);
-            this.groupBox5.TabIndex = 1;
-            this.groupBox5.TabStop = false;
-            this.groupBox5.Text = "Transformation";
+            this.groupBoxTransformationNonRigid.Controls.Add(this.radioButtonSplineRecursive);
+            this.groupBoxTransformationNonRigid.Controls.Add(this.radioButtonKernelSpline);
+            this.groupBoxTransformationNonRigid.Controls.Add(this.radioButtonBsplineDiffusion);
+            this.groupBoxTransformationNonRigid.Controls.Add(this.radioButtonAdvancedBspline);
+            this.groupBoxTransformationNonRigid.Location = new System.Drawing.Point(5, 3);
+            this.groupBoxTransformationNonRigid.Name = "groupBoxTransformationNonRigid";
+            this.groupBoxTransformationNonRigid.Size = new System.Drawing.Size(174, 125);
+            this.groupBoxTransformationNonRigid.TabIndex = 1;
+            this.groupBoxTransformationNonRigid.TabStop = false;
+            this.groupBoxTransformationNonRigid.Text = "Transformation";
             // 
             // radioButtonSplineRecursive
             // 
@@ -477,6 +472,16 @@
             this.radioButtonAdvancedBspline.UseVisualStyleBackColor = true;
             this.radioButtonAdvancedBspline.CheckedChanged += new System.EventHandler(this.radioButtonAdvancedBspline_CheckedChanged);
             // 
+            // buttonSegmentationInnerstructures
+            // 
+            this.buttonSegmentationInnerstructures.Location = new System.Drawing.Point(525, 17);
+            this.buttonSegmentationInnerstructures.Name = "buttonSegmentationInnerstructures";
+            this.buttonSegmentationInnerstructures.Size = new System.Drawing.Size(128, 47);
+            this.buttonSegmentationInnerstructures.TabIndex = 4;
+            this.buttonSegmentationInnerstructures.Text = "Adjust segmentation parameters";
+            this.buttonSegmentationInnerstructures.UseVisualStyleBackColor = true;
+            this.buttonSegmentationInnerstructures.Click += new System.EventHandler(this.buttonSegmentationInnerstructures_Click);
+            // 
             // splitContainer5
             // 
             this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -493,13 +498,13 @@
             // 
             this.splitContainer5.Panel2.Controls.Add(this.textBoxConsoleNonRigid);
             this.splitContainer5.Panel2.Controls.Add(this.progressBarNonRigid);
-            this.splitContainer5.Size = new System.Drawing.Size(786, 189);
-            this.splitContainer5.SplitterDistance = 148;
+            this.splitContainer5.Size = new System.Drawing.Size(671, 178);
+            this.splitContainer5.SplitterDistance = 146;
             this.splitContainer5.TabIndex = 2;
             // 
             // buttonEvaluateNonRigidReg
             // 
-            this.buttonEvaluateNonRigidReg.Location = new System.Drawing.Point(13, 151);
+            this.buttonEvaluateNonRigidReg.Location = new System.Drawing.Point(13, 140);
             this.buttonEvaluateNonRigidReg.Name = "buttonEvaluateNonRigidReg";
             this.buttonEvaluateNonRigidReg.Size = new System.Drawing.Size(121, 23);
             this.buttonEvaluateNonRigidReg.TabIndex = 2;
@@ -530,14 +535,14 @@
             this.textBoxConsoleNonRigid.Location = new System.Drawing.Point(20, 45);
             this.textBoxConsoleNonRigid.Multiline = true;
             this.textBoxConsoleNonRigid.Name = "textBoxConsoleNonRigid";
-            this.textBoxConsoleNonRigid.Size = new System.Drawing.Size(596, 130);
+            this.textBoxConsoleNonRigid.Size = new System.Drawing.Size(483, 130);
             this.textBoxConsoleNonRigid.TabIndex = 1;
             // 
             // progressBarNonRigid
             // 
             this.progressBarNonRigid.Location = new System.Drawing.Point(20, 13);
             this.progressBarNonRigid.Name = "progressBarNonRigid";
-            this.progressBarNonRigid.Size = new System.Drawing.Size(596, 23);
+            this.progressBarNonRigid.Size = new System.Drawing.Size(483, 23);
             this.progressBarNonRigid.TabIndex = 0;
             // 
             // buttonSegmentationParams
@@ -559,30 +564,30 @@
             // 
             // splitContainer3.Panel1
             // 
-            this.splitContainer3.Panel1.Controls.Add(this.groupBox6);
+            this.splitContainer3.Panel1.Controls.Add(this.groupBoxMaskingGeneral);
             this.splitContainer3.Panel1.Controls.Add(this.label1);
-            this.splitContainer3.Panel1.Controls.Add(this.groupBox3);
+            this.splitContainer3.Panel1.Controls.Add(this.groupBoxRegOrder);
             // 
             // splitContainer3.Panel2
             // 
             this.splitContainer3.Panel2.Controls.Add(this.tabControlRegistration);
-            this.splitContainer3.Size = new System.Drawing.Size(800, 507);
-            this.splitContainer3.SplitterDistance = 147;
+            this.splitContainer3.Size = new System.Drawing.Size(685, 501);
+            this.splitContainer3.SplitterDistance = 149;
             this.splitContainer3.TabIndex = 1;
             // 
-            // groupBox6
+            // groupBoxMaskingGeneral
             // 
-            this.groupBox6.Controls.Add(this.radioButtonFIxedAndMovingMask);
-            this.groupBox6.Controls.Add(this.radioButtonOnlyMovingMask);
-            this.groupBox6.Controls.Add(this.radioButtonOnlyFixedMask);
-            this.groupBox6.Controls.Add(this.buttonSegmentationParams);
-            this.groupBox6.Controls.Add(this.radioButtonNoMask);
-            this.groupBox6.Location = new System.Drawing.Point(263, 28);
-            this.groupBox6.Name = "groupBox6";
-            this.groupBox6.Size = new System.Drawing.Size(248, 113);
-            this.groupBox6.TabIndex = 3;
-            this.groupBox6.TabStop = false;
-            this.groupBox6.Text = "Masking";
+            this.groupBoxMaskingGeneral.Controls.Add(this.radioButtonFIxedAndMovingMask);
+            this.groupBoxMaskingGeneral.Controls.Add(this.radioButtonOnlyMovingMask);
+            this.groupBoxMaskingGeneral.Controls.Add(this.radioButtonOnlyFixedMask);
+            this.groupBoxMaskingGeneral.Controls.Add(this.buttonSegmentationParams);
+            this.groupBoxMaskingGeneral.Controls.Add(this.radioButtonNoMask);
+            this.groupBoxMaskingGeneral.Location = new System.Drawing.Point(263, 28);
+            this.groupBoxMaskingGeneral.Name = "groupBoxMaskingGeneral";
+            this.groupBoxMaskingGeneral.Size = new System.Drawing.Size(248, 113);
+            this.groupBoxMaskingGeneral.TabIndex = 3;
+            this.groupBoxMaskingGeneral.TabStop = false;
+            this.groupBoxMaskingGeneral.Text = "Masking";
             // 
             // radioButtonFIxedAndMovingMask
             // 
@@ -637,18 +642,18 @@
             this.label1.TabIndex = 1;
             this.label1.Text = "General registration settings";
             // 
-            // groupBox3
+            // groupBoxRegOrder
             // 
-            this.groupBox3.Controls.Add(this.radioButtonUsePrevInStack);
-            this.groupBox3.Controls.Add(this.radioButtonMiddleStack);
-            this.groupBox3.Controls.Add(this.radioButtonLastInStack);
-            this.groupBox3.Controls.Add(this.radioButtonFirstFromStack);
-            this.groupBox3.Location = new System.Drawing.Point(12, 28);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(245, 113);
-            this.groupBox3.TabIndex = 0;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Registration order";
+            this.groupBoxRegOrder.Controls.Add(this.radioButtonUsePrevInStack);
+            this.groupBoxRegOrder.Controls.Add(this.radioButtonMiddleStack);
+            this.groupBoxRegOrder.Controls.Add(this.radioButtonLastInStack);
+            this.groupBoxRegOrder.Controls.Add(this.radioButtonFirstFromStack);
+            this.groupBoxRegOrder.Location = new System.Drawing.Point(12, 28);
+            this.groupBoxRegOrder.Name = "groupBoxRegOrder";
+            this.groupBoxRegOrder.Size = new System.Drawing.Size(245, 113);
+            this.groupBoxRegOrder.TabIndex = 0;
+            this.groupBoxRegOrder.TabStop = false;
+            this.groupBoxRegOrder.Text = "Registration order";
             // 
             // radioButtonUsePrevInStack
             // 
@@ -694,11 +699,21 @@
             this.radioButtonFirstFromStack.Text = "Use first image in stack as reference";
             this.radioButtonFirstFromStack.UseVisualStyleBackColor = true;
             // 
+            // tabPageManual
+            // 
+            this.tabPageManual.Location = new System.Drawing.Point(4, 22);
+            this.tabPageManual.Name = "tabPageManual";
+            this.tabPageManual.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageManual.Size = new System.Drawing.Size(677, 322);
+            this.tabPageManual.TabIndex = 2;
+            this.tabPageManual.Text = "Manual registration";
+            this.tabPageManual.UseVisualStyleBackColor = true;
+            // 
             // RegistrationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(800, 507);
+            this.ClientSize = new System.Drawing.Size(685, 501);
             this.Controls.Add(this.splitContainer3);
             this.Name = "RegistrationForm";
             this.Text = "RegistrationForm";
@@ -710,10 +725,10 @@
             this.splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.groupBoxMiscRigid.ResumeLayout(false);
+            this.groupBoxMiscRigid.PerformLayout();
+            this.groupBoxTransformationRigid.ResumeLayout(false);
+            this.groupBoxTransformationRigid.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
             this.splitContainer2.Panel2.ResumeLayout(false);
             this.splitContainer2.Panel2.PerformLayout();
@@ -724,10 +739,10 @@
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
-            this.groupBox5.ResumeLayout(false);
-            this.groupBox5.PerformLayout();
+            this.groupBoxPenalty.ResumeLayout(false);
+            this.groupBoxPenalty.PerformLayout();
+            this.groupBoxTransformationNonRigid.ResumeLayout(false);
+            this.groupBoxTransformationNonRigid.PerformLayout();
             this.splitContainer5.Panel1.ResumeLayout(false);
             this.splitContainer5.Panel2.ResumeLayout(false);
             this.splitContainer5.Panel2.PerformLayout();
@@ -738,10 +753,10 @@
             this.splitContainer3.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
             this.splitContainer3.ResumeLayout(false);
-            this.groupBox6.ResumeLayout(false);
-            this.groupBox6.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.groupBoxMaskingGeneral.ResumeLayout(false);
+            this.groupBoxMaskingGeneral.PerformLayout();
+            this.groupBoxRegOrder.ResumeLayout(false);
+            this.groupBoxRegOrder.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -753,12 +768,12 @@
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TabPage tabPageNonRigid;
         private System.Windows.Forms.Button buttonStartRegistration;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox groupBoxTransformationRigid;
         private System.Windows.Forms.RadioButton radioButtonAffine;
         private System.Windows.Forms.RadioButton radioButtonRigid;
         private System.Windows.Forms.RadioButton radioButtonSimilarity;
         private System.Windows.Forms.RadioButton radioButtonTranslation;
-        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBoxMiscRigid;
         private System.Windows.Forms.Button buttonEditParameters;
         private System.Windows.Forms.Button buttonSegmentationParams;
         private System.ComponentModel.BackgroundWorker backgroundWorkerRigid;
@@ -768,7 +783,7 @@
         private System.Windows.Forms.ProgressBar progressBarRigid;
         private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.GroupBox groupBoxRegOrder;
         private System.Windows.Forms.RadioButton radioButtonUsePrevInStack;
         private System.Windows.Forms.RadioButton radioButtonMiddleStack;
         private System.Windows.Forms.RadioButton radioButtonLastInStack;
@@ -776,13 +791,13 @@
         private System.Windows.Forms.Button buttonEvaluation;
         private System.Windows.Forms.SplitContainer splitContainer4;
         private System.Windows.Forms.Button buttonEditParamsNonRigid;
-        private System.Windows.Forms.GroupBox groupBox4;
+        private System.Windows.Forms.GroupBox groupBoxPenalty;
         private System.Windows.Forms.RadioButton radioButtonDistancePreserving;
         private System.Windows.Forms.RadioButton radioButtonBendEnergy;
         private System.Windows.Forms.RadioButton radioButtonTransformRigidity;
         private System.Windows.Forms.RadioButton radioButtonNoPenalties;
         private System.Windows.Forms.Button buttonSegmentationInnerstructures;
-        private System.Windows.Forms.GroupBox groupBox5;
+        private System.Windows.Forms.GroupBox groupBoxTransformationNonRigid;
         private System.Windows.Forms.RadioButton radioButtonSplineRecursive;
         private System.Windows.Forms.RadioButton radioButtonKernelSpline;
         private System.Windows.Forms.RadioButton radioButtonBsplineDiffusion;
@@ -794,11 +809,12 @@
         private System.Windows.Forms.TextBox textBoxConsoleNonRigid;
         private System.Windows.Forms.ProgressBar progressBarNonRigid;
         private System.Windows.Forms.CheckBox checkBoxMaskRegistration;
-        private System.Windows.Forms.GroupBox groupBox6;
+        private System.Windows.Forms.GroupBox groupBoxMaskingGeneral;
         private System.Windows.Forms.RadioButton radioButtonFIxedAndMovingMask;
         private System.Windows.Forms.RadioButton radioButtonOnlyMovingMask;
         private System.Windows.Forms.RadioButton radioButtonOnlyFixedMask;
         private System.Windows.Forms.RadioButton radioButtonNoMask;
         private System.ComponentModel.BackgroundWorker backgroundWorkerNonRigid;
+        private System.Windows.Forms.TabPage tabPageManual;
     }
 }

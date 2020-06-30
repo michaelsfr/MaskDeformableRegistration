@@ -202,7 +202,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                 VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
                 CvInvoke.FindContours(nMat, contours, null, RetrType.Ccomp, ChainApproxMethod.ChainApproxSimple);
                 CvInvoke.DrawContours(mat, contours, -1, new MCvScalar(sc), thickness: -1);
-                sc -= 0.5;
+                sc += 0.5;
             }
 
             return mat;

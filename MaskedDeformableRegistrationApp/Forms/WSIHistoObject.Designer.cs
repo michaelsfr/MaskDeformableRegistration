@@ -39,7 +39,7 @@
             // 
             // buttonAdaptSize
             // 
-            this.buttonAdaptSize.Location = new System.Drawing.Point(4, 4);
+            this.buttonAdaptSize.Location = new System.Drawing.Point(7, 10);
             this.buttonAdaptSize.Name = "buttonAdaptSize";
             this.buttonAdaptSize.Size = new System.Drawing.Size(27, 23);
             this.buttonAdaptSize.TabIndex = 0;
@@ -49,7 +49,7 @@
             // 
             // buttonRotate
             // 
-            this.buttonRotate.Location = new System.Drawing.Point(37, 4);
+            this.buttonRotate.Location = new System.Drawing.Point(41, 10);
             this.buttonRotate.Name = "buttonRotate";
             this.buttonRotate.Size = new System.Drawing.Size(42, 23);
             this.buttonRotate.TabIndex = 1;
@@ -59,7 +59,7 @@
             // 
             // buttonFlip
             // 
-            this.buttonFlip.Location = new System.Drawing.Point(85, 4);
+            this.buttonFlip.Location = new System.Drawing.Point(90, 10);
             this.buttonFlip.Name = "buttonFlip";
             this.buttonFlip.Size = new System.Drawing.Size(29, 23);
             this.buttonFlip.TabIndex = 2;
@@ -69,7 +69,7 @@
             // 
             // buttonRemove
             // 
-            this.buttonRemove.Location = new System.Drawing.Point(120, 4);
+            this.buttonRemove.Location = new System.Drawing.Point(125, 10);
             this.buttonRemove.Name = "buttonRemove";
             this.buttonRemove.Size = new System.Drawing.Size(26, 23);
             this.buttonRemove.TabIndex = 3;
@@ -79,7 +79,7 @@
             // 
             // pictureBox1
             // 
-            this.pictureBox1.Location = new System.Drawing.Point(4, 43);
+            this.pictureBox1.Location = new System.Drawing.Point(7, 52);
             this.pictureBox1.Name = "pictureBox1";
             this.pictureBox1.Size = new System.Drawing.Size(143, 104);
             this.pictureBox1.TabIndex = 4;
@@ -88,7 +88,7 @@
             // labelTitle
             // 
             this.labelTitle.AutoSize = true;
-            this.labelTitle.Location = new System.Drawing.Point(4, 29);
+            this.labelTitle.Location = new System.Drawing.Point(6, 36);
             this.labelTitle.Name = "labelTitle";
             this.labelTitle.Size = new System.Drawing.Size(28, 13);
             this.labelTitle.TabIndex = 5;
@@ -105,6 +105,7 @@
             this.Controls.Add(this.buttonRotate);
             this.Controls.Add(this.buttonAdaptSize);
             this.Name = "WSIHistoObject";
+            this.Size = new System.Drawing.Size(159, 164);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -27,6 +27,9 @@ namespace MaskedDeformableRegistrationApp.Forms
         private RegistrationParameters RegistrationParametersRigid { get; set; } = RegistrationParameters.GetRigidRegistrationParameters();
         private RegistrationParameters RegistrationParametersNonRigid { get; set; } = RegistrationParameters.GetNonRigidRegistrationParameters();
 
+        private sitk.ParameterMap EditedMapRigid { get; set; } = null;
+        private sitk.ParameterMap EditedMapNonRigid { get; set; } = null;
+
         private uint LargestImageWidth { get; set; } = 0;
         private uint LargestImageHeight { get; set; } = 0;
 
@@ -326,7 +329,6 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             RigidRegistration regRigid = new RigidRegistration(fixedImage, movingImage, RegistrationParametersRigid);
             regRigid.SetDefaultParameterMap(RegistrationParametersRigid.RegistrationType, RegistrationParametersRigid.NumberOfResolutions);
-            regRigid.SetSimilarityMetric(RegistrationParametersRigid.Metric);
 
             if (fixedMask != null)
             {
@@ -353,13 +355,11 @@ namespace MaskedDeformableRegistrationApp.Forms
             // registration can be handled through the registration parameters!
             NonRigidRegistration nonRigidRegistration = new NonRigidRegistration(fixedImage, movingImage, RegistrationParametersNonRigid);
             nonRigidRegistration.SetDefaultParameterMap(RegistrationParametersNonRigid.RegistrationType, RegistrationParametersNonRigid.NumberOfResolutions);
-            nonRigidRegistration.SetSimilarityMetric(RegistrationParametersNonRigid.Metric);
 
             if(radioButtonTransformRigidity.Checked)
             {
                 string coefficientMapFilename = GetInnerStructureSegmentations(movingImageFilename);
-
-                nonRigidRegistration.SetRigidyPenaltyTerm(PenaltyTerm.TransformRigidityPenalty, movingRigidityMask: coefficientMapFilename);
+                RegistrationParametersNonRigid.CoefficientMapFilename = coefficientMapFilename;
             }
 
             if (fixedMask != null)
@@ -408,7 +408,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             InnerTissueSegmentation innerSegImage = new InnerTissueSegmentation(image, wholeMask, SegmentationParametersInnerStructures);
             innerSegImage.Execute();
-            UMat coefficientMap = innerSegImage.GetOutput().FirstOrDefault();
+            UMat coefficientMap = innerSegImage.GetCoefficientMatrix();
             string filenameCoefficientMap = Path.Combine(ApplicationContext.OutputPath, RegistrationParametersNonRigid.SubDirectory) + "\\coefficientMap.png";
             ReadWriteUtils.WriteUMatToFile(filenameCoefficientMap, coefficientMap);
             return filenameCoefficientMap;
@@ -435,8 +435,20 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonEditParameters_Click(object sender, EventArgs e)
         {
-            sitk.ParameterMap map = RegistrationUtils.GetDefaultParameterMap(RegistrationParametersRigid.RegistrationType);
-            using (EditParametersForm paramForm = new EditParametersForm(map))
+            if (EditedMapRigid == null)
+            {
+                using (RigidRegistration reg = new RigidRegistration(RegistrationParametersRigid))
+                {
+                    EditedMapRigid = reg.GetParameterMap();
+                }
+
+                if (EditedMapRigid == null)
+                {
+                    EditedMapRigid = RegistrationUtils.GetDefaultParameterMap(RegistrationParametersRigid.RegistrationType);
+                }
+            }
+
+            using (EditParametersForm paramForm = new EditParametersForm(EditedMapRigid))
             {
                 DialogResult result = paramForm.ShowDialog();
 
@@ -519,14 +531,6 @@ namespace MaskedDeformableRegistrationApp.Forms
             }
         }
 
-        private void radioButtonTransformRigidity_CheckedChanged(object sender, EventArgs e)
-        {
-            if (radioButtonTransformRigidity.Checked)
-            {
-                buttonSegmentationInnerstructures.Enabled = true;
-            }
-        }
-
         private void radioButtonTranslation_CheckedChanged(object sender, EventArgs e)
         {
             UpdateRigidRegistrationType();
@@ -554,6 +558,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void UpdateRigidRegistrationType()
         {
+            EditedMapRigid = null;
             if (radioButtonTranslation.Checked)
             {
                 RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.translation;
@@ -600,6 +605,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void UpdateNonRigidRegistrationType()
         {
+            EditedMapNonRigid = null;
             if (radioButtonAdvancedBspline.Checked)
             {
                 RegistrationParametersNonRigid.RegistrationType = RegistrationDefaultParameters.bspline;
@@ -620,8 +626,19 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonEditParamsNonRigid_Click(object sender, EventArgs e)
         {
-            sitk.ParameterMap map = RegistrationUtils.GetDefaultParameterMap(RegistrationParametersNonRigid.RegistrationType);
-            using (EditParametersForm paramForm = new EditParametersForm(map))
+            if (EditedMapNonRigid != null) {
+                using (NonRigidRegistration reg = new NonRigidRegistration(RegistrationParametersNonRigid))
+                {
+                    EditedMapNonRigid = reg.GetParameterMap();
+                }
+
+                if (EditedMapNonRigid == null)
+                {
+                    EditedMapNonRigid = RegistrationUtils.GetDefaultParameterMap(RegistrationParametersNonRigid.RegistrationType);
+                }
+            }
+
+            using (EditParametersForm paramForm = new EditParametersForm(EditedMapNonRigid))
             {
                 DialogResult result = paramForm.ShowDialog();
 
@@ -640,6 +657,47 @@ namespace MaskedDeformableRegistrationApp.Forms
                 buttonCancelNonRigidReg.Enabled = true;
                 backgroundWorkerNonRigid.RunWorkerAsync();
             }
+        }
+
+        private void radioButtonNoPenalties_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatePenalty();
+        }
+
+        private void UpdatePenalty()
+        {
+            if(radioButtonNoPenalties.Checked)
+            {
+                RegistrationParametersNonRigid.Penaltyterm = PenaltyTerm.None;
+            } else if(radioButtonTransformRigidity.Checked)
+            {
+                RegistrationParametersNonRigid.SetTransformPenaltyTerm();
+            } else if (radioButtonBendEnergy.Checked)
+            {
+                RegistrationParametersNonRigid.SetTransformBendingEnergy();
+            } else if (radioButtonDistancePreserving.Checked)
+            {
+                RegistrationParametersNonRigid.SetDistancePreservingRigidityPenalty();
+            }
+        }
+
+        private void radioButtonTransformRigidity_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatePenalty();
+            if (radioButtonTransformRigidity.Checked)
+            {
+                buttonSegmentationInnerstructures.Enabled = true;
+            }
+        }
+
+        private void radioButtonBendEnergy_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatePenalty();
+        }
+
+        private void radioButtonDistancePreserving_CheckedChanged(object sender, EventArgs e)
+        {
+            UpdatePenalty();
         }
     }
 }

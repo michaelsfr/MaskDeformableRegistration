@@ -34,7 +34,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             return parameters;
         }
 
-        public void SetTransformPenaltyTerm(string coefficientMapFilename, int orthonormality = 1, int linearity = 1, int properness = 1)
+        public void SetTransformPenaltyTerm(string coefficientMapFilename = null, int orthonormality = 1, int linearity = 1, int properness = 1)
         {
             this.Penaltyterm = PenaltyTerm.TransformRigidityPenalty;
             // see: https://elastix.lumc.nl/doxygen/classelastix_1_1TransformRigidityPenalty.html
@@ -49,11 +49,11 @@ namespace MaskedDeformableRegistrationApp.Registration
             this.Penaltyterm = PenaltyTerm.TransformBendingEnergyPenalty;
         }
 
-        public void SetDistancePreservingRigidityPenalty(string coefficientMap, int[] penaltyGridSpacingInVoxels)
+        public void SetDistancePreservingRigidityPenalty(string segmentedImage = null, int[] penaltyGridSpacingInVoxels = null)
         {
             this.Penaltyterm = PenaltyTerm.DistancePreservingRigidityPenalty;
             // see: https://elastix.lumc.nl/doxygen/classelastix_1_1DistancePreservingRigidityPenalty.html
-            this.CoefficientMapFilename = coefficientMap;
+            this.SegmentedImageFilename = segmentedImage;
             this.PenaltyGridSpacingInVoxels = penaltyGridSpacingInVoxels;
         }
 
@@ -72,20 +72,39 @@ namespace MaskedDeformableRegistrationApp.Registration
         }
         public string SubDirectory { get; set; } = "";
 
-        // rigid and non rigid parameters
-        public RegistrationDefaultParameters RegistrationType { get; set; }
         public sitk.ParameterMap ParamMapToUse { get; set; } = null;
-        public uint NumberOfResolutions { get; set; } = 5;
+
+        // rigid and non rigid parameters
+
+        // type
+        public RegistrationDefaultParameters RegistrationType { get; set; }
+
+        // metric
         public SimilarityMetric Metric { get; set; } = SimilarityMetric.AdvancedMeanSquares;
+        public int[] NumberOfHistogramBins { get; set; } = { 32 };
+
+        // image pyramid
+        public ImagePyramid FixedImagePyramid { get; set; } = ImagePyramid.FixedRecursiveImagePyramid;
+        public ImagePyramid MovingImagePyramid { get; set; } = ImagePyramid.MovingRecursiveImagePyramid;
+
+        // optimizer
         public Optimizer Optimizer { get; set; } = Optimizer.AdaptiveStochasticGradientDescent;
+
+        // reg strategy
         public RegistrationStrategy RegistrationStrategy { get; set; } = RegistrationStrategy.MultiResolutionRegistration;
+        public uint NumberOfResolutions { get; set; } = 5;
 
         // non rigid parameters
+
+        // penalties
         public PenaltyTerm Penaltyterm { get; set; } = PenaltyTerm.None;
+        // transform rigidity
         public string CoefficientMapFilename { get; set; } = null;
-        public int OrthonormalityConditionWeight { get; set; }
-        public int LinearityConditionWeight  { get; set; }
-        public int PropernessConditionWeight { get; set; }
-        public int[] PenaltyGridSpacingInVoxels { get; set; }
+        public int OrthonormalityConditionWeight { get; set; } = 1;
+        public int LinearityConditionWeight { get; set; } = 1;
+        public int PropernessConditionWeight { get; set; } = 1;
+        // distance preserving
+        public string SegmentedImageFilename { get; set; } = null;
+        public int[] PenaltyGridSpacingInVoxels { get; set; } = null;
     }
 }

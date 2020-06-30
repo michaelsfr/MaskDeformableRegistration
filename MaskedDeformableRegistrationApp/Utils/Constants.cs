@@ -14,5 +14,14 @@ namespace MaskedDeformableRegistrationApp.Utils
         public const string cOptimizer = "Optimizer";
         public const string cSegmentedImageName = "SegmentedImageName";
         public const string cMovingRigidityImageName = "MovingRigidityImageName";
+        public const string cLinearityConditionWeight = "LinearityConditionWeight";
+        public const string cOrthonormalityConditionWeight = "OrthonormalityConditionWeight";
+        public const string cPropernessConditionWeight = "PropernessConditionWeight";
+        public const string cNumberOfHistogramBins = "NumberOfHistogramBins";
+        public const string cPenaltyGridSpacingInVoxels = "PenaltyGridSpacingInVoxels";
+        public const string cFixedImagePyramid = "FixedImagePyramid";
+        public const string cMovingImagePyramid = "MovingImagePyramid";
+        public const string cMetric0Weight = "Metric0Weight";
+        public const string cMetric1Weight = "Metric0Weight";
     }
 }

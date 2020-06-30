@@ -30,6 +30,7 @@
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBoxExtract = new System.Windows.Forms.GroupBox();
+            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.textBox1 = new System.Windows.Forms.TextBox();
@@ -52,22 +53,25 @@
             this.radioButtonHorzDesc = new System.Windows.Forms.RadioButton();
             this.radioButtonNone = new System.Windows.Forms.RadioButton();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.labelThreshold = new System.Windows.Forms.Label();
+            this.labelMinContour = new System.Windows.Forms.Label();
+            this.labelMaxContour = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.groupBoxExtract.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarResolutuion)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
             this.groupBox2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
             // 
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
             this.splitContainer1.Location = new System.Drawing.Point(0, 0);
             this.splitContainer1.Name = "splitContainer1";
             this.splitContainer1.Orientation = System.Windows.Forms.Orientation.Horizontal;
@@ -99,6 +103,14 @@
             this.groupBoxExtract.TabIndex = 1;
             this.groupBoxExtract.TabStop = false;
             this.groupBoxExtract.Text = "Exraction";
+            // 
+            // numericUpDown1
+            // 
+            this.numericUpDown1.Location = new System.Drawing.Point(157, 81);
+            this.numericUpDown1.Name = "numericUpDown1";
+            this.numericUpDown1.Size = new System.Drawing.Size(53, 20);
+            this.numericUpDown1.TabIndex = 5;
+            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
             // 
             // label5
             // 
@@ -167,9 +179,9 @@
             // 
             // buttonSegment
             // 
-            this.buttonSegment.Location = new System.Drawing.Point(505, 84);
+            this.buttonSegment.Location = new System.Drawing.Point(531, 84);
             this.buttonSegment.Name = "buttonSegment";
-            this.buttonSegment.Size = new System.Drawing.Size(112, 23);
+            this.buttonSegment.Size = new System.Drawing.Size(98, 23);
             this.buttonSegment.TabIndex = 2;
             this.buttonSegment.Text = "Segment";
             this.buttonSegment.UseVisualStyleBackColor = true;
@@ -177,6 +189,9 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.labelMaxContour);
+            this.groupBox3.Controls.Add(this.labelMinContour);
+            this.groupBox3.Controls.Add(this.labelThreshold);
             this.groupBox3.Controls.Add(this.hScrollBarMaxContourSize);
             this.groupBox3.Controls.Add(this.hScrollBarMinContourSize);
             this.groupBox3.Controls.Add(this.hScrollBarThreshold);
@@ -185,7 +200,7 @@
             this.groupBox3.Controls.Add(this.label1);
             this.groupBox3.Location = new System.Drawing.Point(245, 20);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(243, 94);
+            this.groupBox3.Size = new System.Drawing.Size(280, 94);
             this.groupBox3.TabIndex = 1;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Thresholding";
@@ -196,6 +211,7 @@
             this.hScrollBarMaxContourSize.Name = "hScrollBarMaxContourSize";
             this.hScrollBarMaxContourSize.Size = new System.Drawing.Size(120, 17);
             this.hScrollBarMaxContourSize.TabIndex = 5;
+            this.hScrollBarMaxContourSize.ValueChanged += new System.EventHandler(this.hScrollBarMaxContourSize_ValueChanged);
             // 
             // hScrollBarMinContourSize
             // 
@@ -203,6 +219,7 @@
             this.hScrollBarMinContourSize.Name = "hScrollBarMinContourSize";
             this.hScrollBarMinContourSize.Size = new System.Drawing.Size(120, 17);
             this.hScrollBarMinContourSize.TabIndex = 4;
+            this.hScrollBarMinContourSize.ValueChanged += new System.EventHandler(this.hScrollBarMinContourSize_ValueChanged);
             // 
             // hScrollBarThreshold
             // 
@@ -210,6 +227,7 @@
             this.hScrollBarThreshold.Name = "hScrollBarThreshold";
             this.hScrollBarThreshold.Size = new System.Drawing.Size(120, 17);
             this.hScrollBarThreshold.TabIndex = 3;
+            this.hScrollBarThreshold.ValueChanged += new System.EventHandler(this.hScrollBarThreshold_ValueChanged);
             // 
             // label3
             // 
@@ -311,19 +329,39 @@
             // 
             // panel1
             // 
+            this.panel1.AutoScroll = true;
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1021, 433);
             this.panel1.TabIndex = 0;
             // 
-            // numericUpDown1
+            // labelThreshold
             // 
-            this.numericUpDown1.Location = new System.Drawing.Point(157, 81);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(53, 20);
-            this.numericUpDown1.TabIndex = 5;
-            this.numericUpDown1.ValueChanged += new System.EventHandler(this.numericUpDown1_ValueChanged);
+            this.labelThreshold.AutoSize = true;
+            this.labelThreshold.Location = new System.Drawing.Point(239, 21);
+            this.labelThreshold.Name = "labelThreshold";
+            this.labelThreshold.Size = new System.Drawing.Size(28, 13);
+            this.labelThreshold.TabIndex = 6;
+            this.labelThreshold.Text = "###";
+            // 
+            // labelMinContour
+            // 
+            this.labelMinContour.AutoSize = true;
+            this.labelMinContour.Location = new System.Drawing.Point(239, 43);
+            this.labelMinContour.Name = "labelMinContour";
+            this.labelMinContour.Size = new System.Drawing.Size(28, 13);
+            this.labelMinContour.TabIndex = 7;
+            this.labelMinContour.Text = "###";
+            // 
+            // labelMaxContour
+            // 
+            this.labelMaxContour.AutoSize = true;
+            this.labelMaxContour.Location = new System.Drawing.Point(239, 67);
+            this.labelMaxContour.Name = "labelMaxContour";
+            this.labelMaxContour.Size = new System.Drawing.Size(28, 13);
+            this.labelMaxContour.TabIndex = 8;
+            this.labelMaxContour.Text = "###";
             // 
             // PreSegmentationForm
             // 
@@ -341,13 +379,13 @@
             this.splitContainer1.ResumeLayout(false);
             this.groupBoxExtract.ResumeLayout(false);
             this.groupBoxExtract.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.trackBarResolutuion)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -379,5 +417,8 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.Label labelMaxContour;
+        private System.Windows.Forms.Label labelMinContour;
+        private System.Windows.Forms.Label labelThreshold;
     }
 }

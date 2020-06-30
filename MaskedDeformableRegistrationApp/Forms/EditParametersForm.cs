@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -73,11 +74,29 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void EditParametersForm_Load(object sender, EventArgs e)
         {
-            foreach(var param in Parametermap.AsEnumerable())
+            foreach (var param in Parametermap.AsEnumerable())
             {
                 string values = String.Join(";", param.Value.AsEnumerable());
                 richTextBox1.AppendText(param.Key + " ( " + values + " )\n");
             }
+        }
+        
+        private void buttonSaveTo_Click(object sender, EventArgs e)
+        {
+            string parameters = richTextBox1.Text;
+
+            saveFileDialog1.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
+            saveFileDialog1.FilterIndex = 2;
+
+            if (saveFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                File.WriteAllText(saveFileDialog1.FileName, parameters);
+            }
+        }
+
+        private void buttonTest_Click(object sender, EventArgs e)
+        {
+            // TODO
         }
     }
 }

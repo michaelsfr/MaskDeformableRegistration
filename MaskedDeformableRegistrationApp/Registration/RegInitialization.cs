@@ -8,10 +8,12 @@ using sitk = itk.simple;
 
 namespace MaskedDeformableRegistrationApp.Registration
 {
-    public abstract class RegInitialization : IRegistration<sitk.Image, sitk.ParameterMap, sitk.VectorOfParameterMap>
+    public abstract class RegInitialization : IRegistration<sitk.Image, sitk.ParameterMap, sitk.VectorOfParameterMap>, IDisposable
     {
         protected sitk.ElastixImageFilter elastix = null;
         protected sitk.ParameterMap parameterMap = null;
+        protected RegistrationParameters registrationParameters;
+        protected string outputDirectory;
 
         protected sitk.Image fixedImage = null;
         protected sitk.Image movingImage = null;
@@ -19,9 +21,43 @@ namespace MaskedDeformableRegistrationApp.Registration
         protected sitk.Image movingMask = null;
         protected sitk.Image transformedImage = null;
 
-        public RegInitialization(sitk.Image fixedImage, sitk.Image movingImage)
+        protected RegInitialization(RegistrationParameters parameters)
         {
+            this.registrationParameters = parameters;
+        }
 
+        protected void SetGeneralParameters()
+        {
+            SetImageSampler();
+            SetImagePyramid();
+            SetSimilarityMetric();
+            SetOptimizer();
+        }
+
+        private void SetOptimizer()
+        {
+            // TODO
+        }
+
+        private void SetSimilarityMetric()
+        {
+            AddParameter(Constants.cMetric, registrationParameters.Metric.ToString());
+
+            if (registrationParameters.Metric == SimilarityMetric.AdvancedMattesMutualInformation 
+                && registrationParameters.NumberOfHistogramBins != new int[] { 32 })
+            {
+                AddParameter(Constants.cNumberOfHistogramBins, registrationParameters.NumberOfHistogramBins);
+            }
+        }
+
+        private void SetImagePyramid()
+        {
+            // TODO
+        }
+
+        private void SetImageSampler()
+        {
+            // TODO
         }
 
         public virtual void Dispose()
@@ -82,15 +118,29 @@ namespace MaskedDeformableRegistrationApp.Registration
             elastix.ReadParameterFile(file);
         }
 
-        public virtual void SetSimilarityMetric(SimilarityMetric metric)
+        protected void AddParameter(string parameterName, sitk.VectorString value)
         {
-            foreach (var parameter in parameterMap.AsEnumerable())
+            if (parameterMap.ContainsKey(parameterName))
             {
-                if (parameter.Key == "Metric")
-                {
-                    parameter.Value[0] = metric.ToString();
-                }
+                parameterMap.Remove(parameterName);
             }
+
+            parameterMap.Add(parameterName, value);
+        }
+
+        protected void AddParameter<T>(string parameterName, params T[] values)
+        {
+            if (parameterMap.ContainsKey(parameterName))
+            {
+                parameterMap.Remove(parameterName);
+            }
+
+            sitk.VectorString vec = new sitk.VectorString();
+            foreach (T value in values)
+            {
+                vec.Add(value.ToString());
+            }
+            parameterMap.Add(parameterName, vec);
         }
     }
 }

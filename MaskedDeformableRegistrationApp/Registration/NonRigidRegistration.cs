@@ -11,10 +11,9 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     internal class NonRigidRegistration : RegInitialization
     {
-        private RegistrationParameters registrationParameters;
-
-        public NonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(fixedImage, movingImage)
+        public NonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
         {
+            // cast images to from pixel type uint to float
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
             castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
             sitk.Image vector1 = castImageFilter.Execute(fixedImage);
@@ -26,38 +25,54 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             this.fixedImage = tempImage1;
             this.movingImage = tempImage2;
-            this.registrationParameters = parameters;
 
+            // initiate elastix and set default registration params
             elastix = new sitk.ElastixImageFilter();
-            parameterMap = elastix.GetDefaultParameterMap(RegistrationDefaultParameters.bspline.ToString(), 5);
+            parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+
+            // set output dir and log file
+            outputDirectory = Path.Combine(ApplicationContext.OutputPath, registrationParameters.SubDirectory);
+            if (!Directory.Exists(outputDirectory))
+            {
+                Directory.CreateDirectory(outputDirectory);
+            }
+            elastix.SetOutputDirectory(outputDirectory);
+            elastix.SetLogFileName(outputDirectory + registrationParameters.ElastixLogFileName);
+
+            // set non rigid parameters
+            base.SetGeneralParameters();
+            SetParameters();
+        }
+
+        public NonRigidRegistration(RegistrationParameters parameters) : base(parameters)
+        {
+            elastix = new sitk.ElastixImageFilter();
+            parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+            base.SetGeneralParameters();
+            SetParameters();
         }
 
         public override void Execute()
         {
             if (fixedImage != null && movingImage != null)
             {
-                // set output dir
-                string outputDirectory = Path.Combine(ApplicationContext.OutputPath, registrationParameters.SubDirectory);
-                if (!Directory.Exists(outputDirectory))
-                {
-                    Directory.CreateDirectory(outputDirectory);
-                }
-                elastix.SetOutputDirectory(outputDirectory);
-                elastix.SetLogFileName(outputDirectory + registrationParameters.ElastixLogFileName);
-
+                /*// initialize non rigid 
                 sitk.BSplineTransformInitializerFilter bSplineTransformInitializer = new sitk.BSplineTransformInitializerFilter();
                 // todo: calculate mesh size here
                 Console.WriteLine(bSplineTransformInitializer.GetTransformDomainMeshSize().ToString());
-                bSplineTransformInitializer.Execute(fixedImage);
+                bSplineTransformInitializer.Execute(fixedImage);*/
 
+                // set fixed and moving mask if defined
                 if(this.fixedMask != null)
                 {
                     elastix.SetFixedMask(this.fixedMask);
+                    AddParameter(Constants.cFixedImagePyramid, ImagePyramid.FixedSmoothingImagePyramid);
                 }
 
                 if(this.movingMask != null)
                 {
                     elastix.SetMovingMask(this.movingMask);
+                    AddParameter(Constants.cMovingImagePyramid, ImagePyramid.MovingSmoothingImagePyramid);
                 }
 
                 elastix.SetParameterMap(parameterMap);
@@ -75,50 +90,81 @@ namespace MaskedDeformableRegistrationApp.Registration
                 {
                     Console.WriteLine("Exception occurred during registration: ");
                     Console.WriteLine(ex);
-                } finally
-                {
-                    //elastix.Dispose();
                 }
             }
         }
 
-        public void SetOptimizer(Optimizer optimizer, sitk.VectorString numberOfIterationsEachResolution)
+        private void SetParameters()
         {
-            // todo
+            if (registrationParameters.RegistrationType == RegistrationDefaultParameters.bspline)
+            {
+
+            } else if (registrationParameters.RegistrationType == RegistrationDefaultParameters.diffusion)
+            {
+
+            } else if (registrationParameters.RegistrationType == RegistrationDefaultParameters.spline)
+            {
+
+            } else if (registrationParameters.RegistrationType == RegistrationDefaultParameters.recursive)
+            {
+                
+            }
+
+            SetPenaltyTerm();
         }
 
-        public void SetRigidyPenaltyTerm(PenaltyTerm penalty, string movingPenalizedAreas = null, string movingRigidityMask = null)
+        private void SetPenaltyTerm()
         {
-            foreach (var parameter in parameterMap.AsEnumerable())
+            if (registrationParameters.Penaltyterm != PenaltyTerm.None)
             {
-                if (parameter.Key == Constants.cRegistration)
+                AddPenaltyTermToParameterMap(registrationParameters.Penaltyterm);
+
+                if (registrationParameters.Penaltyterm == PenaltyTerm.TransformRigidityPenalty)
                 {
-                    parameter.Value[0] = RegistrationStrategy.MultiMetricMultiResolutionRegistration.ToString();
+                    SetTransformRigidityPenaltyParameters();
                 }
-                if (parameter.Key == Constants.cMetric)
+                if (registrationParameters.Penaltyterm == PenaltyTerm.DistancePreservingRigidityPenalty)
                 {
-                    parameter.Value[1] = penalty.ToString();
+                    AddParameter(Constants.cSegmentedImageName, registrationParameters.SegmentedImageFilename);
+                    AddParameter(Constants.cPenaltyGridSpacingInVoxels, registrationParameters.PenaltyGridSpacingInVoxels);
                 }
             }
+            
+        }
 
-            if (penalty == PenaltyTerm.TransformRigidityPenalty
-                  && movingRigidityMask != null)
+        private void SetTransformRigidityPenaltyParameters()
+        {
+            if (!string.IsNullOrEmpty(registrationParameters.CoefficientMapFilename))
             {
-                sitk.Image img = ReadWriteUtils.ReadITKImageFromFile(movingRigidityMask);
-                sitk.Image img02 = ReadWriteUtils.RescaleImageToFloat(img);
-                ReadWriteUtils.WriteSitkImage(img02, movingRigidityMask);
-                img.Dispose();
-                img02.Dispose();
+                AddParameter(Constants.cMovingRigidityImageName, registrationParameters.CoefficientMapFilename);
+            }
+            if (registrationParameters.LinearityConditionWeight != 1)
+            {
+                AddParameter(Constants.cLinearityConditionWeight, registrationParameters.LinearityConditionWeight.ToString());
+            }
+            if(registrationParameters.OrthonormalityConditionWeight != 1)
+            {
+                AddParameter(Constants.cOrthonormalityConditionWeight, registrationParameters.OrthonormalityConditionWeight.ToString());
+            }
+            if (registrationParameters.PropernessConditionWeight != 1)
+            {
+                AddParameter(Constants.cPropernessConditionWeight, registrationParameters.PropernessConditionWeight.ToString());
+            }
+        }
 
+        private void AddPenaltyTermToParameterMap(PenaltyTerm pt)
+        {
+            AddParameter(Constants.cRegistration, RegistrationStrategy.MultiMetricMultiResolutionRegistration.ToString());
 
-                sitk.VectorString vec = new sitk.VectorString();
-                vec.Add(movingRigidityMask);
-                parameterMap.Add(Constants.cMovingRigidityImageName, vec);
-
-                // set orthogonality / linearity / correctness
+            if(parameterMap.ContainsKey(Constants.cMetric))
+            {
+                sitk.VectorString metric = parameterMap[Constants.cMetric];
+                metric.Add(pt.ToString());
             }
 
-            // set parameters for specific penalty terms
+            // add weight for metric / penalty
+            AddParameter(Constants.cMetric0Weight, "1.0");
+            AddParameter(Constants.cMetric1Weight, "1.0");
         }
     }
 }

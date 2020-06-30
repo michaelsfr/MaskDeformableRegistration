@@ -30,7 +30,8 @@ namespace MaskedDeformableRegistrationApp.Utils
         AdvancedMeanSquares,
         AdvancedNormalizedCorrelation,
         AdvancedMattesMutualInformation,
-        AdvancedKappaStatistic
+        AdvancedKappaStatistic,
+        CorrespondingPointsEuclideanDistanceMetric
     }
 
     public enum PenaltyTerm

@@ -14,7 +14,6 @@ namespace MaskedDeformableRegistrationApp.Registration
         void SetMovingMask(T movingMask);
         void SetDefaultParameterMap(RegistrationDefaultParameters type, uint numberOfResolutions);
         void SetParameterMap(string file);
-        void SetSimilarityMetric(SimilarityMetric metric);
         U GetParameterMap();
         N GetTransformationFile();
         T GetOutput();

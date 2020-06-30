@@ -11,9 +11,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     class RigidRegistration : RegInitialization
     {
-        private RegistrationParameters registrationParameters;
-
-        public RigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(fixedImage, movingImage)
+        public RigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
         {
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
             castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
@@ -33,38 +31,43 @@ namespace MaskedDeformableRegistrationApp.Registration
             vectorFilter.Dispose();
             
             elastix = new sitk.ElastixImageFilter();
-            parameterMap = elastix.GetDefaultParameterMap(RegistrationDefaultParameters.rigid.ToString(), 10);
+            parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+
+            // set output dir
+            outputDirectory = Path.Combine(ApplicationContext.OutputPath, registrationParameters.SubDirectory);
+            if (!Directory.Exists(outputDirectory))
+            {
+                Directory.CreateDirectory(outputDirectory);
+            }
+            elastix.SetOutputDirectory(outputDirectory);
+            elastix.SetLogFileName(Path.Combine(outputDirectory, registrationParameters.ElastixLogFileName));
+
+            base.SetGeneralParameters();
+        }
+
+        public RigidRegistration(RegistrationParameters parameters) : base(parameters)
+        {
+            elastix = new sitk.ElastixImageFilter();
+            parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+            base.SetGeneralParameters();
+
         }
 
         public override void Execute()
         {
             if(fixedImage != null && movingImage != null)
             {
-                // set output dir
-                string outputDirectory = Path.Combine(ApplicationContext.OutputPath, registrationParameters.SubDirectory);
-                if(!Directory.Exists(outputDirectory))
-                {
-                    Directory.CreateDirectory(outputDirectory);
-                }
-                elastix.SetOutputDirectory(outputDirectory);
-                elastix.SetLogFileName(Path.Combine(outputDirectory, registrationParameters.ElastixLogFileName));
-
                 // set image masks
                 if (fixedMask != null)
                 {
                     elastix.SetFixedMask(fixedMask);
-                    foreach (var parameter in parameterMap.AsEnumerable())
-                    {
-                        if(parameter.Key == "FixedImagePyramid")
-                        {
-                            parameter.Value[0] = "FixedSmoothingImagePyramid";
-                        }
-                    }
+                    AddParameter(Constants.cFixedImagePyramid, ImagePyramid.FixedSmoothingImagePyramid);
                 }
 
                 if (movingMask != null)
                 {
                     elastix.SetMovingMask(movingMask);
+                    AddParameter(Constants.cMovingImagePyramid, ImagePyramid.MovingSmoothingImagePyramid);
                 }
 
                 // set parameter vector here?
@@ -82,9 +85,6 @@ namespace MaskedDeformableRegistrationApp.Registration
                 {
                     Console.WriteLine("Exception occurred during registration: ");
                     Console.WriteLine(ex);
-                } finally
-                {
-                    //elastix.Dispose();
                 }
             }
         }

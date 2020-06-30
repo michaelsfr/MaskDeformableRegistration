@@ -68,13 +68,16 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             hScrollBarThreshold.Minimum = 0;
             hScrollBarThreshold.Maximum = 255;
-            hScrollBarThreshold.Value = 220;
+            hScrollBarThreshold.Value = 200;
 
             hScrollBarMaxContourSize.Minimum = 0;
-            hScrollBarMaxContourSize.Maximum = 50000; // Todo: calculate by image size
+            hScrollBarMaxContourSize.Maximum = 100;
+            hScrollBarMaxContourSize.Value = 80;
+            hScrollBarMaxContourSize.Enabled = false;
 
             hScrollBarMinContourSize.Minimum = 0;
-            hScrollBarMinContourSize.Maximum = 50000;
+            hScrollBarMinContourSize.Maximum = 100;
+            hScrollBarMinContourSize.Value = 25;
 
             trackBarResolutuion.Minimum = 0;
             trackBarResolutuion.Maximum = 9;
@@ -133,7 +136,8 @@ namespace MaskedDeformableRegistrationApp.Forms
                 try
                 {
                     Image<Bgr, byte> image = WSIExtraction.Extraction.ExtractImageFromWSI(path, 7);
-                    List<Rectangle> extracted = WSIExtraction.Extraction.ExtractObjects(image, this.hScrollBarThreshold.Value, 1000, out Image<Bgr, byte> image_debug);
+                    int minContourSize = ImageUtils.GetPercentualImagePixelCount(image, ((float)this.hScrollBarMinContourSize.Value / 100.0f));
+                    List<Rectangle> extracted = WSIExtraction.Extraction.ExtractObjects(image, this.hScrollBarThreshold.Value, minContourSize, out Image<Bgr, byte> image_debug);
                     obj_contours.Add(extracted);
                     AddObjectsFromContours(image, extracted, path, 7);
                 } catch (Exception ex)
@@ -441,6 +445,21 @@ namespace MaskedDeformableRegistrationApp.Forms
                 form.ShowDialog();
             }
             this.Close();
+        }
+
+        private void hScrollBarThreshold_ValueChanged(object sender, EventArgs e)
+        {
+            labelThreshold.Text = hScrollBarThreshold.Value.ToString();
+        }
+
+        private void hScrollBarMinContourSize_ValueChanged(object sender, EventArgs e)
+        {
+            labelMinContour.Text = hScrollBarMinContourSize.Value.ToString() + "%";
+        }
+
+        private void hScrollBarMaxContourSize_ValueChanged(object sender, EventArgs e)
+        {
+            labelMaxContour.Text = hScrollBarMaxContourSize.Value.ToString() + "%";
         }
     }
 }
