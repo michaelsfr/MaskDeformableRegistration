@@ -65,6 +65,7 @@
             this.buttonCancelNonRigidReg = new System.Windows.Forms.Button();
             this.textBoxConsoleNonRigid = new System.Windows.Forms.TextBox();
             this.progressBarNonRigid = new System.Windows.Forms.ProgressBar();
+            this.tabPageManual = new System.Windows.Forms.TabPage();
             this.buttonSegmentationParams = new System.Windows.Forms.Button();
             this.backgroundWorkerRigid = new System.ComponentModel.BackgroundWorker();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -80,7 +81,6 @@
             this.radioButtonLastInStack = new System.Windows.Forms.RadioButton();
             this.radioButtonFirstFromStack = new System.Windows.Forms.RadioButton();
             this.backgroundWorkerNonRigid = new System.ComponentModel.BackgroundWorker();
-            this.tabPageManual = new System.Windows.Forms.TabPage();
             this.tabControlRegistration.SuspendLayout();
             this.tabPageRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -510,6 +510,7 @@
             this.buttonEvaluateNonRigidReg.TabIndex = 2;
             this.buttonEvaluateNonRigidReg.Text = "Evaluate Registration";
             this.buttonEvaluateNonRigidReg.UseVisualStyleBackColor = true;
+            this.buttonEvaluateNonRigidReg.Click += new System.EventHandler(this.buttonEvaluateNonRigidReg_Click);
             // 
             // buttonStartNonRigidRegistration
             // 
@@ -544,6 +545,16 @@
             this.progressBarNonRigid.Name = "progressBarNonRigid";
             this.progressBarNonRigid.Size = new System.Drawing.Size(483, 23);
             this.progressBarNonRigid.TabIndex = 0;
+            // 
+            // tabPageManual
+            // 
+            this.tabPageManual.Location = new System.Drawing.Point(4, 22);
+            this.tabPageManual.Name = "tabPageManual";
+            this.tabPageManual.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageManual.Size = new System.Drawing.Size(677, 322);
+            this.tabPageManual.TabIndex = 2;
+            this.tabPageManual.Text = "Manual registration";
+            this.tabPageManual.UseVisualStyleBackColor = true;
             // 
             // buttonSegmentationParams
             // 
@@ -698,16 +709,6 @@
             this.radioButtonFirstFromStack.TabStop = true;
             this.radioButtonFirstFromStack.Text = "Use first image in stack as reference";
             this.radioButtonFirstFromStack.UseVisualStyleBackColor = true;
-            // 
-            // tabPageManual
-            // 
-            this.tabPageManual.Location = new System.Drawing.Point(4, 22);
-            this.tabPageManual.Name = "tabPageManual";
-            this.tabPageManual.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageManual.Size = new System.Drawing.Size(677, 322);
-            this.tabPageManual.TabIndex = 2;
-            this.tabPageManual.Text = "Manual registration";
-            this.tabPageManual.UseVisualStyleBackColor = true;
             // 
             // RegistrationForm
             // 

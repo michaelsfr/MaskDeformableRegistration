@@ -62,8 +62,8 @@ namespace MaskedDeformableRegistrationApp.Forms
                 sitk.VectorString vec = new sitk.VectorString();
                 foreach (string value in values)
                 {
-                    value.Replace(" ", "");
-                    vec.Add(value);
+                    string valueC = value.Replace(" ", "");
+                    vec.Add(valueC);
                 }
                 return vec;
             } catch (Exception)

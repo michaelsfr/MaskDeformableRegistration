@@ -126,6 +126,12 @@
     <Compile Include="Forms\EditParametersForm.Designer.cs">
       <DependentUpon>EditParametersForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\EvaluationForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\EvaluationForm.Designer.cs">
+      <DependentUpon>EvaluationForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\LoadStackForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -203,6 +209,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EditParametersForm.resx">
       <DependentUpon>EditParametersForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\EvaluationForm.resx">
+      <DependentUpon>EvaluationForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\LoadStackForm.resx">
       <DependentUpon>LoadStackForm.cs</DependentUpon>

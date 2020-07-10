@@ -1,6 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
 using Emgu.CV.UI;
+using MaskedDeformableRegistrationApp.Registration;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -101,5 +102,124 @@ namespace MaskedDeformableRegistrationApp.Utils
             labelStatisticsImageFilter.Execute(img, labelImage);
             return labelStatisticsImageFilter;
         }
+
+        public static string TransfromPointSet(sitk.VectorOfParameterMap transformParameters, string movImage, RegistrationParameters parameters)
+        {
+            sitk.Image movingImage = ReadWriteUtils.ReadITKImageFromFile(movImage , sitk.PixelIDValueEnum.sitkFloat32);
+            sitk.TransformixImageFilter transformix = null;
+            try
+            {
+                transformix = new sitk.TransformixImageFilter();
+                transformix.SetTransformParameterMap(transformParameters);
+                transformix.SetMovingImage(movingImage);
+                transformix.SetFixedPointSetFileName(parameters.FixedImagePointSetFilename);
+                transformix.SetOutputDirectory(ReadWriteUtils.GetOutputDirectory(parameters));
+                sitk.Image image = transformix.Execute();
+                string output = ReadWriteUtils.GetOutputDirectory(parameters) + "\\points.mhd";
+                //ReadWriteUtils.WriteSitkImage(image, output);
+                image.Dispose();
+                return output;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Calculates the mean TRE between given landmarks.
+        /// </summary>
+        /// <param name="coords01">list of expected points</param>
+        /// <param name="coords02">list of transformed points</param>
+        /// <returns>mean TRE</returns>
+        public static double CalculateMeanTargetRegistrationError(List<CoordPoint> coords01, List<CoordPoint> coords02)
+        {
+            if (IsCorrespondingList(coords01, coords02))
+            {
+                double sum = GetEuclideanSum(coords01, coords02);
+                return (sum / coords01.Count);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        /// <summary>
+        /// Calculates the absolute TRE between given landmarks.
+        /// </summary>
+        /// <param name="coords01">list of expected points</param>
+        /// <param name="coords02">list of transformed points</param>
+        /// <returns>absolute TRE</returns>
+        public static double CalculateAbsoluteTargetRegistrationError(List<CoordPoint> coords01, List<CoordPoint> coords02)
+        {
+            if(IsCorrespondingList(coords01, coords02))
+            {
+                double sum = GetEuclideanSum(coords01, coords02);
+                return sum;
+            }
+            else
+            {
+                return 0;
+            }
+        }
+
+        private static double GetEuclideanSum(List<CoordPoint> coords01, List<CoordPoint> coords02)
+        {
+            double sum = 0;
+            for (int i = 0; i <= coords01.Count; i++)
+            {
+                CoordPoint p1 = coords01.ElementAt(i);
+                CoordPoint p2 = coords02.ElementAt(i);
+                sum += Math.Abs(EuclideanDistance(p1.X, p1.Y, p2.X, p2.Y));
+            }
+
+            return sum;
+        }
+
+        /// <summary>
+        /// Method checks if list are not null, not empty and have the same length.
+        /// </summary>
+        /// <param name="coords01">list a</param>
+        /// <param name="coords02">list b</param>
+        /// <returns>true if lists are corresponding</returns>
+        private static bool IsCorrespondingList(List<CoordPoint> coords01, List<CoordPoint> coords02)
+        {
+            if ((coords01 != null && coords01.Count > 0) || (coords02 == null && coords02.Count > 0))
+            {
+                if (coords01.Count == coords02.Count) return true;
+                else return false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Calculatesthe euclidean distance for given pair of points.
+        /// </summary>
+        /// <param name="x1">x1</param>
+        /// <param name="y1">y1</param>
+        /// <param name="x2">x2</param>
+        /// <param name="y2">y2</param>
+        /// <returns>distance between point (x1,y1) and (x2,y2)</returns>
+        private static double EuclideanDistance(double x1, double y1, double x2, double y2)
+        {
+            return Math.Sqrt(((x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)));
+        }
+    }
+
+    public class CoordPoint
+    {
+        public CoordPoint(double x, double y)
+        {
+            X = x;
+            Y = y;
+        }
+
+        public double X { get; set; }
+        public double Y { get; set; }
     }
 }

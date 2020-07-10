@@ -81,7 +81,7 @@ namespace MaskedDeformableRegistrationApp.Forms
                     WSIExtraction.Stack stack = ReadWriteUtils.DeserializeObjectFromJSON<WSIExtraction.Stack>(Stackname);
                     foreach (WSIExtraction.Slice slice in stack.Section)
                     {
-                        Filenames.Add(slice.Path);
+                        Filenames.Add(Path.Combine(Path.GetDirectoryName(Stackname), slice.Path));
                     }
                 }
                 textBox1.Text = Stackname;

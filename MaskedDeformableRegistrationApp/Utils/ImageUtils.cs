@@ -92,14 +92,16 @@ namespace MaskedDeformableRegistrationApp.Utils
 
         public static sitk.Image GetITKImageFromBitmap(Bitmap image)
         {
-            BitmapData bitmapData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, image.PixelFormat);
+            BitmapData bitmapData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed/*image.PixelFormat*/);
             int bitmapByteSize = bitmapData.Stride * image.Height;
             byte[] bitmapByteArray = new byte[bitmapByteSize];
+            uint width = (uint)image.Width;
+            uint height = (uint)image.Height;
 
             Marshal.Copy(bitmapData.Scan0, bitmapByteArray, 0, bitmapByteSize);
             image.UnlockBits(bitmapData);
 
-            sitk.Image sitkImage = new sitk.Image((uint)image.Width, (uint)image.Height, sitk.PixelIDValueEnum.sitkUInt8);
+            sitk.Image sitkImage = new sitk.Image(width, height, sitk.PixelIDValueEnum.sitkUInt8);
             IntPtr sitkImageBuffer = sitkImage.GetBufferAsUInt8();
 
             Marshal.Copy(bitmapByteArray, 0, sitkImageBuffer, bitmapByteSize);

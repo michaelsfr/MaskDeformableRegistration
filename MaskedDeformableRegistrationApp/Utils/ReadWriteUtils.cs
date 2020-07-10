@@ -10,6 +10,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Drawing;
 using System.Drawing.Imaging;
+using MaskedDeformableRegistrationApp.Registration;
 
 namespace MaskedDeformableRegistrationApp.Utils
 {
@@ -101,6 +102,25 @@ namespace MaskedDeformableRegistrationApp.Utils
             return dict;
         }
 
+        public static List<CoordPoint> ReadPointSetsFromFile(string filenamePointSets)
+        {
+            if(File.Exists(filenamePointSets))
+            {
+                string content = File.ReadAllText(filenamePointSets);
+                string[] temp = content.Split(new char[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] sPoints = temp[1].Split('\n');
+                List<CoordPoint> points = new List<CoordPoint>();
+
+                foreach (string sPoint in sPoints)
+                {
+                    double[] coords = sPoint.Split(' ').Where(it => it != null).Select(it => double.Parse(it)).ToArray();
+                    points.Add(new CoordPoint(coords[0], coords[1]));
+                }
+                return points;
+            }
+            return null;
+        }
+
         public static void SerializeObjectToJSON<T>(T toSerialize, string filename)
         {
             using (StreamWriter file = File.CreateText(filename))
@@ -137,6 +157,21 @@ namespace MaskedDeformableRegistrationApp.Utils
                 T data = (T)serializer.Deserialize(file, typeof(T));
                 return data;
             }
+        }
+
+        public static string GetOutputDirectory(RegistrationParameters parameters, int i = -1)
+        {
+            string path = Path.Combine(ApplicationContext.OutputPath, parameters.SubDirectory);
+            if (i != -1)
+            {
+                path = Path.Combine(path, i.ToString());
+            }
+
+            if (!Directory.Exists(path))
+            {
+                Directory.CreateDirectory(path);
+            }
+            return path;
         }
     }
 }

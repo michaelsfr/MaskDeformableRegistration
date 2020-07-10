@@ -105,3 +105,4 @@ C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrat
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.pdb
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.SegParamsNonRigidForm.resources
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.SegParamsRigidForm.resources
+C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.EvaluationForm.resources

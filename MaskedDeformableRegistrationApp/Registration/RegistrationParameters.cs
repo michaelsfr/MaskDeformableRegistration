@@ -106,5 +106,11 @@ namespace MaskedDeformableRegistrationApp.Registration
         // distance preserving
         public string SegmentedImageFilename { get; set; } = null;
         public int[] PenaltyGridSpacingInVoxels { get; set; } = null;
+
+
+        // transformation
+        public Dictionary<string, sitk.VectorOfParameterMap> TransformationParameterMap { get; set; } = new Dictionary<string, sitk.VectorOfParameterMap>();
+        public Dictionary<string, sitk.VectorOfParameterMap> InverseTranformationParameterMap { get; set; } = new Dictionary<string, sitk.VectorOfParameterMap>();
+        public string FixedImagePointSetFilename { get; set; }
     }
 }
