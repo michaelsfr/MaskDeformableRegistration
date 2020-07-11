@@ -103,20 +103,26 @@ namespace MaskedDeformableRegistrationApp.Utils
             return labelStatisticsImageFilter;
         }
 
+        public static sitk.LabelOverlapMeasuresImageFilter GetOverlapImageFilter(sitk.Image mask01, sitk.Image mask02)
+        {
+            sitk.LabelOverlapMeasuresImageFilter overlapFilter = new sitk.LabelOverlapMeasuresImageFilter();
+            overlapFilter.Execute(mask01, mask02);
+            return overlapFilter;
+        }
+
         public static string TransfromPointSet(sitk.VectorOfParameterMap transformParameters, string movImage, RegistrationParameters parameters)
         {
-            sitk.Image movingImage = ReadWriteUtils.ReadITKImageFromFile(movImage , sitk.PixelIDValueEnum.sitkFloat32);
+            //sitk.Image movingImage = ReadWriteUtils.ReadITKImageFromFile(movImage , sitk.PixelIDValueEnum.sitkFloat32);
             sitk.TransformixImageFilter transformix = null;
             try
             {
                 transformix = new sitk.TransformixImageFilter();
                 transformix.SetTransformParameterMap(transformParameters);
-                transformix.SetMovingImage(movingImage);
+                //transformix.SetMovingImage(movingImage);
                 transformix.SetFixedPointSetFileName(parameters.FixedImagePointSetFilename);
                 transformix.SetOutputDirectory(ReadWriteUtils.GetOutputDirectory(parameters));
                 sitk.Image image = transformix.Execute();
-                string output = ReadWriteUtils.GetOutputDirectory(parameters) + "\\points.mhd";
-                //ReadWriteUtils.WriteSitkImage(image, output);
+                string output = ReadWriteUtils.GetOutputDirectory(parameters) + "\\outputpoints.txt";
                 image.Dispose();
                 return output;
             }
@@ -124,6 +130,9 @@ namespace MaskedDeformableRegistrationApp.Utils
             {
                 Console.WriteLine(ex);
                 return null;
+            } finally
+            {
+                transformix.Dispose();
             }
         }
 

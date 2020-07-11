@@ -111,9 +111,13 @@ namespace MaskedDeformableRegistrationApp.Registration
             return this.transformedImage;
         }
 
-        public sitk.Image GetTranform()
+        public sitk.Image GetDeformationField()
         {
-            return transformix.GetDeformationField();
+            if(transformix != null)
+            {
+                return transformix.GetDeformationField();
+            }
+            return null;
         }
 
         public void SetInterpolationType(sitk.InterpolatorEnum interpolationType)

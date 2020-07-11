@@ -174,6 +174,7 @@ namespace MaskedDeformableRegistrationApp.Forms
                 Console.SetOut(stringWriter);
 
                 string filenameReference = ToRegistrate.First();
+                RegistrationParametersRigid.FixedImageFilename = filenameReference;
                 // resize fixed image
                 sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filenameReference);
                 sitk.Image refResized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
@@ -275,6 +276,7 @@ namespace MaskedDeformableRegistrationApp.Forms
                 Console.SetOut(stringWriter);
 
                 string filenameReference = ToRegistrate.First();
+                RegistrationParametersNonRigid.FixedImageFilename = filenameReference;
                 // resize fixed image
                 sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filenameReference);
                 sitk.Image refResized = ImageUtils.ResizeImage(refImage, LargestImageWidth, LargestImageHeight);
@@ -354,7 +356,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             }
 
             regRigid.Execute();
-            sitk.VectorOfParameterMap transformparams = regRigid.GetTransformationFile();
+            sitk.VectorOfParameterMap transformparams = regRigid.GetTransformationParameterMap();
             regRigid.Dispose();
 
             return transformparams;
@@ -386,7 +388,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             }
 
             nonRigidRegistration.Execute();
-            sitk.VectorOfParameterMap transformparams = nonRigidRegistration.GetTransformationFile();
+            sitk.VectorOfParameterMap transformparams = nonRigidRegistration.GetTransformationParameterMap();
             nonRigidRegistration.Dispose();
 
             return transformparams;
@@ -471,7 +473,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             trans.WriteTransformedImage(resultFilename);
 
             // write deformation field
-            sitk.Image deformationField = trans.GetTranform();
+            sitk.Image deformationField = trans.GetDeformationField();
             string filenameDeformationField = ReadWriteUtils.GetOutputDirectory(parameters, iteration) + "\\deformationField.mhd";
             ReadWriteUtils.WriteSitkImage(deformationField, filenameDeformationField);
             trans.Dispose();
@@ -497,6 +499,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             if (EditedMapRigid == null)
             {
+                
                 using (RigidRegistration reg = new RigidRegistration(RegistrationParametersRigid))
                 {
                     EditedMapRigid = reg.GetParameterMap();
@@ -616,19 +619,19 @@ namespace MaskedDeformableRegistrationApp.Forms
             EditedMapRigid = null;
             if (radioButtonTranslation.Checked)
             {
-                RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.translation;
+                SetRegistrationParameterMap(RegistrationParametersRigid, RegistrationDefaultParameters.translation, EditedMapRigid);
             }
             else if (radioButtonSimilarity.Checked)
             {
-                RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.similarity;
+                SetRegistrationParameterMap(RegistrationParametersRigid, RegistrationDefaultParameters.similarity, EditedMapRigid);
             }
             else if (radioButtonRigid.Checked)
             {
-                RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.rigid;
+                SetRegistrationParameterMap(RegistrationParametersRigid, RegistrationDefaultParameters.rigid, EditedMapRigid);
             }
             else if (radioButtonAffine.Checked)
             {
-                RegistrationParametersRigid.RegistrationType = RegistrationDefaultParameters.affine;
+                SetRegistrationParameterMap(RegistrationParametersRigid, RegistrationDefaultParameters.affine, EditedMapRigid);
             }
             RegistrationParametersRigid.SubDirectory = RegistrationParametersRigid.RegistrationType + "_" + DateTime.Now.ToShortDateString();
         }
@@ -664,21 +667,27 @@ namespace MaskedDeformableRegistrationApp.Forms
             EditedMapNonRigid = null;
             if (radioButtonAdvancedBspline.Checked)
             {
-                RegistrationParametersNonRigid.RegistrationType = RegistrationDefaultParameters.bspline;
+                SetRegistrationParameterMap(RegistrationParametersNonRigid, RegistrationDefaultParameters.bspline, EditedMapNonRigid);
             }
             else if (radioButtonBsplineDiffusion.Checked)
             {
-                RegistrationParametersNonRigid.RegistrationType = RegistrationDefaultParameters.diffusion;
+                SetRegistrationParameterMap(RegistrationParametersNonRigid, RegistrationDefaultParameters.diffusion, EditedMapNonRigid);
             }
             else if (radioButtonKernelSpline.Checked)
             {
-                RegistrationParametersNonRigid.RegistrationType = RegistrationDefaultParameters.spline;
+                SetRegistrationParameterMap(RegistrationParametersNonRigid, RegistrationDefaultParameters.spline, EditedMapNonRigid);
             }
             else if (radioButtonSplineRecursive.Checked)
             {
-                RegistrationParametersNonRigid.RegistrationType = RegistrationDefaultParameters.recursive;
+                SetRegistrationParameterMap(RegistrationParametersNonRigid, RegistrationDefaultParameters.recursive, EditedMapNonRigid);
             }
             RegistrationParametersNonRigid.SubDirectory = RegistrationParametersNonRigid.RegistrationType + "_" + DateTime.Now.ToShortDateString();
+        }
+
+        private void SetRegistrationParameterMap(RegistrationParameters parameters, RegistrationDefaultParameters defaultParams, sitk.ParameterMap map)
+        {
+            parameters.RegistrationType = defaultParams;
+            map = RegistrationUtils.GetDefaultParameterMap(defaultParams);
         }
 
         private void buttonEditParamsNonRigid_Click(object sender, EventArgs e)

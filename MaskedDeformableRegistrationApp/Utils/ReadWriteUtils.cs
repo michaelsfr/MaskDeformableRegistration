@@ -102,7 +102,40 @@ namespace MaskedDeformableRegistrationApp.Utils
             return dict;
         }
 
-        public static List<CoordPoint> ReadPointSetsFromFile(string filenamePointSets)
+        public static Tuple<List<CoordPoint>, List<CoordPoint>> ReadFixedAndTransformedPointSets(string filename)
+        {
+            Tuple<List<CoordPoint>, List<CoordPoint>> result = null;
+
+            if (File.Exists(filename))
+            {
+                string content = File.ReadAllText(filename);
+                string[] lines = content.Split('\n');
+
+                List<CoordPoint> inputPoints = new List<CoordPoint>();
+                List<CoordPoint> transformedPoints = new List<CoordPoint>();
+
+                foreach (string line in lines)
+                {
+                    List<string> entries = line.Split(';').ToList();
+                    string inputPoint = entries.Where(it => it.Contains("InputPoint")).FirstOrDefault();
+                    string transformedPoint = entries.Where(it => it.Contains("OutputPoint")).FirstOrDefault();
+                    inputPoints.Add(ExractCoordsFromString(inputPoint));
+                    transformedPoints.Add(ExractCoordsFromString(transformedPoint));
+                }
+                result = new Tuple<List<CoordPoint>, List<CoordPoint>>(inputPoints, transformedPoints);
+            }
+
+            return result;
+        }
+
+        private static CoordPoint ExractCoordsFromString(string sCoord)
+        {
+            string[] temp = sCoord.Split(new char[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries);
+            double[] coords = temp[1].Split(' ').Where(it => it != null).Select(it => double.Parse(it)).ToArray();
+            return new CoordPoint(coords[0], coords[1]);
+        }
+             
+        public static List<CoordPoint> ReadPointSetsFromFileOLD(string filenamePointSets)
         {
             if(File.Exists(filenamePointSets))
             {

@@ -1,6 +1,8 @@
-﻿using MaskedDeformableRegistrationApp.Utils;
+﻿using MaskedDeformableRegistrationApp.Segmentation;
+using MaskedDeformableRegistrationApp.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -71,6 +73,12 @@ namespace MaskedDeformableRegistrationApp.Registration
             }
         }
         public string SubDirectory { get; set; } = "";
+        public string OutputDirectory {
+            get
+            {
+                return Path.Combine(ApplicationContext.OutputPath, SubDirectory);
+            }
+        }
 
         public sitk.ParameterMap ParamMapToUse { get; set; } = null;
 
@@ -107,10 +115,13 @@ namespace MaskedDeformableRegistrationApp.Registration
         public string SegmentedImageFilename { get; set; } = null;
         public int[] PenaltyGridSpacingInVoxels { get; set; } = null;
 
-
-        // transformation
+        // evaluation
+        public string FixedImageFilename { get; set; }
         public Dictionary<string, sitk.VectorOfParameterMap> TransformationParameterMap { get; set; } = new Dictionary<string, sitk.VectorOfParameterMap>();
-        public Dictionary<string, sitk.VectorOfParameterMap> InverseTranformationParameterMap { get; set; } = new Dictionary<string, sitk.VectorOfParameterMap>();
         public string FixedImagePointSetFilename { get; set; }
+
+        // segmentaion
+        public SegmentationParameters WholeTissueSeg { get; set; } = null;
+        public SegmentationParameters InnerStructuresSeg { get; set; } = null;
     }
 }
