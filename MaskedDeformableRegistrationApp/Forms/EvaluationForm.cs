@@ -80,6 +80,8 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonCalcMetrics_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             string key = comboBoxMoving.SelectedValue.ToString();
             sitk.VectorOfParameterMap map = registrationParameters.TransformationParameterMap[key];
             registrationParameters.FixedImagePointSetFilename = filenameFixedPointSet;
@@ -90,12 +92,16 @@ namespace MaskedDeformableRegistrationApp.Forms
             double absTRE = VisualizationEvaluationUtils.CalculateAbsoluteTargetRegistrationError(tuple.Item1, tuple.Item2);
             double meanTRE = VisualizationEvaluationUtils.CalculateMeanTargetRegistrationError(tuple.Item1, tuple.Item2);
 
-            labelAbsDiff.Text = absTRE.ToString();
-            labelMeanDiff.Text = meanTRE.ToString();
+            labelAbsDiff.Text = absTRE.ToString("0.##");
+            labelMeanDiff.Text = meanTRE.ToString("0.##");
+
+            Cursor.Current = Cursors.Default;
         }
 
         private void buttonCalcCoef_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             string fixedImageFilename = registrationParameters.FixedImageFilename;
             string movingImageFilename = comboBoxMovingImage.SelectedValue.ToString();
             bool isInnerSeg = comboBoxSegmentationParams.SelectedIndex == 1;
@@ -105,14 +111,14 @@ namespace MaskedDeformableRegistrationApp.Forms
             var img02 = ReadWriteUtils.ReadOpenCVImageFromFile(movingImageFilename);
 
             // whole particle seg
-            WholeTissueSegmentation seg01 = new WholeTissueSegmentation(img01, registrationParameters.WholeTissueSeg);
+            WholeTissueSegmentation seg01 = new WholeTissueSegmentation(img01, registrationParameters.WholeTissueSegParams);
             seg01.Execute();
             var mask01w = seg01.GetOutput().Clone();
             seg01.Dispose();
             string mask01wFn = registrationParameters.OutputDirectory + "\\mask01w.png";
             ReadWriteUtils.WriteUMatToFile(mask01wFn, mask01w.ToUMat());
 
-            WholeTissueSegmentation seg02 = new WholeTissueSegmentation(img02, registrationParameters.WholeTissueSeg);
+            WholeTissueSegmentation seg02 = new WholeTissueSegmentation(img02, registrationParameters.WholeTissueSegParams);
             seg02.Execute();
             var mask02w = seg02.GetOutput().Clone();
             seg02.Dispose();
@@ -123,24 +129,38 @@ namespace MaskedDeformableRegistrationApp.Forms
             if (isInnerSeg)
             {
                 // inner structure seg
-
+                // todo
 
             } else
             {
                 sitk.Image sImg01 = ReadWriteUtils.ReadITKImageFromFile(mask01wFn);
                 sitk.Image sImg02 = ReadWriteUtils.ReadITKImageFromFile(mask02wFn);
                 overlapFilter = VisualizationEvaluationUtils.GetOverlapImageFilter(sImg01, sImg02);
-
-                Console.WriteLine("Dice coefficient: " + overlapFilter.GetDiceCoefficient());
-                Console.WriteLine("False negative error: " + overlapFilter.GetFalseNegativeError());
-                Console.WriteLine("False positive error: " + overlapFilter.GetFalsePositiveError());
-                Console.WriteLine("JaccaFrd coefficient: " + overlapFilter.GetJaccardCoefficient());
-                Console.WriteLine("Mean overlap: " + overlapFilter.GetMeanOverlap());
             }
+
+            if(overlapFilter != null)
+            {
+                double diceCoef = overlapFilter.GetDiceCoefficient();
+                double falseNegative = overlapFilter.GetFalseNegativeError();
+                double falsePositive = overlapFilter.GetFalsePositiveError();
+                double jaccard = overlapFilter.GetJaccardCoefficient();
+                double meanOverlap = overlapFilter.GetMeanOverlap();
+                double unionOverlap = overlapFilter.GetUnionOverlap();
+
+                labelDice.Text = diceCoef.ToString("0.##");
+                labelJacc.Text = jaccard.ToString("0.##");
+                labelfalseNegPos.Text = string.Format("{0} / {1}", falseNegative.ToString("0.##"), falsePositive.ToString("0.##"));
+                labelMeanOverlap.Text = meanOverlap.ToString("0.##");
+                labelUnionOverlap.Text = unionOverlap.ToString("0.##");
+            }
+
+            Cursor.Current = Cursors.Default;
         }
 
         private void buttonDiffImage_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             string fixedImageFilename = registrationParameters.FixedImageFilename;
             string movingImageFilename = comboBoxMovingImage.SelectedValue.ToString();
 
@@ -149,10 +169,17 @@ namespace MaskedDeformableRegistrationApp.Forms
             var img02 = ReadWriteUtils.ReadITKImageFromFile(movingImageFilename);
             var difference = VisualizationEvaluationUtils.GetTotalDifferenceImage(img01, img02);
             ReadWriteUtils.WriteSitkImage(difference, registrationParameters.OutputDirectory + "\\difference.png");
+            img01.Dispose();
+            img02.Dispose();
+            difference.Dispose();
+
+            Cursor.Current = Cursors.Default;
         }
 
         private void buttonCheckerBoard_Click(object sender, EventArgs e)
         {
+            Cursor.Current = Cursors.WaitCursor;
+
             string fixedImageFilename = registrationParameters.FixedImageFilename;
             string movingImageFilename = comboBoxMovingImage.SelectedValue.ToString();
 
@@ -161,6 +188,11 @@ namespace MaskedDeformableRegistrationApp.Forms
             var img02 = ReadWriteUtils.ReadITKImageFromFile(movingImageFilename);
             var checkerboard = VisualizationEvaluationUtils.GetCheckerBoard(img01, img02);
             ReadWriteUtils.WriteSitkImage(checkerboard, registrationParameters.OutputDirectory + "\\checkerboard.png");
+            img01.Dispose();
+            img02.Dispose();
+            checkerboard.Dispose();
+
+            Cursor.Current = Cursors.Default;
         }
     }
 }

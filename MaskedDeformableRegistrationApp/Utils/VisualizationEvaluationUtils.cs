@@ -22,21 +22,29 @@ namespace MaskedDeformableRegistrationApp.Utils
 
         public static sitk.Image GetTotalDifferenceImage(sitk.Image img01, sitk.Image img02)
         {
-            // todo: split channels and do subtraction only for grayscale image?
+            sitk.VectorIndexSelectionCastImageFilter channelFilter = new sitk.VectorIndexSelectionCastImageFilter();
+            channelFilter.SetIndex(0);
+            sitk.Image ch01 = channelFilter.Execute(img01);
+            sitk.VectorIndexSelectionCastImageFilter channelFilter2 = new sitk.VectorIndexSelectionCastImageFilter();
+            channelFilter2.SetIndex(0);
+            sitk.Image ch02 = channelFilter2.Execute(img02);
             sitk.SubtractImageFilter subtractImageFilter = new sitk.SubtractImageFilter();
-            sitk.Image imgResult = subtractImageFilter.Execute(img01, img02);
+            sitk.Image imgResult = subtractImageFilter.Execute(ch01, ch02);
             return imgResult;
         }
 
         public static sitk.Image GetCheckerBoard(sitk.Image img01, sitk.Image img02, uint size = 0)
         {
-            Console.WriteLine(string.Format("width: Img01 [{0}] - Img02 [{1}]", img01.GetWidth(), img02.GetWidth()));
-            Console.WriteLine(string.Format("height: Img01 [{0}] - Img02 [{1}]", img01.GetHeight(), img02.GetHeight()));
-            Console.WriteLine(string.Format("pixel type: Img01 [{0}] - Img02 [{1}]", img01.GetPixelIDTypeAsString(), img02.GetPixelIDTypeAsString()));       
+            //Console.WriteLine(string.Format("width: Img01 [{0}] - Img02 [{1}]", img01.GetWidth(), img02.GetWidth()));
+            //Console.WriteLine(string.Format("height: Img01 [{0}] - Img02 [{1}]", img01.GetHeight(), img02.GetHeight()));
+            //Console.WriteLine(string.Format("pixel type: Img01 [{0}] - Img02 [{1}]", img01.GetPixelIDTypeAsString(), img02.GetPixelIDTypeAsString()));
+            sitk.CastImageFilter castImageFilter01 = new sitk.CastImageFilter();
+            castImageFilter01.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
+            sitk.Image castedReference = castImageFilter01.Execute(img01);
 
-            sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
-            castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
-            sitk.Image castedImage = castImageFilter.Execute(img02);
+            sitk.CastImageFilter castImageFilter02 = new sitk.CastImageFilter();
+            castImageFilter02.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
+            sitk.Image castedImage = castImageFilter02.Execute(img02);
 
             sitk.Image tempImage = ImageUtils.ResizeImage(castedImage, img01);
 
@@ -50,7 +58,7 @@ namespace MaskedDeformableRegistrationApp.Utils
                 checkerBoard.SetCheckerPattern(vec);
             }
 
-            sitk.Image result = checkerBoard.Execute(img01, tempImage);
+            sitk.Image result = checkerBoard.Execute(castedReference, tempImage);
             return result;
         }
 
@@ -177,7 +185,7 @@ namespace MaskedDeformableRegistrationApp.Utils
         private static double GetEuclideanSum(List<CoordPoint> coords01, List<CoordPoint> coords02)
         {
             double sum = 0;
-            for (int i = 0; i <= coords01.Count; i++)
+            for (int i = 0; i < coords01.Count; i++)
             {
                 CoordPoint p1 = coords01.ElementAt(i);
                 CoordPoint p2 = coords02.ElementAt(i);

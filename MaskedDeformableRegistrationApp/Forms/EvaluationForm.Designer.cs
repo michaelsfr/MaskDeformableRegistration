@@ -40,20 +40,30 @@
             this.openFileDialogMoving = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBoxEuclidDist = new System.Windows.Forms.GroupBox();
+            this.labelMeanDiff = new System.Windows.Forms.Label();
+            this.label5 = new System.Windows.Forms.Label();
+            this.labelAbsDiff = new System.Windows.Forms.Label();
+            this.label3 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.groupBoxDiceJaccard = new System.Windows.Forms.GroupBox();
-            this.groupBoxMisc = new System.Windows.Forms.GroupBox();
-            this.buttonDiffImage = new System.Windows.Forms.Button();
-            this.buttonCheckerBoard = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
-            this.labelAbsDiff = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
-            this.labelMeanDiff = new System.Windows.Forms.Label();
-            this.comboBoxMovingImage = new System.Windows.Forms.ComboBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.comboBoxSegmentationParams = new System.Windows.Forms.ComboBox();
             this.buttonCalcCoef = new System.Windows.Forms.Button();
+            this.comboBoxSegmentationParams = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.comboBoxMovingImage = new System.Windows.Forms.ComboBox();
+            this.groupBoxMisc = new System.Windows.Forms.GroupBox();
+            this.buttonCheckerBoard = new System.Windows.Forms.Button();
+            this.buttonDiffImage = new System.Windows.Forms.Button();
+            this.label4 = new System.Windows.Forms.Label();
+            this.labelDice = new System.Windows.Forms.Label();
+            this.labelJacc = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.labelfalseNegPos = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.labelMeanOverlap = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.labelUnionOverlap = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -184,6 +194,42 @@
             this.groupBoxEuclidDist.TabStop = false;
             this.groupBoxEuclidDist.Text = "Euclidean distance";
             // 
+            // labelMeanDiff
+            // 
+            this.labelMeanDiff.AutoSize = true;
+            this.labelMeanDiff.Location = new System.Drawing.Point(189, 215);
+            this.labelMeanDiff.Name = "labelMeanDiff";
+            this.labelMeanDiff.Size = new System.Drawing.Size(13, 13);
+            this.labelMeanDiff.TabIndex = 11;
+            this.labelMeanDiff.Text = "0";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(16, 215);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(62, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Mean TRE:";
+            // 
+            // labelAbsDiff
+            // 
+            this.labelAbsDiff.AutoSize = true;
+            this.labelAbsDiff.Location = new System.Drawing.Point(189, 196);
+            this.labelAbsDiff.Name = "labelAbsDiff";
+            this.labelAbsDiff.Size = new System.Drawing.Size(13, 13);
+            this.labelAbsDiff.TabIndex = 9;
+            this.labelAbsDiff.Text = "0";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(16, 196);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(76, 13);
+            this.label3.TabIndex = 8;
+            this.label3.Text = "Absolute TRE:";
+            // 
             // splitContainer2
             // 
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -204,6 +250,16 @@
             // 
             // groupBoxDiceJaccard
             // 
+            this.groupBoxDiceJaccard.Controls.Add(this.labelUnionOverlap);
+            this.groupBoxDiceJaccard.Controls.Add(this.label16);
+            this.groupBoxDiceJaccard.Controls.Add(this.labelMeanOverlap);
+            this.groupBoxDiceJaccard.Controls.Add(this.label14);
+            this.groupBoxDiceJaccard.Controls.Add(this.labelfalseNegPos);
+            this.groupBoxDiceJaccard.Controls.Add(this.label12);
+            this.groupBoxDiceJaccard.Controls.Add(this.labelJacc);
+            this.groupBoxDiceJaccard.Controls.Add(this.label10);
+            this.groupBoxDiceJaccard.Controls.Add(this.labelDice);
+            this.groupBoxDiceJaccard.Controls.Add(this.label4);
             this.groupBoxDiceJaccard.Controls.Add(this.buttonCalcCoef);
             this.groupBoxDiceJaccard.Controls.Add(this.comboBoxSegmentationParams);
             this.groupBoxDiceJaccard.Controls.Add(this.label8);
@@ -216,6 +272,50 @@
             this.groupBoxDiceJaccard.TabStop = false;
             this.groupBoxDiceJaccard.Text = "Dice-Jaccard-Coefficient";
             // 
+            // buttonCalcCoef
+            // 
+            this.buttonCalcCoef.Location = new System.Drawing.Point(16, 126);
+            this.buttonCalcCoef.Name = "buttonCalcCoef";
+            this.buttonCalcCoef.Size = new System.Drawing.Size(224, 23);
+            this.buttonCalcCoef.TabIndex = 9;
+            this.buttonCalcCoef.Text = "Calculate coefficients";
+            this.buttonCalcCoef.UseVisualStyleBackColor = true;
+            this.buttonCalcCoef.Click += new System.EventHandler(this.buttonCalcCoef_Click);
+            // 
+            // comboBoxSegmentationParams
+            // 
+            this.comboBoxSegmentationParams.FormattingEnabled = true;
+            this.comboBoxSegmentationParams.Location = new System.Drawing.Point(16, 89);
+            this.comboBoxSegmentationParams.Name = "comboBoxSegmentationParams";
+            this.comboBoxSegmentationParams.Size = new System.Drawing.Size(224, 21);
+            this.comboBoxSegmentationParams.TabIndex = 8;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(16, 67);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(130, 13);
+            this.label8.TabIndex = 7;
+            this.label8.Text = "Segmentation parameters:";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(13, 16);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(170, 13);
+            this.label7.TabIndex = 6;
+            this.label7.Text = "Choose moving image to compare:";
+            // 
+            // comboBoxMovingImage
+            // 
+            this.comboBoxMovingImage.FormattingEnabled = true;
+            this.comboBoxMovingImage.Location = new System.Drawing.Point(16, 36);
+            this.comboBoxMovingImage.Name = "comboBoxMovingImage";
+            this.comboBoxMovingImage.Size = new System.Drawing.Size(224, 21);
+            this.comboBoxMovingImage.TabIndex = 5;
+            // 
             // groupBoxMisc
             // 
             this.groupBoxMisc.Controls.Add(this.buttonCheckerBoard);
@@ -227,16 +327,6 @@
             this.groupBoxMisc.TabStop = false;
             this.groupBoxMisc.Text = "Misc";
             // 
-            // buttonDiffImage
-            // 
-            this.buttonDiffImage.Location = new System.Drawing.Point(6, 186);
-            this.buttonDiffImage.Name = "buttonDiffImage";
-            this.buttonDiffImage.Size = new System.Drawing.Size(185, 23);
-            this.buttonDiffImage.TabIndex = 0;
-            this.buttonDiffImage.Text = "Create Difference-Image";
-            this.buttonDiffImage.UseVisualStyleBackColor = true;
-            this.buttonDiffImage.Click += new System.EventHandler(this.buttonDiffImage_Click);
-            // 
             // buttonCheckerBoard
             // 
             this.buttonCheckerBoard.Location = new System.Drawing.Point(6, 215);
@@ -247,85 +337,105 @@
             this.buttonCheckerBoard.UseVisualStyleBackColor = true;
             this.buttonCheckerBoard.Click += new System.EventHandler(this.buttonCheckerBoard_Click);
             // 
-            // label3
+            // buttonDiffImage
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 196);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(101, 13);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "Absolute difference:";
+            this.buttonDiffImage.Location = new System.Drawing.Point(6, 186);
+            this.buttonDiffImage.Name = "buttonDiffImage";
+            this.buttonDiffImage.Size = new System.Drawing.Size(185, 23);
+            this.buttonDiffImage.TabIndex = 0;
+            this.buttonDiffImage.Text = "Create Difference-Image";
+            this.buttonDiffImage.UseVisualStyleBackColor = true;
+            this.buttonDiffImage.Click += new System.EventHandler(this.buttonDiffImage_Click);
             // 
-            // labelAbsDiff
+            // label4
             // 
-            this.labelAbsDiff.AutoSize = true;
-            this.labelAbsDiff.Location = new System.Drawing.Point(159, 196);
-            this.labelAbsDiff.Name = "labelAbsDiff";
-            this.labelAbsDiff.Size = new System.Drawing.Size(13, 13);
-            this.labelAbsDiff.TabIndex = 9;
-            this.labelAbsDiff.Text = "0";
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(16, 158);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(84, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Dice coefficient:";
             // 
-            // label5
+            // labelDice
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(16, 215);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(87, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Mean difference:";
+            this.labelDice.AutoSize = true;
+            this.labelDice.Location = new System.Drawing.Point(194, 159);
+            this.labelDice.Name = "labelDice";
+            this.labelDice.Size = new System.Drawing.Size(13, 13);
+            this.labelDice.TabIndex = 11;
+            this.labelDice.Text = "0";
             // 
-            // labelMeanDiff
+            // labelJacc
             // 
-            this.labelMeanDiff.AutoSize = true;
-            this.labelMeanDiff.Location = new System.Drawing.Point(159, 215);
-            this.labelMeanDiff.Name = "labelMeanDiff";
-            this.labelMeanDiff.Size = new System.Drawing.Size(13, 13);
-            this.labelMeanDiff.TabIndex = 11;
-            this.labelMeanDiff.Text = "0";
+            this.labelJacc.AutoSize = true;
+            this.labelJacc.Location = new System.Drawing.Point(194, 178);
+            this.labelJacc.Name = "labelJacc";
+            this.labelJacc.Size = new System.Drawing.Size(13, 13);
+            this.labelJacc.TabIndex = 13;
+            this.labelJacc.Text = "0";
             // 
-            // comboBoxMovingImage
+            // label10
             // 
-            this.comboBoxMovingImage.FormattingEnabled = true;
-            this.comboBoxMovingImage.Location = new System.Drawing.Point(16, 36);
-            this.comboBoxMovingImage.Name = "comboBoxMovingImage";
-            this.comboBoxMovingImage.Size = new System.Drawing.Size(224, 21);
-            this.comboBoxMovingImage.TabIndex = 5;
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(16, 177);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(100, 13);
+            this.label10.TabIndex = 12;
+            this.label10.Text = "Jaccard coefficient:";
             // 
-            // label7
+            // labelfalseNegPos
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(13, 16);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(170, 13);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "Choose moving image to compare:";
+            this.labelfalseNegPos.AutoSize = true;
+            this.labelfalseNegPos.Location = new System.Drawing.Point(194, 197);
+            this.labelfalseNegPos.Name = "labelfalseNegPos";
+            this.labelfalseNegPos.Size = new System.Drawing.Size(13, 13);
+            this.labelfalseNegPos.TabIndex = 15;
+            this.labelfalseNegPos.Text = "0";
             // 
-            // label8
+            // label12
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(16, 67);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(130, 13);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "Segmentation parameters:";
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(16, 196);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(129, 13);
+            this.label12.TabIndex = 14;
+            this.label12.Text = "False negative / positive: ";
             // 
-            // comboBoxSegmentationParams
+            // labelMeanOverlap
             // 
-            this.comboBoxSegmentationParams.FormattingEnabled = true;
-            this.comboBoxSegmentationParams.Location = new System.Drawing.Point(16, 89);
-            this.comboBoxSegmentationParams.Name = "comboBoxSegmentationParams";
-            this.comboBoxSegmentationParams.Size = new System.Drawing.Size(224, 21);
-            this.comboBoxSegmentationParams.TabIndex = 8;
+            this.labelMeanOverlap.AutoSize = true;
+            this.labelMeanOverlap.Location = new System.Drawing.Point(194, 216);
+            this.labelMeanOverlap.Name = "labelMeanOverlap";
+            this.labelMeanOverlap.Size = new System.Drawing.Size(13, 13);
+            this.labelMeanOverlap.TabIndex = 17;
+            this.labelMeanOverlap.Text = "0";
             // 
-            // buttonCalcCoef
+            // label14
             // 
-            this.buttonCalcCoef.Location = new System.Drawing.Point(16, 126);
-            this.buttonCalcCoef.Name = "buttonCalcCoef";
-            this.buttonCalcCoef.Size = new System.Drawing.Size(224, 23);
-            this.buttonCalcCoef.TabIndex = 9;
-            this.buttonCalcCoef.Text = "Calculate coefficients";
-            this.buttonCalcCoef.UseVisualStyleBackColor = true;
-            this.buttonCalcCoef.Click += new System.EventHandler(this.buttonCalcCoef_Click);
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(16, 215);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(75, 13);
+            this.label14.TabIndex = 16;
+            this.label14.Text = "Mean overlap:";
+            // 
+            // labelUnionOverlap
+            // 
+            this.labelUnionOverlap.AutoSize = true;
+            this.labelUnionOverlap.Location = new System.Drawing.Point(194, 236);
+            this.labelUnionOverlap.Name = "labelUnionOverlap";
+            this.labelUnionOverlap.Size = new System.Drawing.Size(13, 13);
+            this.labelUnionOverlap.TabIndex = 19;
+            this.labelUnionOverlap.Text = "0";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(16, 235);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(73, 13);
+            this.label16.TabIndex = 18;
+            this.label16.Text = "Union overlap";
             // 
             // EvaluationForm
             // 
@@ -381,5 +491,15 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox comboBoxMovingImage;
+        private System.Windows.Forms.Label labelUnionOverlap;
+        private System.Windows.Forms.Label label16;
+        private System.Windows.Forms.Label labelMeanOverlap;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.Label labelfalseNegPos;
+        private System.Windows.Forms.Label label12;
+        private System.Windows.Forms.Label labelJacc;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label labelDice;
+        private System.Windows.Forms.Label label4;
     }
 }

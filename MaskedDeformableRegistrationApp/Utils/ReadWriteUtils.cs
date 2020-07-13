@@ -119,8 +119,11 @@ namespace MaskedDeformableRegistrationApp.Utils
                     List<string> entries = line.Split(';').ToList();
                     string inputPoint = entries.Where(it => it.Contains("InputPoint")).FirstOrDefault();
                     string transformedPoint = entries.Where(it => it.Contains("OutputPoint")).FirstOrDefault();
-                    inputPoints.Add(ExractCoordsFromString(inputPoint));
-                    transformedPoints.Add(ExractCoordsFromString(transformedPoint));
+                    if(inputPoint != null && transformedPoint != null)
+                    {
+                        inputPoints.Add(ExractCoordsFromString(inputPoint));
+                        transformedPoints.Add(ExractCoordsFromString(transformedPoint));
+                    }
                 }
                 result = new Tuple<List<CoordPoint>, List<CoordPoint>>(inputPoints, transformedPoints);
             }
@@ -131,7 +134,7 @@ namespace MaskedDeformableRegistrationApp.Utils
         private static CoordPoint ExractCoordsFromString(string sCoord)
         {
             string[] temp = sCoord.Split(new char[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries);
-            double[] coords = temp[1].Split(' ').Where(it => it != null).Select(it => double.Parse(it)).ToArray();
+            double[] coords = temp[1].Replace('.', ',').Split(' ').Where(it => it != null && it != "").Select(it => double.Parse(it)).ToArray();
             return new CoordPoint(coords[0], coords[1]);
         }
              
@@ -146,7 +149,7 @@ namespace MaskedDeformableRegistrationApp.Utils
 
                 foreach (string sPoint in sPoints)
                 {
-                    double[] coords = sPoint.Split(' ').Where(it => it != null).Select(it => double.Parse(it)).ToArray();
+                    double[] coords = sPoint.Replace('.', ',').Split(' ').Where(it => it != null).Select(it => double.Parse(it)).ToArray();
                     points.Add(new CoordPoint(coords[0], coords[1]));
                 }
                 return points;

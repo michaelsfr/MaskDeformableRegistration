@@ -22,6 +22,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             RegistrationParameters parameters = new RegistrationParameters();
             parameters.RegistrationType = RegistrationDefaultParameters.rigid;
             parameters.NumberOfResolutions = 10;
+
             return parameters;
         }
 
@@ -121,7 +122,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         public string FixedImagePointSetFilename { get; set; }
 
         // segmentaion
-        public SegmentationParameters WholeTissueSeg { get; set; } = null;
-        public SegmentationParameters InnerStructuresSeg { get; set; } = null;
+        public SegmentationParameters WholeTissueSegParams { get; set; } = new SegmentationParameters();
+        public SegmentationParameters InnerStructuresSegParams { get; set; } = new SegmentationParameters();
     }
 }

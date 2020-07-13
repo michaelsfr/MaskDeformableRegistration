@@ -116,16 +116,30 @@ namespace MaskedDeformableRegistrationApp.Registration
 
         public virtual void SetFixedMask(sitk.Image fixedMask)
         {
-            sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
-            castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkUInt8);
-            this.fixedMask = castImageFilter.Execute(fixedMask);
+            try
+            {
+                sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
+                castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkUInt8);
+                this.fixedMask = castImageFilter.Execute(fixedMask);
+            } catch (Exception)
+            {
+                // ignore when mask of pixeltype uint8
+            }
+            
         }
 
         public virtual void SetMovingMask(sitk.Image movingMask)
         {
-            sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
-            castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkUInt8);
-            this.movingMask = castImageFilter.Execute(movingMask);
+            try
+            {
+                sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
+                castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkUInt8);
+                this.movingMask = castImageFilter.Execute(movingMask);
+            } catch (Exception)
+            {
+                // ignore when mask of pixeltype uint8
+            }
+
         }
 
         public virtual void SetParameterMap(string file)
