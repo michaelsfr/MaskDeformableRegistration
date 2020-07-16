@@ -86,7 +86,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             sitk.VectorOfParameterMap map = registrationParameters.TransformationParameterMap[key];
             registrationParameters.FixedImagePointSetFilename = filenameFixedPointSet;
 
-            string filenameOutputPoints = VisualizationEvaluationUtils.TransfromPointSet(map, key, registrationParameters);
+            string filenameOutputPoints = VisualizationEvaluationUtils.TransfromPointSet(map, registrationParameters);
             var tuple = ReadWriteUtils.ReadFixedAndTransformedPointSets(filenameOutputPoints);
 
             double absTRE = VisualizationEvaluationUtils.CalculateAbsoluteTargetRegistrationError(tuple.Item1, tuple.Item2);
