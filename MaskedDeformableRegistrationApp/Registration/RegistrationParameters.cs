@@ -80,6 +80,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 return Path.Combine(ApplicationContext.OutputPath, SubDirectory);
             }
         }
+        public int Iteration = -1;
 
         public sitk.ParameterMap ParamMapToUse { get; set; } = null;
 

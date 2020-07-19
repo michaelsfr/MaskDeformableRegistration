@@ -16,12 +16,12 @@ namespace MaskedDeformableRegistrationApp.Utils
 {
     public static class ReadWriteUtils
     {
-        public static Image<Bgr, byte> ReadOpenCVImageFromFile(string file)
+        public static Image<T, D> ReadOpenCVImageFromFile<T, D>(string file) where T : struct, IColor where D : new()
         {
-            Image<Bgr, byte> image = null;
+            Image<T, D> image = null;
             try
             {
-                image = new Image<Bgr, byte>(file);
+                image = new Image<T, D>(file);
             } catch (Exception ex)
             {
                 Console.WriteLine(ex);

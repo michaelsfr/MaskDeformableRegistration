@@ -58,7 +58,6 @@
             this.radioButtonKernelSpline = new System.Windows.Forms.RadioButton();
             this.radioButtonBsplineDiffusion = new System.Windows.Forms.RadioButton();
             this.radioButtonAdvancedBspline = new System.Windows.Forms.RadioButton();
-            this.buttonSegmentationInnerstructures = new System.Windows.Forms.Button();
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             this.buttonEvaluateNonRigidReg = new System.Windows.Forms.Button();
             this.buttonStartNonRigidRegistration = new System.Windows.Forms.Button();
@@ -66,6 +65,7 @@
             this.textBoxConsoleNonRigid = new System.Windows.Forms.TextBox();
             this.progressBarNonRigid = new System.Windows.Forms.ProgressBar();
             this.tabPageManual = new System.Windows.Forms.TabPage();
+            this.buttonSegmentationInnerstructures = new System.Windows.Forms.Button();
             this.buttonSegmentationParams = new System.Windows.Forms.Button();
             this.backgroundWorkerRigid = new System.ComponentModel.BackgroundWorker();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
@@ -81,8 +81,9 @@
             this.radioButtonLastInStack = new System.Windows.Forms.RadioButton();
             this.radioButtonFirstFromStack = new System.Windows.Forms.RadioButton();
             this.backgroundWorkerNonRigid = new System.ComponentModel.BackgroundWorker();
-            this.checkBoxUseWholeSeg = new System.Windows.Forms.CheckBox();
-            this.checkBoxUseInnerSeg = new System.Windows.Forms.CheckBox();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioButtonWholeTissue = new System.Windows.Forms.RadioButton();
+            this.radioButtonInnerStructures = new System.Windows.Forms.RadioButton();
             this.tabControlRegistration.SuspendLayout();
             this.tabPageRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -112,6 +113,7 @@
             this.splitContainer3.SuspendLayout();
             this.groupBoxMaskingGeneral.SuspendLayout();
             this.groupBoxRegOrder.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControlRegistration
@@ -132,7 +134,7 @@
             this.tabPageRigid.Location = new System.Drawing.Point(4, 22);
             this.tabPageRigid.Name = "tabPageRigid";
             this.tabPageRigid.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageRigid.Size = new System.Drawing.Size(677, 322);
+            this.tabPageRigid.Size = new System.Drawing.Size(782, 322);
             this.tabPageRigid.TabIndex = 0;
             this.tabPageRigid.Text = "Rigid registration";
             this.tabPageRigid.UseVisualStyleBackColor = true;
@@ -153,7 +155,7 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(671, 316);
+            this.splitContainer1.Size = new System.Drawing.Size(776, 316);
             this.splitContainer1.SplitterDistance = 133;
             this.splitContainer1.TabIndex = 0;
             // 
@@ -263,8 +265,8 @@
             // 
             this.splitContainer2.Panel2.Controls.Add(this.textBoxConsoleRigid);
             this.splitContainer2.Panel2.Controls.Add(this.progressBarRigid);
-            this.splitContainer2.Size = new System.Drawing.Size(671, 179);
-            this.splitContainer2.SplitterDistance = 146;
+            this.splitContainer2.Size = new System.Drawing.Size(776, 179);
+            this.splitContainer2.SplitterDistance = 168;
             this.splitContainer2.TabIndex = 2;
             // 
             // buttonEvaluation
@@ -473,16 +475,6 @@
             this.radioButtonAdvancedBspline.UseVisualStyleBackColor = true;
             this.radioButtonAdvancedBspline.CheckedChanged += new System.EventHandler(this.radioButtonAdvancedBspline_CheckedChanged);
             // 
-            // buttonSegmentationInnerstructures
-            // 
-            this.buttonSegmentationInnerstructures.Location = new System.Drawing.Point(295, 67);
-            this.buttonSegmentationInnerstructures.Name = "buttonSegmentationInnerstructures";
-            this.buttonSegmentationInnerstructures.Size = new System.Drawing.Size(124, 40);
-            this.buttonSegmentationInnerstructures.TabIndex = 4;
-            this.buttonSegmentationInnerstructures.Text = "Adjust inner structures params";
-            this.buttonSegmentationInnerstructures.UseVisualStyleBackColor = true;
-            this.buttonSegmentationInnerstructures.Click += new System.EventHandler(this.buttonSegmentationInnerstructures_Click);
-            // 
             // splitContainer5
             // 
             this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
@@ -553,10 +545,20 @@
             this.tabPageManual.Location = new System.Drawing.Point(4, 22);
             this.tabPageManual.Name = "tabPageManual";
             this.tabPageManual.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageManual.Size = new System.Drawing.Size(677, 322);
+            this.tabPageManual.Size = new System.Drawing.Size(782, 322);
             this.tabPageManual.TabIndex = 2;
             this.tabPageManual.Text = "Manual registration";
             this.tabPageManual.UseVisualStyleBackColor = true;
+            // 
+            // buttonSegmentationInnerstructures
+            // 
+            this.buttonSegmentationInnerstructures.Location = new System.Drawing.Point(295, 67);
+            this.buttonSegmentationInnerstructures.Name = "buttonSegmentationInnerstructures";
+            this.buttonSegmentationInnerstructures.Size = new System.Drawing.Size(124, 40);
+            this.buttonSegmentationInnerstructures.TabIndex = 4;
+            this.buttonSegmentationInnerstructures.Text = "Adjust inner structures params";
+            this.buttonSegmentationInnerstructures.UseVisualStyleBackColor = true;
+            this.buttonSegmentationInnerstructures.Click += new System.EventHandler(this.buttonSegmentationInnerstructures_Click);
             // 
             // buttonSegmentationParams
             // 
@@ -564,7 +566,7 @@
             this.buttonSegmentationParams.Name = "buttonSegmentationParams";
             this.buttonSegmentationParams.Size = new System.Drawing.Size(124, 51);
             this.buttonSegmentationParams.TabIndex = 4;
-            this.buttonSegmentationParams.Text = "Adjust fore- /background segmentation params";
+            this.buttonSegmentationParams.Text = "Adjust fore-/ background segmentation params";
             this.buttonSegmentationParams.UseVisualStyleBackColor = true;
             this.buttonSegmentationParams.Click += new System.EventHandler(this.buttonSegmentationParams_Click);
             // 
@@ -590,8 +592,7 @@
             // 
             // groupBoxMaskingGeneral
             // 
-            this.groupBoxMaskingGeneral.Controls.Add(this.checkBoxUseInnerSeg);
-            this.groupBoxMaskingGeneral.Controls.Add(this.checkBoxUseWholeSeg);
+            this.groupBoxMaskingGeneral.Controls.Add(this.groupBox1);
             this.groupBoxMaskingGeneral.Controls.Add(this.radioButtonFIxedAndMovingMask);
             this.groupBoxMaskingGeneral.Controls.Add(this.buttonSegmentationInnerstructures);
             this.groupBoxMaskingGeneral.Controls.Add(this.buttonSegmentationParams);
@@ -715,25 +716,38 @@
             this.radioButtonFirstFromStack.Text = "Use first image in stack as reference";
             this.radioButtonFirstFromStack.UseVisualStyleBackColor = true;
             // 
-            // checkBoxUseWholeSeg
+            // groupBox1
             // 
-            this.checkBoxUseWholeSeg.AutoSize = true;
-            this.checkBoxUseWholeSeg.Location = new System.Drawing.Point(169, 21);
-            this.checkBoxUseWholeSeg.Name = "checkBoxUseWholeSeg";
-            this.checkBoxUseWholeSeg.Size = new System.Drawing.Size(106, 17);
-            this.checkBoxUseWholeSeg.TabIndex = 9;
-            this.checkBoxUseWholeSeg.Text = "Use whole tissue";
-            this.checkBoxUseWholeSeg.UseVisualStyleBackColor = true;
+            this.groupBox1.Controls.Add(this.radioButtonInnerStructures);
+            this.groupBox1.Controls.Add(this.radioButtonWholeTissue);
+            this.groupBox1.Location = new System.Drawing.Point(159, 11);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(130, 74);
+            this.groupBox1.TabIndex = 11;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Mask option";
             // 
-            // checkBoxUseInnerSeg
+            // radioButtonWholeTissue
             // 
-            this.checkBoxUseInnerSeg.AutoSize = true;
-            this.checkBoxUseInnerSeg.Location = new System.Drawing.Point(169, 45);
-            this.checkBoxUseInnerSeg.Name = "checkBoxUseInnerSeg";
-            this.checkBoxUseInnerSeg.Size = new System.Drawing.Size(120, 17);
-            this.checkBoxUseInnerSeg.TabIndex = 10;
-            this.checkBoxUseInnerSeg.Text = "Use inner structures";
-            this.checkBoxUseInnerSeg.UseVisualStyleBackColor = true;
+            this.radioButtonWholeTissue.AutoSize = true;
+            this.radioButtonWholeTissue.Location = new System.Drawing.Point(7, 20);
+            this.radioButtonWholeTissue.Name = "radioButtonWholeTissue";
+            this.radioButtonWholeTissue.Size = new System.Drawing.Size(105, 17);
+            this.radioButtonWholeTissue.TabIndex = 0;
+            this.radioButtonWholeTissue.TabStop = true;
+            this.radioButtonWholeTissue.Text = "Use whole tissue";
+            this.radioButtonWholeTissue.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonInnerStructures
+            // 
+            this.radioButtonInnerStructures.AutoSize = true;
+            this.radioButtonInnerStructures.Location = new System.Drawing.Point(7, 44);
+            this.radioButtonInnerStructures.Name = "radioButtonInnerStructures";
+            this.radioButtonInnerStructures.Size = new System.Drawing.Size(119, 17);
+            this.radioButtonInnerStructures.TabIndex = 1;
+            this.radioButtonInnerStructures.TabStop = true;
+            this.radioButtonInnerStructures.Text = "Use inner structures";
+            this.radioButtonInnerStructures.UseVisualStyleBackColor = true;
             // 
             // RegistrationForm
             // 
@@ -784,6 +798,8 @@
             this.groupBoxMaskingGeneral.PerformLayout();
             this.groupBoxRegOrder.ResumeLayout(false);
             this.groupBoxRegOrder.PerformLayout();
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -843,7 +859,8 @@
         private System.Windows.Forms.RadioButton radioButtonNoMask;
         private System.ComponentModel.BackgroundWorker backgroundWorkerNonRigid;
         private System.Windows.Forms.TabPage tabPageManual;
-        private System.Windows.Forms.CheckBox checkBoxUseInnerSeg;
-        private System.Windows.Forms.CheckBox checkBoxUseWholeSeg;
+        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.RadioButton radioButtonInnerStructures;
+        private System.Windows.Forms.RadioButton radioButtonWholeTissue;
     }
 }

@@ -403,7 +403,7 @@ namespace MaskedDeformableRegistrationApp.Forms
                     else
                         transformparams = PerformRigidRegistration(refResized, movResized, fixedMask: fixedMaskFull, movingMask: movingMaskFull);
                 }
-                WriteTransform(imageFilename, transformparams, RegistrationParametersRigid, i, isBinary: true);
+                WriteTransform(imageFilename, transformparams, RegistrationParametersRigid, isBinary: true);
 
                 stopWatch.Stop();
                 string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
@@ -464,7 +464,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             int i = 0;
             foreach (string imageFilename in ToRegistrate)
             {
-                i++;
+                RegistrationParametersNonRigid.Iteration = i++;
                 if (imageFilename == RegistrationParametersNonRigid.FixedImageFilename) continue;
 
                 // resize moving image
@@ -480,8 +480,8 @@ namespace MaskedDeformableRegistrationApp.Forms
                 stopWatch.Start();
 
                 // masked registration selection
-                sitk.VectorOfParameterMap transformparams = PerformNonRigidRegistration(refResized, movResized, imageFilename, iteration: i);
-                WriteTransform(imageFilename, transformparams, RegistrationParametersNonRigid, i, isBinary: true);
+                sitk.VectorOfParameterMap transformparams = PerformNonRigidRegistration(refResized, movResized, imageFilename);
+                WriteTransform(imageFilename, transformparams, RegistrationParametersNonRigid, isBinary: true, computeJacobian: true);
 
                 stopWatch.Stop();
                 string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
@@ -608,11 +608,11 @@ namespace MaskedDeformableRegistrationApp.Forms
         }
 
         private sitk.VectorOfParameterMap PerformNonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, string movingImageFilename,
-            sitk.Image fixedMask = null, sitk.Image movingMask = null, int iteration = -1)
+            sitk.Image fixedMask = null, sitk.Image movingMask = null)
         {
             if (radioButtonTransformRigidity.Checked)
             {
-                string coefficientMapFilename = GetInnerStructureSegmentationsAsCoefficientMap(movingImageFilename, RegistrationParametersNonRigid, iteration);
+                string coefficientMapFilename = GetInnerStructureSegmentationsAsCoefficientMap(movingImageFilename, RegistrationParametersNonRigid);
                 RegistrationParametersNonRigid.CoefficientMapFilename = coefficientMapFilename;
             }
 
@@ -676,11 +676,11 @@ namespace MaskedDeformableRegistrationApp.Forms
         /// <param name="parameters">registration parameters containing segmentation parameters</param>
         /// <param name="iteration">iteration number for subdirectory creation</param>
         /// <returns>return coefficient map filename</returns>
-        private string GetInnerStructureSegmentationsAsCoefficientMap(string filename, RegistrationParameters parameters, int iteration = -1)
+        private string GetInnerStructureSegmentationsAsCoefficientMap(string filename, RegistrationParameters parameters)
         {
             InnerTissueSegmentation innerSegImage = GetInnerStructureSegmentation(filename, parameters);
 
-            string filenameCoefficientMap = ReadWriteUtils.GetOutputDirectory(parameters, iteration) + "\\coefficientMap.png";
+            string filenameCoefficientMap = ReadWriteUtils.GetOutputDirectory(parameters, parameters.Iteration) + "\\coefficientMap.png";
             ReadWriteUtils.WriteUMatToFile(filenameCoefficientMap, innerSegImage.GetOutput().FirstOrDefault());
             innerSegImage.Dispose();
 
@@ -695,7 +695,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             sitk.Image coefficientMap = filter.Execute(img);
 
             // save as mhd
-            filenameCoefficientMap = ReadWriteUtils.GetOutputDirectory(parameters, iteration) + "\\coefficientMap.mhd";
+            filenameCoefficientMap = ReadWriteUtils.GetOutputDirectory(parameters, parameters.Iteration) + "\\coefficientMap.mhd";
             ReadWriteUtils.WriteSitkImage(coefficientMap, filenameCoefficientMap);
             coefficientMap.Dispose();
             return filenameCoefficientMap;
@@ -726,18 +726,16 @@ namespace MaskedDeformableRegistrationApp.Forms
         /// </summary>
         /// <param name="filename">filename of the image to transform</param>
         /// <param name="transformParams">transform parameters</param>
-        /// <param name="parameters">registration parameters</param>
         /// <param name="isBinary">flag for binary registration (will set interpolation order to zero)</param>
-        private void WriteTransform(string filename, sitk.VectorOfParameterMap transformParams, RegistrationParameters parameters, int iteration, bool isBinary = false)
+        private void WriteTransform(string filename, sitk.VectorOfParameterMap transformParams, RegistrationParameters parameters, bool isBinary = false, bool computeJacobian = false)
         {
-            string resultFilename = ReadWriteUtils.GetOutputDirectory(parameters, iteration) + "\\" + Path.GetFileNameWithoutExtension(filename) + ".png";
+            string resultFilename = ReadWriteUtils.GetOutputDirectory(parameters) + "\\" + Path.GetFileNameWithoutExtension(filename) + ".png";
             // add transform parameter map to registration parameters
             parameters.TransformationParameterMap.Add(resultFilename, transformParams);
             // read moving image from file
             sitk.Image movingImageToTransform = ReadWriteUtils.ReadITKImageFromFile(filename, sitk.PixelIDValueEnum.sitkVectorUInt8);
             // initialize transform instance
-            TransformRGB trans = new TransformRGB(movingImageToTransform, transformParams,
-                Path.Combine(ApplicationContext.OutputPath, parameters.SubDirectory));
+            TransformRGB trans = new TransformRGB(movingImageToTransform, transformParams, parameters, computeJacobian);
 
             if (isBinary)
             {
@@ -750,7 +748,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             // write deformation field
             sitk.Image deformationField = trans.GetDeformationField();
-            string filenameDeformationField = ReadWriteUtils.GetOutputDirectory(parameters, iteration) + "\\deformationField.mhd";
+            string filenameDeformationField = ReadWriteUtils.GetOutputDirectory(parameters, parameters.Iteration) + "\\deformationField.mhd";
             ReadWriteUtils.WriteSitkImage(deformationField, filenameDeformationField);
             trans.Dispose();
             movingImageToTransform.Dispose();

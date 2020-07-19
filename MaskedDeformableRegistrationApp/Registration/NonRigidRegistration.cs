@@ -34,7 +34,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             }
 
             // set output dir and log file
-            outputDirectory = Path.Combine(ApplicationContext.OutputPath, registrationParameters.SubDirectory);
+            outputDirectory = Path.Combine(registrationParameters.OutputDirectory, registrationParameters.Iteration.ToString());
             if (!Directory.Exists(outputDirectory))
             {
                 Directory.CreateDirectory(outputDirectory);

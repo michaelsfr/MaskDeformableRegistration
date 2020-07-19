@@ -59,16 +59,34 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             }
         }
 
+        /// <summary>
+        /// Kmeans segmentation of given image.
+        /// 1. Do a kmeans clustering
+        /// 2. Find contours
+        /// 3. Classification of clusters (?)
+        /// </summary>
+        /// <param name="uMatChannel"></param>
         private void KmeansSegmentation(UMat uMatChannel)
         {
             Image<Gray, byte> newImage = new Image<Gray, byte>(uMatChannel.Bitmap);
-            //SegmentationUtils.KMeansClustering(newImage.Clone(), 3);
-            SegmentationUtils.KMeansClustering<Gray, byte, byte>(newImage.Clone(), 3, SegmentationUtils.clusterColorsGray);
-            //throw new NotImplementedException();
+            Image<Gray, byte> clusteredImage = SegmentationUtils.KMeansClustering<Gray, byte, byte>(newImage.Clone(), 3, SegmentationUtils.clusterColorsGray);
+
+            // TODO
+            // Find contours
+            // Classificate contours
         }
 
+        /// <summary>
+        /// Standard segmentation of given image.
+        /// 1. Thresholding
+        /// 2. Morphological operations
+        /// 3. Find contours
+        /// 4. Calculate coefficients and classificate contours
+        /// </summary>
+        /// <param name="uMatChannel">image in UMat format</param>
         private void StandardSegmentation(UMat uMatChannel)
         {
+            // thresholding
             UMat thresholded = null;
             using (UMat copy = uMatChannel.Clone())
             {
@@ -81,14 +99,14 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                     thresholded = SegmentationUtils.Threshold(copy, segmentationParameters.Threshold);
                 }
             }
-            
 
+            // morphological operations (todo: make kernel generic or depending on image size)
             UMat opened = SegmentationUtils.Opening(thresholded, 5);
             UMat dilated = SegmentationUtils.Dilate(opened, 5);
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\dilated.png", dilated);
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\dilated.png", dilated);
             UMat inverted = new UMat();
             CvInvoke.BitwiseNot(dilated, inverted);
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\inverted.png", inverted);
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\inverted.png", inverted);
 
             VectorOfVectorOfPoint contours = new VectorOfVectorOfPoint();
             VectorOfVectorOfPoint contoursRelevant = new VectorOfVectorOfPoint();
@@ -141,29 +159,27 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                 }
             }
 
+            // debug: show image with found contours
             //CvInvoke.DrawContours(image, contoursRelevant, -1, new MCvScalar(0, 255, 0));
             //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\image_with_contours.png", image.ToUMat());
 
+            // creat mask with rigid structures
             Image<Gray, byte> mask = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0));
             CvInvoke.DrawContours(mask, contoursRelevant, -1, new MCvScalar(255.0), thickness: -1);
-            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask1_not_converted.png", mask.ToUMat());
             UMat inv1 = new UMat();
             CvInvoke.BitwiseNot(mask, inv1);
             UMat convertedMask = new UMat();
             inv1.ConvertTo(convertedMask, DepthType.Cv32F);
-            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask1_converted.png", convertedMask);
 
-
+            // create mask with non rigid structures
             Image<Gray, byte> mask2 = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0));
             CvInvoke.Subtract(particleMask, mask, mask2);
             UMat inv2 = new UMat();
             CvInvoke.BitwiseNot(mask2, inv2);
-            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask2_not_converted.png", mask2.ToUMat());
             UMat convertedMask2 = new UMat();
             inv2.ConvertTo(convertedMask2, DepthType.Cv32F);
-            ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask2_not_converted.png", convertedMask2);
-            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask2_converted.png", convertedMask2);
 
+            // add masks to list
             masks.Add(convertedMask);
             masks.Add(convertedMask2);
         }
@@ -183,6 +199,11 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return masks;
         }
 
+        /// <summary>
+        /// Create a coefficient map of crearted segmentations.
+        /// Coefficient map will hold values between 0 and 1 for each segments.
+        /// </summary>
+        /// <returns>coefficient map as umat</returns>
         public UMat GetCoefficientMatrix()
         {
             UMat mat = null;
@@ -208,6 +229,9 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return mat;
         }
 
+        /// <summary>
+        /// Dispose all globally used instances of image.
+        /// </summary>
         public void Dispose()
         {
             image.Dispose();

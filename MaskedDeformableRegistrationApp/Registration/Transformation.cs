@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaskedDeformableRegistrationApp.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -19,16 +20,16 @@ namespace MaskedDeformableRegistrationApp.Registration
         private sitk.VectorOfParameterMap parameterMaps = null;
         private sitk.InterpolatorEnum interpolationType = sitk.InterpolatorEnum.sitkLinear;
 
-        private string outputDirectory = null;
+        private RegistrationParameters registrationParameters = null;
 
         private int interpolationOrder = -1;
         private bool computeJaccobian;
 
-        public TransformRGB(sitk.Image movingImage, sitk.VectorOfParameterMap parameterMaps, string outputDirectory, bool computeJaccobian = false)
+        public TransformRGB(sitk.Image movingImage, sitk.VectorOfParameterMap parameterMaps, RegistrationParameters parameters, bool computeJaccobian = false)
         {
             this.movingImage = movingImage;
             this.parameterMaps = parameterMaps;
-            this.outputDirectory = outputDirectory;
+            this.registrationParameters = parameters;
             this.computeJaccobian = computeJaccobian;
 
             transformix = new sitk.TransformixImageFilter();
@@ -36,9 +37,10 @@ namespace MaskedDeformableRegistrationApp.Registration
 
         public void Execute()
         {
-            if(Directory.Exists(outputDirectory))
+            string outputDir = ReadWriteUtils.GetOutputDirectory(registrationParameters, registrationParameters.Iteration);
+            if (Directory.Exists(outputDir))
             {
-                Directory.CreateDirectory(outputDirectory);
+                Directory.CreateDirectory(outputDir);
             }
 
             // split rgb channels
@@ -66,14 +68,14 @@ namespace MaskedDeformableRegistrationApp.Registration
                 }
             }
             // initialize transformix
-            transformix.SetOutputDirectory(outputDirectory);
+            transformix.SetOutputDirectory(outputDir);
             transformix.SetTransformParameterMap(parameterMaps);
             transformix.ComputeDeformationFieldOn();
             transformix.LogToFileOn();
 
             if (this.computeJaccobian)
             {
-                transformix.ComputeSpatialJacobianOn();
+                //transformix.ComputeSpatialJacobianOn();
                 transformix.ComputeDeterminantOfSpatialJacobianOn();
             }
 
@@ -115,6 +117,14 @@ namespace MaskedDeformableRegistrationApp.Registration
             transformedImage = composedImage;
         }
 
+        public void AddVectorOfParameterMap(sitk.VectorOfParameterMap vectorOfParametermap)
+        {
+            foreach (sitk.ParameterMap map in vectorOfParametermap.AsEnumerable())
+            {
+                transformix = transformix.AddTransformParameterMap(map);
+            }
+        }
+
         public sitk.Image GetOutput()
         {
             return this.transformedImage;
@@ -146,7 +156,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.Image temp = castImageFilter.Execute(transformedImage);
 
             sitk.ImageFileWriter writer = new sitk.ImageFileWriter();
-            writer.SetFileName(Path.Combine(outputDirectory, imagename));
+            writer.SetFileName(Path.Combine(registrationParameters.OutputDirectory, imagename));
             writer.Execute(temp);
         }
 
