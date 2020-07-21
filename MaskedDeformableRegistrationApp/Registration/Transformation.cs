@@ -23,14 +23,12 @@ namespace MaskedDeformableRegistrationApp.Registration
         private RegistrationParameters registrationParameters = null;
 
         private int interpolationOrder = -1;
-        private bool computeJaccobian;
 
-        public TransformRGB(sitk.Image movingImage, sitk.VectorOfParameterMap parameterMaps, RegistrationParameters parameters, bool computeJaccobian = false)
+        public TransformRGB(sitk.Image movingImage, sitk.VectorOfParameterMap parameterMaps, RegistrationParameters parameters)
         {
             this.movingImage = movingImage;
             this.parameterMaps = parameterMaps;
             this.registrationParameters = parameters;
-            this.computeJaccobian = computeJaccobian;
 
             transformix = new sitk.TransformixImageFilter();
         }
@@ -73,7 +71,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             transformix.ComputeDeformationFieldOn();
             transformix.LogToFileOn();
 
-            if (this.computeJaccobian)
+            if (registrationParameters.ComputeJaccobian)
             {
                 //transformix.ComputeSpatialJacobianOn();
                 transformix.ComputeDeterminantOfSpatialJacobianOn();

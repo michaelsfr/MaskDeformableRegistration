@@ -6,6 +6,12 @@ using System.Threading.Tasks;
 
 namespace MaskedDeformableRegistrationApp.Utils
 {
+    public enum RegistrationType
+    {
+        Rigid,
+        NonRigid
+    }
+
     public enum RegistrationStrategy
     {
         MultiMetricMultiResolutionRegistration,
@@ -105,5 +111,30 @@ namespace MaskedDeformableRegistrationApp.Utils
         HLS = 11,
         LAB = 12,
         LUV = 13
+    }
+
+    public enum RegistrationOrder
+    {
+        FirstInStackIsReference,
+        LastInStackIsReference,
+        PreviousIsReference,
+        MedianIsReference
+    }
+
+    public enum MaskedRigidRegistrationOptions
+    {
+        None,
+        BinaryRegistrationWholeTissue,
+        BinaryRegistrationInnerStructures,
+        ComponentwiseRegistration
+    }
+
+    public enum MaskedNonRigidRegistrationOptions
+    {
+        None,
+        BsplineWithPenaltyTerm,
+        BsplineWithPenaltyTermAndCoefficientMap,
+        ComposeIndependantRegistrations,
+        DiffuseRegistration
     }
 }

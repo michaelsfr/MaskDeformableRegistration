@@ -1,4 +1,6 @@
-﻿using MaskedDeformableRegistrationApp.Registration;
+﻿using Emgu.CV;
+using Emgu.CV.Structure;
+using MaskedDeformableRegistrationApp.Registration;
 using MaskedDeformableRegistrationApp.Segmentation;
 using MaskedDeformableRegistrationApp.Utils;
 using System;
@@ -107,8 +109,8 @@ namespace MaskedDeformableRegistrationApp.Forms
             bool isInnerSeg = comboBoxSegmentationParams.SelectedIndex == 1;
 
             // read images
-            var img01 = ReadWriteUtils.ReadOpenCVImageFromFile(fixedImageFilename);
-            var img02 = ReadWriteUtils.ReadOpenCVImageFromFile(movingImageFilename);
+            Image<Bgr, byte> img01 = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(fixedImageFilename);
+            Image<Bgr, byte> img02 = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(movingImageFilename);
 
             // whole particle seg
             WholeTissueSegmentation seg01 = new WholeTissueSegmentation(img01, registrationParameters.WholeTissueSegParams);

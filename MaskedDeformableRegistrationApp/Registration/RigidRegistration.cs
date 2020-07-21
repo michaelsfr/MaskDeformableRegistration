@@ -11,7 +11,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     class RigidRegistration : RegInitialization
     {
-        public RigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, sitk.ParameterMap parameterMap, RegistrationParameters parameters) : base(parameters, parameterMap)
+        public RigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
         {
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
             castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
@@ -33,7 +33,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             elastix = new sitk.ElastixImageFilter();
             if (parameterMap == null)
             {
-                parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+                parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationDefaultParams);
             }
 
             // set output dir
@@ -48,10 +48,10 @@ namespace MaskedDeformableRegistrationApp.Registration
             base.SetGeneralParameters();
         }
 
-        public RigidRegistration(RegistrationParameters parameters) : base(parameters, null)
+        public RigidRegistration(RegistrationParameters parameters) : base(parameters)
         {
             elastix = new sitk.ElastixImageFilter();
-            parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+            parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationDefaultParams);
             base.SetGeneralParameters();
 
         }

@@ -176,14 +176,15 @@ namespace MaskedDeformableRegistrationApp.Registration
                 filenameOfMaskComponents.Add(temp);
             }
 
-            sitk.ParameterMap map = GetDefaultParameterMap(parameters.RegistrationType);
+            sitk.ParameterMap map = GetDefaultParameterMap(parameters.RegistrationDefaultParams);
 
             List<sitk.VectorOfParameterMap> list = new List<sitk.VectorOfParameterMap>();
             foreach(Tuple<string, string> tuple in filenameOfMaskComponents)
             {
                 sitk.Image img01 = ReadWriteUtils.ReadITKImageFromFile(tuple.Item1);
                 sitk.Image img02 = ReadWriteUtils.ReadITKImageFromFile(tuple.Item2);
-                RigidRegistration reg = new RigidRegistration(img01, img02, map, parameters);
+                parameters.ParamMapToUse = map;
+                RigidRegistration reg = new RigidRegistration(img01, img02, parameters);
                 reg.Execute();
                 sitk.VectorOfParameterMap toAdd = new sitk.VectorOfParameterMap(reg.GetTransformationParameterMap());
                 list.Add(toAdd);

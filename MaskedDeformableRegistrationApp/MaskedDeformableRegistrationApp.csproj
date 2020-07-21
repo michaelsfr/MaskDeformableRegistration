@@ -185,6 +185,7 @@
     <Compile Include="Registration\NonRigidRegistration.cs" />
     <Compile Include="Registration\IRegistration.cs" />
     <Compile Include="Registration\RegInitialization.cs" />
+    <Compile Include="Registration\RegistrationController.cs" />
     <Compile Include="Registration\RegistrationParameters.cs" />
     <Compile Include="Registration\RegistrationUtils.cs" />
     <Compile Include="Registration\RigidRegistration.cs" />

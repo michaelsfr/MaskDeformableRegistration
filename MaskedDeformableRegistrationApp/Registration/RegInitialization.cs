@@ -21,10 +21,10 @@ namespace MaskedDeformableRegistrationApp.Registration
         protected sitk.Image movingMask = null;
         protected sitk.Image transformedImage = null;
 
-        protected RegInitialization(RegistrationParameters parameters, sitk.ParameterMap parameterMap)
+        protected RegInitialization(RegistrationParameters parameters)
         {
             this.registrationParameters = parameters;
-            this.parameterMap = parameterMap;
+            this.parameterMap = parameters.ParamMapToUse;
         }
 
         protected void SetGeneralParameters()

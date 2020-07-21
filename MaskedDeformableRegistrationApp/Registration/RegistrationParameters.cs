@@ -20,7 +20,8 @@ namespace MaskedDeformableRegistrationApp.Registration
         public static RegistrationParameters GetRigidRegistrationParameters()
         {
             RegistrationParameters parameters = new RegistrationParameters();
-            parameters.RegistrationType = RegistrationDefaultParameters.rigid;
+            parameters.Type = RegistrationType.Rigid;
+            parameters.RegistrationDefaultParams = RegistrationDefaultParameters.rigid;
             parameters.NumberOfResolutions = 10;
 
             return parameters;
@@ -29,7 +30,8 @@ namespace MaskedDeformableRegistrationApp.Registration
         public static RegistrationParameters GetNonRigidRegistrationParameters()
         {
             RegistrationParameters parameters = new RegistrationParameters();
-            parameters.RegistrationType = RegistrationDefaultParameters.bspline;
+            parameters.Type = RegistrationType.NonRigid;
+            parameters.RegistrationDefaultParams = RegistrationDefaultParameters.bspline;
             parameters.NumberOfResolutions = 5;
             parameters.Metric = SimilarityMetric.AdvancedMattesMutualInformation;
             parameters.RegistrationStrategy = RegistrationStrategy.MultiMetricMultiResolutionRegistration;
@@ -61,12 +63,13 @@ namespace MaskedDeformableRegistrationApp.Registration
         }
 
         // general parameters
+        public RegistrationType Type;
         private string specifiedLogFilename = null;
         public string ElastixLogFileName {
             get
             {
                 if (specifiedLogFilename != null) return specifiedLogFilename;
-                else return string.Format("elastix_log_file_{0}.txt", RegistrationType.ToString());
+                else return string.Format("elastix_log_file_{0}.txt", RegistrationDefaultParams.ToString());
             }
             set
             {
@@ -83,11 +86,23 @@ namespace MaskedDeformableRegistrationApp.Registration
         public int Iteration = -1;
 
         public sitk.ParameterMap ParamMapToUse { get; set; } = null;
+        public RegistrationOrder Order { get; set; } = RegistrationOrder.FirstInStackIsReference;
+
+        public uint LargestImageWidth { get; set; }
+        public uint LargestImageHeight { get; set; }
+
+        public bool UseFixedMask { get; set; } = false;
+        public bool UseMovingMask { get; set; } = false;
+        public bool UseInnerStructuresSegmentation { get; set; } = false;
+
+        public bool IsBinaryTransform { get; set; } = false;
+        public bool ComputeJaccobian { get; set; } = false;
 
         // rigid and non rigid parameters
 
+        public MaskedRigidRegistrationOptions RigidOptions { get; set; } = MaskedRigidRegistrationOptions.None;
         // type
-        public RegistrationDefaultParameters RegistrationType { get; set; }
+        public RegistrationDefaultParameters RegistrationDefaultParams { get; set; }
 
         // metric
         public SimilarityMetric Metric { get; set; } = SimilarityMetric.AdvancedMeanSquares;
@@ -106,6 +121,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 
         // non rigid parameters
 
+        public MaskedNonRigidRegistrationOptions NonRigidOptions { get; set; } = MaskedNonRigidRegistrationOptions.None;
         // penalties
         public PenaltyTerm Penaltyterm { get; set; } = PenaltyTerm.None;
         // transform rigidity

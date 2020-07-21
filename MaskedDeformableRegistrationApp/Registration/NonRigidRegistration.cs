@@ -11,7 +11,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     internal class NonRigidRegistration : RegInitialization
     {
-        public NonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, sitk.ParameterMap parameterMap, RegistrationParameters parameters) : base(parameters, parameterMap)
+        public NonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
         {
             // cast images to from pixel type uint to float
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
@@ -30,7 +30,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             elastix = new sitk.ElastixImageFilter();
             if(parameterMap == null)
             {
-                parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+                parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationDefaultParams);
             }
 
             // set output dir and log file
@@ -47,10 +47,10 @@ namespace MaskedDeformableRegistrationApp.Registration
             SetParameters();
         }
 
-        public NonRigidRegistration(RegistrationParameters parameters) : base(parameters, null)
+        public NonRigidRegistration(RegistrationParameters parameters) : base(parameters)
         {
             elastix = new sitk.ElastixImageFilter();
-            parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationType);
+            parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationDefaultParams);
             base.SetGeneralParameters();
             SetParameters();
         }
@@ -99,16 +99,16 @@ namespace MaskedDeformableRegistrationApp.Registration
 
         private void SetParameters()
         {
-            if (registrationParameters.RegistrationType == RegistrationDefaultParameters.bspline)
+            if (registrationParameters.RegistrationDefaultParams == RegistrationDefaultParameters.bspline)
             {
 
-            } else if (registrationParameters.RegistrationType == RegistrationDefaultParameters.diffusion)
+            } else if (registrationParameters.RegistrationDefaultParams == RegistrationDefaultParameters.diffusion)
             {
                 // todo
-            } else if (registrationParameters.RegistrationType == RegistrationDefaultParameters.spline)
+            } else if (registrationParameters.RegistrationDefaultParams == RegistrationDefaultParameters.spline)
             {
                 // todo
-            } else if (registrationParameters.RegistrationType == RegistrationDefaultParameters.recursive)
+            } else if (registrationParameters.RegistrationDefaultParams == RegistrationDefaultParameters.recursive)
             {
                 // todo
             }
