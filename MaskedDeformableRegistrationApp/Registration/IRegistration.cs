@@ -9,7 +9,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 {
     public interface IRegistration<T, U, N>
     {
-        void Execute();
+        object Execute();
         void SetFixedMask(T fixedMask);
         void SetMovingMask(T movingMask);
         void SetDefaultParameterMap(RegistrationDefaultParameters type, uint numberOfResolutions);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MaskedDeformableRegistrationApp.Segmentation
 {
-    public class SegmentationParameters
+    public class SegmentationParameters : ICloneable
     {
         public SegmentationParameters()
         {
@@ -15,8 +15,8 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         }
 
         public int ParticlePixelAmount { get; set; }
-        public ColorSpace Colorspace { get; set; } = ColorSpace.HSV;
-        public int Channel { get; set; } = 0;
+        public ColorSpace Colorspace { get; set; } = ColorSpace.HaematoxylinDAB;
+        public int Channel { get; set; } = 2;
         public bool UseOtsu { get; set; } = true;
         public int Threshold { get; set; } = 127;
         public bool UseKmeans { get; set; } = false;
@@ -24,5 +24,9 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         public int MinContourSize { get; set; }
         public int MaxContourSize { get; set; }
 
+        public object Clone()
+        {
+            return (SegmentationParameters)this.MemberwiseClone();
+        }
     }
 }

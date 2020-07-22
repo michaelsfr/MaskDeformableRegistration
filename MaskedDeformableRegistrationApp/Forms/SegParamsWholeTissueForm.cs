@@ -14,13 +14,13 @@ using System.Windows.Forms;
 
 namespace MaskedDeformableRegistrationApp.Forms
 {
-    public partial class SegParamsRigidForm : Form
+    public partial class SegParamsWholeTissueForm : Form
     {
         public SegmentationParameters segmentationParameters;
 
         private Image<Bgr, byte> image;
 
-        public SegParamsRigidForm(Image<Bgr, byte> image, SegmentationParameters parameters)
+        public SegParamsWholeTissueForm(Image<Bgr, byte> image, SegmentationParameters parameters)
         {
             InitializeComponent();
 
@@ -45,10 +45,12 @@ namespace MaskedDeformableRegistrationApp.Forms
             splitContainer2.SplitterDistance = this.Height / 2;
             splitContainer1.IsSplitterFixed = true;
 
+            trackBar1.ValueChanged -= trackBar1_ValueChanged;
             trackBar1.Minimum = 0;
             trackBar1.Maximum = 255;
             trackBar1.Value = segmentationParameters.Threshold;
             labelThreshold.Text = segmentationParameters.Threshold.ToString();
+            trackBar1.ValueChanged += trackBar1_ValueChanged;
 
             int[] channels = { 1, 2, 3 };
             comboBoxChannel.DataSource = channels;
@@ -94,6 +96,9 @@ namespace MaskedDeformableRegistrationApp.Forms
                 segmentationParameters.UseOtsu = false;
                 segmentationParameters.Threshold = trackBar1.Value;
             }
+            segmentationParameters.Channel = comboBoxChannel.SelectedIndex;
+            int index = comboBoxColorspace.SelectedIndex;
+            segmentationParameters.Colorspace = (ColorSpace)index;
         }
 
         private void buttonSaveParameters_Click(object sender, EventArgs e)

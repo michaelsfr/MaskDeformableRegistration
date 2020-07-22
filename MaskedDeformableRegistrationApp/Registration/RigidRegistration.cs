@@ -43,7 +43,8 @@ namespace MaskedDeformableRegistrationApp.Registration
                 Directory.CreateDirectory(outputDirectory);
             }
             elastix.SetOutputDirectory(outputDirectory);
-            elastix.SetLogFileName(Path.Combine(outputDirectory, registrationParameters.ElastixLogFileName));
+            //elastix.SetLogFileName(Path.Combine(outputDirectory, registrationParameters.ElastixLogFileName));
+            elastix.LogToFileOn();
 
             base.SetGeneralParameters();
         }
@@ -56,7 +57,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 
         }
 
-        public override void Execute()
+        public override object Execute()
         {
             if(fixedImage != null && movingImage != null)
             {
@@ -86,10 +87,12 @@ namespace MaskedDeformableRegistrationApp.Registration
                     transformedImage = elastix.Execute();
                 } catch(Exception ex)
                 {
-                    Console.WriteLine("Exception occurred during registration: ");
+                    Console.WriteLine("Exception occurred during elastix registration: ");
                     Console.WriteLine(ex);
+                    return ex.Message;
                 }
             }
+            return null;
         }
     }
 }

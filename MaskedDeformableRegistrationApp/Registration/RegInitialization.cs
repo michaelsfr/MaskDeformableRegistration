@@ -71,7 +71,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             if (transformedImage != null) transformedImage.Dispose();
         }
 
-        public abstract void Execute();
+        public abstract object Execute();
 
         public virtual sitk.Image GetOutput()
         {

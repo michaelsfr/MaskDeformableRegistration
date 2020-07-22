@@ -9,6 +9,7 @@ using Emgu.CV.CvEnum;
 using Emgu.CV.Structure;
 using Emgu.CV.UI;
 using Emgu.CV.Util;
+using MaskedDeformableRegistrationApp.Forms;
 using MaskedDeformableRegistrationApp.Utils;
 
 namespace MaskedDeformableRegistrationApp.Segmentation
@@ -48,8 +49,6 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                         thresholded = SegmentationUtils.Threshold(copy, segmentationParameters.Threshold);
                     }
                 }
-
-                CvInvoke.BitwiseNot(thresholded, thresholded);
 
                 UMat closed = SegmentationUtils.Closing(thresholded, 5);
                 UMat dilated = SegmentationUtils.Dilate(closed, 10);

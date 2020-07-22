@@ -41,6 +41,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             }
             elastix.SetOutputDirectory(outputDirectory);
             elastix.SetLogFileName(outputDirectory + registrationParameters.ElastixLogFileName);
+            elastix.LogToConsoleOn();
 
             // set non rigid parameters
             base.SetGeneralParameters();
@@ -55,7 +56,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             SetParameters();
         }
 
-        public override void Execute()
+        public override object Execute()
         {
             if (fixedImage != null && movingImage != null)
             {
@@ -93,8 +94,10 @@ namespace MaskedDeformableRegistrationApp.Registration
                 {
                     Console.WriteLine("Exception occurred during registration: ");
                     Console.WriteLine(ex);
+                    return ex;
                 }
             }
+            return null;
         }
 
         private void SetParameters()

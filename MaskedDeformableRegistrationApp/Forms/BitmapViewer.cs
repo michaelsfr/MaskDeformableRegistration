@@ -24,6 +24,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void BitmapViewer_Load(object sender, EventArgs e)
         {
             this.pictureBox1.Image = Bitmap;
+            this.pictureBox1.SizeMode = PictureBoxSizeMode.Zoom;
         }
     }
 }

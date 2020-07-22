@@ -156,17 +156,17 @@
     <Compile Include="Forms\RegistrationForm.Designer.cs">
       <DependentUpon>RegistrationForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\SegParamsNonRigidForm.cs">
+    <Compile Include="Forms\SegParamsInnerStructuresForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\SegParamsNonRigidForm.Designer.cs">
-      <DependentUpon>SegParamsNonRigidForm.cs</DependentUpon>
+    <Compile Include="Forms\SegParamsInnerStructuresForm.Designer.cs">
+      <DependentUpon>SegParamsInnerStructuresForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\SegParamsRigidForm.cs">
+    <Compile Include="Forms\SegParamsWholeTissueForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\SegParamsRigidForm.Designer.cs">
-      <DependentUpon>SegParamsRigidForm.cs</DependentUpon>
+    <Compile Include="Forms\SegParamsWholeTissueForm.Designer.cs">
+      <DependentUpon>SegParamsWholeTissueForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\StartupForm.cs">
       <SubType>Form</SubType>
@@ -226,11 +226,11 @@
     <EmbeddedResource Include="Forms\RegistrationForm.resx">
       <DependentUpon>RegistrationForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SegParamsNonRigidForm.resx">
-      <DependentUpon>SegParamsNonRigidForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\SegParamsInnerStructuresForm.resx">
+      <DependentUpon>SegParamsInnerStructuresForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\SegParamsRigidForm.resx">
-      <DependentUpon>SegParamsRigidForm.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\SegParamsWholeTissueForm.resx">
+      <DependentUpon>SegParamsWholeTissueForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\StartupForm.resx">
       <DependentUpon>StartupForm.cs</DependentUpon>

@@ -14,14 +14,14 @@ using System.Windows.Forms;
 
 namespace MaskedDeformableRegistrationApp.Forms
 {
-    public partial class SegParamsNonRigidForm : Form
+    public partial class SegParamsInnerStructuresForm : Form
     {
         private Image<Bgr, byte> image = null;
         private Image<Gray, byte> mask = null;
 
         public SegmentationParameters segmentationParameters;
 
-        public SegParamsNonRigidForm(Image<Bgr, byte> image, Image<Gray, byte> mask, SegmentationParameters parameters)
+        public SegParamsInnerStructuresForm(Image<Bgr, byte> image, Image<Gray, byte> mask, SegmentationParameters parameters)
         {
             InitializeComponent();
             this.image = image;
@@ -38,16 +38,33 @@ namespace MaskedDeformableRegistrationApp.Forms
             splitContainer4.SplitterDistance = splitContainer2.Width / 2;
             splitContainer1.IsSplitterFixed = true;
 
+            comboBoxChannel.SelectedIndexChanged -= comboBoxChannel_SelectedIndexChanged;
+            comboBoxColorspace.SelectedIndexChanged -= comboBoxChannel_SelectedIndexChanged;
             int[] channels = { 1, 2, 3 };
             comboBoxChannel.DataSource = channels;
             comboBoxChannel.SelectedIndex = segmentationParameters.Channel;
             comboBoxColorspace.DataSource = Enum.GetValues(typeof(ColorSpace));
             comboBoxColorspace.SelectedIndex = (int)segmentationParameters.Colorspace;
+            comboBoxChannel.SelectedIndexChanged += comboBoxChannel_SelectedIndexChanged;
+            comboBoxColorspace.SelectedIndexChanged += comboBoxChannel_SelectedIndexChanged;
 
+            trackBar1.ValueChanged -= trackBar1_ValueChanged;
             trackBar1.Minimum = 0;
             trackBar1.Maximum = 255;
             trackBar1.Value = segmentationParameters.Threshold;
             labelThreshold.Text = segmentationParameters.Threshold.ToString();
+            trackBar1.ValueChanged += trackBar1_ValueChanged;
+
+            radioButtonOtsu.CheckedChanged -= radioButtonOtsu_CheckedChanged;
+            radioButtonThresholdManually.CheckedChanged -= radioButtonThresholdManually_CheckedChanged;
+            radioButtonOtsu.Checked = segmentationParameters.UseOtsu;
+            radioButtonThresholdManually.Checked = !segmentationParameters.UseOtsu;
+            radioButtonOtsu.CheckedChanged += radioButtonOtsu_CheckedChanged;
+            radioButtonThresholdManually.CheckedChanged += radioButtonThresholdManually_CheckedChanged;
+
+            checkBoxKmeans.CheckedChanged -= checkBoxKmeans_CheckedChanged;
+            checkBoxKmeans.Checked = segmentationParameters.UseKmeans;
+            checkBoxKmeans.CheckedChanged += checkBoxKmeans_CheckedChanged;
 
             pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBoxColorChannel.SizeMode = PictureBoxSizeMode.Zoom;
@@ -175,7 +192,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             }
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
+        private void checkBoxKmeans_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox cb = sender as CheckBox;
             segmentationParameters.UseKmeans = cb.Checked;

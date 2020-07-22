@@ -103,6 +103,6 @@ C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrat
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.csproj.CopyComplete
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.exe
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.pdb
-C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.SegParamsNonRigidForm.resources
-C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.SegParamsRigidForm.resources
 C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.EvaluationForm.resources
+C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.SegParamsInnerStructuresForm.resources
+C:\Users\dersc\source\repos\MaskDeformableRegistration\MaskedDeformableRegistrationApp\obj\x64\Debug\MaskedDeformableRegistrationApp.Forms.SegParamsWholeTissueForm.resources
