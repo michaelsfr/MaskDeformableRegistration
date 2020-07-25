@@ -254,6 +254,7 @@
             this.radioButtonAffine.TabIndex = 3;
             this.radioButtonAffine.Text = "Affine";
             this.radioButtonAffine.UseVisualStyleBackColor = true;
+            this.radioButtonAffine.CheckedChanged += new System.EventHandler(this.radioButtonAffine_CheckedChanged);
             // 
             // radioButtonRigid
             // 
@@ -264,6 +265,7 @@
             this.radioButtonRigid.TabIndex = 2;
             this.radioButtonRigid.Text = "Rigid";
             this.radioButtonRigid.UseVisualStyleBackColor = true;
+            this.radioButtonRigid.CheckedChanged += new System.EventHandler(this.radioButtonRigid_CheckedChanged);
             // 
             // radioButtonSimilarity
             // 
@@ -274,6 +276,7 @@
             this.radioButtonSimilarity.TabIndex = 1;
             this.radioButtonSimilarity.Text = "Similarity";
             this.radioButtonSimilarity.UseVisualStyleBackColor = true;
+            this.radioButtonSimilarity.CheckedChanged += new System.EventHandler(this.radioButtonSimilarity_CheckedChanged);
             // 
             // radioButtonTranslation
             // 
@@ -284,6 +287,7 @@
             this.radioButtonTranslation.TabIndex = 0;
             this.radioButtonTranslation.Text = "Translation";
             this.radioButtonTranslation.UseVisualStyleBackColor = true;
+            this.radioButtonTranslation.CheckedChanged += new System.EventHandler(this.radioButtonTranslation_CheckedChanged);
             // 
             // splitContainer2
             // 

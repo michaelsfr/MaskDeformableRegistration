@@ -86,16 +86,17 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             string key = comboBoxMoving.SelectedValue.ToString();
             sitk.VectorOfParameterMap map = registrationParameters.TransformationParameterMap[key];
-            registrationParameters.FixedImagePointSetFilename = filenameFixedPointSet;
+            registrationParameters.MovingImagePointSetFilename = filenameMovingPointSet;
 
             string filenameOutputPoints = VisualizationEvaluationUtils.TransfromPointSet(map, registrationParameters);
-            var tuple = ReadWriteUtils.ReadFixedAndTransformedPointSets(filenameOutputPoints);
+            var fixedPointsDict = ReadWriteUtils.ReadFixedPointSet(filenameFixedPointSet).Values.ToList();
+            var transformedPointsDict = ReadWriteUtils.ReadTransformedPointSets(filenameOutputPoints).Values.ToList();
 
-            double absTRE = VisualizationEvaluationUtils.CalculateAbsoluteTargetRegistrationError(tuple.Item1, tuple.Item2);
-            double meanTRE = VisualizationEvaluationUtils.CalculateMeanTargetRegistrationError(tuple.Item1, tuple.Item2);
+            RegistrationError registrationError = VisualizationEvaluationUtils.GetRegistrationError(fixedPointsDict, transformedPointsDict);
 
-            labelAbsDiff.Text = absTRE.ToString("0.##");
-            labelMeanDiff.Text = meanTRE.ToString("0.##");
+            labelMeanDiff.Text = registrationError.MeanRegistrationError.ToString("0.##");
+            labelStdDev.Text = registrationError.StdDevRegistrationError.ToString("0.##");
+            labelMax.Text = registrationError.MaximumRegistrationError.ToString("0.##");
 
             Cursor.Current = Cursors.Default;
         }

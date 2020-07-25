@@ -102,33 +102,51 @@ namespace MaskedDeformableRegistrationApp.Utils
             return dict;
         }
 
-        public static Tuple<List<CoordPoint>, List<CoordPoint>> ReadFixedAndTransformedPointSets(string filename)
+        public static Dictionary<int, CoordPoint> ReadFixedPointSet(string filenamePointSets)
         {
-            Tuple<List<CoordPoint>, List<CoordPoint>> result = null;
-
-            if (File.Exists(filename))
+            if (File.Exists(filenamePointSets))
             {
-                string content = File.ReadAllText(filename);
+                string content = File.ReadAllText(filenamePointSets);
+                //string[] temp = content.Split(new char[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
+                string[] sPoints = content.Split('\n').Skip(2).Where(it => !string.IsNullOrWhiteSpace(it)).ToArray();
+                Dictionary<int, CoordPoint> points = new Dictionary<int, CoordPoint>();
+
+                int i = 0;
+                foreach (string sPoint in sPoints)
+                {
+                    double[] coords = sPoint.Replace('.', ',').Split(' ').Where(it => it != null).Select(it => double.Parse(it)).ToArray();
+                    points.Add(i, new CoordPoint(coords[0], coords[1]));
+                    i++;
+                }
+                return points;
+            }
+            return null;
+        }
+
+        public static Dictionary<int, CoordPoint> ReadTransformedPointSets(string filenameTransformedFilename)
+        {
+            if (File.Exists(filenameTransformedFilename))
+            {
+                string content = File.ReadAllText(filenameTransformedFilename);
                 string[] lines = content.Split('\n');
 
-                List<CoordPoint> inputPoints = new List<CoordPoint>();
-                List<CoordPoint> transformedPoints = new List<CoordPoint>();
+                Dictionary<int, CoordPoint> transformedPoints = new Dictionary<int, CoordPoint>();
 
+                int i = 0;
                 foreach (string line in lines)
                 {
                     List<string> entries = line.Split(';').ToList();
-                    string inputPoint = entries.Where(it => it.Contains("InputPoint")).FirstOrDefault();
                     string transformedPoint = entries.Where(it => it.Contains("OutputPoint")).FirstOrDefault();
-                    if(inputPoint != null && transformedPoint != null)
+                    if(transformedPoint != null)
                     {
-                        inputPoints.Add(ExractCoordsFromString(inputPoint));
-                        transformedPoints.Add(ExractCoordsFromString(transformedPoint));
+                        transformedPoints.Add(i, ExractCoordsFromString(transformedPoint));
                     }
+                    i++;
                 }
-                result = new Tuple<List<CoordPoint>, List<CoordPoint>>(inputPoints, transformedPoints);
+                return transformedPoints;
             }
 
-            return result;
+            return null;
         }
 
         private static CoordPoint ExractCoordsFromString(string sCoord)
@@ -136,25 +154,6 @@ namespace MaskedDeformableRegistrationApp.Utils
             string[] temp = sCoord.Split(new char[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries);
             double[] coords = temp[1].Replace('.', ',').Split(' ').Where(it => it != null && it != "").Select(it => double.Parse(it)).ToArray();
             return new CoordPoint(coords[0], coords[1]);
-        }
-             
-        public static List<CoordPoint> ReadPointSetsFromFileOLD(string filenamePointSets)
-        {
-            if(File.Exists(filenamePointSets))
-            {
-                string content = File.ReadAllText(filenamePointSets);
-                string[] temp = content.Split(new char[] { '{', '}' }, StringSplitOptions.RemoveEmptyEntries);
-                string[] sPoints = temp[1].Split('\n');
-                List<CoordPoint> points = new List<CoordPoint>();
-
-                foreach (string sPoint in sPoints)
-                {
-                    double[] coords = sPoint.Replace('.', ',').Split(' ').Where(it => it != null).Select(it => double.Parse(it)).ToArray();
-                    points.Add(new CoordPoint(coords[0], coords[1]));
-                }
-                return points;
-            }
-            return null;
         }
 
         public static void SerializeObjectToJSON<T>(T toSerialize, string filename)

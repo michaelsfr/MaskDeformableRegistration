@@ -49,18 +49,14 @@ namespace MaskedDeformableRegistrationApp.Utils
         /// <returns>checker board image</returns>
         public static sitk.Image GetCheckerBoard(sitk.Image img01, sitk.Image img02, uint size = 0)
         {
+            uint width = img01.GetWidth() > img02.GetWidth() ? img01.GetWidth() : img02.GetWidth();
+            uint height = img01.GetHeight() > img02.GetHeight() ? img01.GetHeight() : img02.GetHeight();
             //Console.WriteLine(string.Format("width: Img01 [{0}] - Img02 [{1}]", img01.GetWidth(), img02.GetWidth()));
             //Console.WriteLine(string.Format("height: Img01 [{0}] - Img02 [{1}]", img01.GetHeight(), img02.GetHeight()));
             //Console.WriteLine(string.Format("pixel type: Img01 [{0}] - Img02 [{1}]", img01.GetPixelIDTypeAsString(), img02.GetPixelIDTypeAsString()));
-            sitk.CastImageFilter castImageFilter01 = new sitk.CastImageFilter();
-            castImageFilter01.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
-            sitk.Image castedReference = castImageFilter01.Execute(img01);
 
-            sitk.CastImageFilter castImageFilter02 = new sitk.CastImageFilter();
-            castImageFilter02.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
-            sitk.Image castedImage = castImageFilter02.Execute(img02);
-
-            sitk.Image tempImage = ImageUtils.ResizeImage(castedImage, img01);
+            sitk.Image reference = ImageUtils.ResizeImage(img01, width, height, sitk.PixelIDValueEnum.sitkFloat32);
+            sitk.Image transformed = ImageUtils.ResizeImage(img02, width, height, sitk.PixelIDValueEnum.sitkFloat32);
 
             sitk.CheckerBoardImageFilter checkerBoard = new sitk.CheckerBoardImageFilter();
 
@@ -72,7 +68,11 @@ namespace MaskedDeformableRegistrationApp.Utils
                 checkerBoard.SetCheckerPattern(vec);
             }
 
-            sitk.Image result = checkerBoard.Execute(castedReference, tempImage);
+            sitk.Image temp = checkerBoard.Execute(reference, transformed);
+            sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
+            castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkUInt8);
+            sitk.Image result = castImageFilter.Execute(temp);
+            temp.Dispose();
             return result;
         }
 
@@ -177,7 +177,7 @@ namespace MaskedDeformableRegistrationApp.Utils
             {
                 transformix = new sitk.TransformixImageFilter();
                 transformix.SetTransformParameterMap(transformParameters);
-                transformix.SetFixedPointSetFileName(parameters.FixedImagePointSetFilename);
+                transformix.SetFixedPointSetFileName(parameters.MovingImagePointSetFilename);
                 transformix.SetOutputDirectory(ReadWriteUtils.GetOutputDirectory(parameters));
                 sitk.Image image = transformix.Execute();
                 string output = ReadWriteUtils.GetOutputDirectory(parameters) + "\\outputpoints.txt";

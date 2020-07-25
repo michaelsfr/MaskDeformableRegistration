@@ -40,12 +40,22 @@
             this.openFileDialogMoving = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBoxEuclidDist = new System.Windows.Forms.GroupBox();
-            this.labelMeanDiff = new System.Windows.Forms.Label();
+            this.labelStdDev = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
-            this.labelAbsDiff = new System.Windows.Forms.Label();
+            this.labelMeanDiff = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.groupBoxDiceJaccard = new System.Windows.Forms.GroupBox();
+            this.labelUnionOverlap = new System.Windows.Forms.Label();
+            this.label16 = new System.Windows.Forms.Label();
+            this.labelMeanOverlap = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.labelfalseNegPos = new System.Windows.Forms.Label();
+            this.label12 = new System.Windows.Forms.Label();
+            this.labelJacc = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.labelDice = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
             this.buttonCalcCoef = new System.Windows.Forms.Button();
             this.comboBoxSegmentationParams = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -54,16 +64,8 @@
             this.groupBoxMisc = new System.Windows.Forms.GroupBox();
             this.buttonCheckerBoard = new System.Windows.Forms.Button();
             this.buttonDiffImage = new System.Windows.Forms.Button();
-            this.label4 = new System.Windows.Forms.Label();
-            this.labelDice = new System.Windows.Forms.Label();
-            this.labelJacc = new System.Windows.Forms.Label();
-            this.label10 = new System.Windows.Forms.Label();
-            this.labelfalseNegPos = new System.Windows.Forms.Label();
-            this.label12 = new System.Windows.Forms.Label();
-            this.labelMeanOverlap = new System.Windows.Forms.Label();
-            this.label14 = new System.Windows.Forms.Label();
-            this.labelUnionOverlap = new System.Windows.Forms.Label();
-            this.label16 = new System.Windows.Forms.Label();
+            this.labelMax = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -175,9 +177,11 @@
             // 
             // groupBoxEuclidDist
             // 
-            this.groupBoxEuclidDist.Controls.Add(this.labelMeanDiff);
+            this.groupBoxEuclidDist.Controls.Add(this.labelMax);
+            this.groupBoxEuclidDist.Controls.Add(this.label9);
+            this.groupBoxEuclidDist.Controls.Add(this.labelStdDev);
             this.groupBoxEuclidDist.Controls.Add(this.label5);
-            this.groupBoxEuclidDist.Controls.Add(this.labelAbsDiff);
+            this.groupBoxEuclidDist.Controls.Add(this.labelMeanDiff);
             this.groupBoxEuclidDist.Controls.Add(this.label3);
             this.groupBoxEuclidDist.Controls.Add(this.textBoxFixedPointSet);
             this.groupBoxEuclidDist.Controls.Add(this.label1);
@@ -194,41 +198,41 @@
             this.groupBoxEuclidDist.TabStop = false;
             this.groupBoxEuclidDist.Text = "Euclidean distance";
             // 
-            // labelMeanDiff
+            // labelStdDev
             // 
-            this.labelMeanDiff.AutoSize = true;
-            this.labelMeanDiff.Location = new System.Drawing.Point(189, 215);
-            this.labelMeanDiff.Name = "labelMeanDiff";
-            this.labelMeanDiff.Size = new System.Drawing.Size(13, 13);
-            this.labelMeanDiff.TabIndex = 11;
-            this.labelMeanDiff.Text = "0";
+            this.labelStdDev.AutoSize = true;
+            this.labelStdDev.Location = new System.Drawing.Point(189, 209);
+            this.labelStdDev.Name = "labelStdDev";
+            this.labelStdDev.Size = new System.Drawing.Size(13, 13);
+            this.labelStdDev.TabIndex = 11;
+            this.labelStdDev.Text = "0";
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(16, 215);
+            this.label5.Location = new System.Drawing.Point(16, 209);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(62, 13);
+            this.label5.Size = new System.Drawing.Size(71, 13);
             this.label5.TabIndex = 10;
-            this.label5.Text = "Mean TRE:";
+            this.label5.Text = "StdDev TRE:";
             // 
-            // labelAbsDiff
+            // labelMeanDiff
             // 
-            this.labelAbsDiff.AutoSize = true;
-            this.labelAbsDiff.Location = new System.Drawing.Point(189, 196);
-            this.labelAbsDiff.Name = "labelAbsDiff";
-            this.labelAbsDiff.Size = new System.Drawing.Size(13, 13);
-            this.labelAbsDiff.TabIndex = 9;
-            this.labelAbsDiff.Text = "0";
+            this.labelMeanDiff.AutoSize = true;
+            this.labelMeanDiff.Location = new System.Drawing.Point(189, 190);
+            this.labelMeanDiff.Name = "labelMeanDiff";
+            this.labelMeanDiff.Size = new System.Drawing.Size(13, 13);
+            this.labelMeanDiff.TabIndex = 9;
+            this.labelMeanDiff.Text = "0";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(16, 196);
+            this.label3.Location = new System.Drawing.Point(16, 190);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(76, 13);
+            this.label3.Size = new System.Drawing.Size(62, 13);
             this.label3.TabIndex = 8;
-            this.label3.Text = "Absolute TRE:";
+            this.label3.Text = "Mean TRE:";
             // 
             // splitContainer2
             // 
@@ -271,6 +275,96 @@
             this.groupBoxDiceJaccard.TabIndex = 0;
             this.groupBoxDiceJaccard.TabStop = false;
             this.groupBoxDiceJaccard.Text = "Dice-Jaccard-Coefficient";
+            // 
+            // labelUnionOverlap
+            // 
+            this.labelUnionOverlap.AutoSize = true;
+            this.labelUnionOverlap.Location = new System.Drawing.Point(194, 236);
+            this.labelUnionOverlap.Name = "labelUnionOverlap";
+            this.labelUnionOverlap.Size = new System.Drawing.Size(13, 13);
+            this.labelUnionOverlap.TabIndex = 19;
+            this.labelUnionOverlap.Text = "0";
+            // 
+            // label16
+            // 
+            this.label16.AutoSize = true;
+            this.label16.Location = new System.Drawing.Point(16, 235);
+            this.label16.Name = "label16";
+            this.label16.Size = new System.Drawing.Size(73, 13);
+            this.label16.TabIndex = 18;
+            this.label16.Text = "Union overlap";
+            // 
+            // labelMeanOverlap
+            // 
+            this.labelMeanOverlap.AutoSize = true;
+            this.labelMeanOverlap.Location = new System.Drawing.Point(194, 216);
+            this.labelMeanOverlap.Name = "labelMeanOverlap";
+            this.labelMeanOverlap.Size = new System.Drawing.Size(13, 13);
+            this.labelMeanOverlap.TabIndex = 17;
+            this.labelMeanOverlap.Text = "0";
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(16, 215);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(75, 13);
+            this.label14.TabIndex = 16;
+            this.label14.Text = "Mean overlap:";
+            // 
+            // labelfalseNegPos
+            // 
+            this.labelfalseNegPos.AutoSize = true;
+            this.labelfalseNegPos.Location = new System.Drawing.Point(194, 197);
+            this.labelfalseNegPos.Name = "labelfalseNegPos";
+            this.labelfalseNegPos.Size = new System.Drawing.Size(13, 13);
+            this.labelfalseNegPos.TabIndex = 15;
+            this.labelfalseNegPos.Text = "0";
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(16, 196);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(129, 13);
+            this.label12.TabIndex = 14;
+            this.label12.Text = "False negative / positive: ";
+            // 
+            // labelJacc
+            // 
+            this.labelJacc.AutoSize = true;
+            this.labelJacc.Location = new System.Drawing.Point(194, 178);
+            this.labelJacc.Name = "labelJacc";
+            this.labelJacc.Size = new System.Drawing.Size(13, 13);
+            this.labelJacc.TabIndex = 13;
+            this.labelJacc.Text = "0";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(16, 177);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(100, 13);
+            this.label10.TabIndex = 12;
+            this.label10.Text = "Jaccard coefficient:";
+            // 
+            // labelDice
+            // 
+            this.labelDice.AutoSize = true;
+            this.labelDice.Location = new System.Drawing.Point(194, 159);
+            this.labelDice.Name = "labelDice";
+            this.labelDice.Size = new System.Drawing.Size(13, 13);
+            this.labelDice.TabIndex = 11;
+            this.labelDice.Text = "0";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(16, 158);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(84, 13);
+            this.label4.TabIndex = 10;
+            this.label4.Text = "Dice coefficient:";
             // 
             // buttonCalcCoef
             // 
@@ -347,95 +441,23 @@
             this.buttonDiffImage.UseVisualStyleBackColor = true;
             this.buttonDiffImage.Click += new System.EventHandler(this.buttonDiffImage_Click);
             // 
-            // label4
+            // labelMax
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(16, 158);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(84, 13);
-            this.label4.TabIndex = 10;
-            this.label4.Text = "Dice coefficient:";
+            this.labelMax.AutoSize = true;
+            this.labelMax.Location = new System.Drawing.Point(189, 228);
+            this.labelMax.Name = "labelMax";
+            this.labelMax.Size = new System.Drawing.Size(13, 13);
+            this.labelMax.TabIndex = 13;
+            this.labelMax.Text = "0";
             // 
-            // labelDice
+            // label9
             // 
-            this.labelDice.AutoSize = true;
-            this.labelDice.Location = new System.Drawing.Point(194, 159);
-            this.labelDice.Name = "labelDice";
-            this.labelDice.Size = new System.Drawing.Size(13, 13);
-            this.labelDice.TabIndex = 11;
-            this.labelDice.Text = "0";
-            // 
-            // labelJacc
-            // 
-            this.labelJacc.AutoSize = true;
-            this.labelJacc.Location = new System.Drawing.Point(194, 178);
-            this.labelJacc.Name = "labelJacc";
-            this.labelJacc.Size = new System.Drawing.Size(13, 13);
-            this.labelJacc.TabIndex = 13;
-            this.labelJacc.Text = "0";
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(16, 177);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(100, 13);
-            this.label10.TabIndex = 12;
-            this.label10.Text = "Jaccard coefficient:";
-            // 
-            // labelfalseNegPos
-            // 
-            this.labelfalseNegPos.AutoSize = true;
-            this.labelfalseNegPos.Location = new System.Drawing.Point(194, 197);
-            this.labelfalseNegPos.Name = "labelfalseNegPos";
-            this.labelfalseNegPos.Size = new System.Drawing.Size(13, 13);
-            this.labelfalseNegPos.TabIndex = 15;
-            this.labelfalseNegPos.Text = "0";
-            // 
-            // label12
-            // 
-            this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(16, 196);
-            this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(129, 13);
-            this.label12.TabIndex = 14;
-            this.label12.Text = "False negative / positive: ";
-            // 
-            // labelMeanOverlap
-            // 
-            this.labelMeanOverlap.AutoSize = true;
-            this.labelMeanOverlap.Location = new System.Drawing.Point(194, 216);
-            this.labelMeanOverlap.Name = "labelMeanOverlap";
-            this.labelMeanOverlap.Size = new System.Drawing.Size(13, 13);
-            this.labelMeanOverlap.TabIndex = 17;
-            this.labelMeanOverlap.Text = "0";
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.Location = new System.Drawing.Point(16, 215);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(75, 13);
-            this.label14.TabIndex = 16;
-            this.label14.Text = "Mean overlap:";
-            // 
-            // labelUnionOverlap
-            // 
-            this.labelUnionOverlap.AutoSize = true;
-            this.labelUnionOverlap.Location = new System.Drawing.Point(194, 236);
-            this.labelUnionOverlap.Name = "labelUnionOverlap";
-            this.labelUnionOverlap.Size = new System.Drawing.Size(13, 13);
-            this.labelUnionOverlap.TabIndex = 19;
-            this.labelUnionOverlap.Text = "0";
-            // 
-            // label16
-            // 
-            this.label16.AutoSize = true;
-            this.label16.Location = new System.Drawing.Point(16, 235);
-            this.label16.Name = "label16";
-            this.label16.Size = new System.Drawing.Size(73, 13);
-            this.label16.TabIndex = 18;
-            this.label16.Text = "Union overlap";
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(16, 228);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(55, 13);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "Max TRE:";
             // 
             // EvaluationForm
             // 
@@ -482,9 +504,9 @@
         private System.Windows.Forms.GroupBox groupBoxMisc;
         private System.Windows.Forms.Button buttonCheckerBoard;
         private System.Windows.Forms.Button buttonDiffImage;
-        private System.Windows.Forms.Label labelMeanDiff;
+        private System.Windows.Forms.Label labelStdDev;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.Label labelAbsDiff;
+        private System.Windows.Forms.Label labelMeanDiff;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button buttonCalcCoef;
         private System.Windows.Forms.ComboBox comboBoxSegmentationParams;
@@ -501,5 +523,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label labelDice;
         private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label labelMax;
+        private System.Windows.Forms.Label label9;
     }
 }

@@ -108,6 +108,25 @@ namespace MaskedDeformableRegistrationApp.Utils
             return sitkImage;
         }
 
+        public static sitk.Image ResizeImage(sitk.Image img, uint width, uint height, sitk.PixelIDValueEnum pixelType)
+        {
+            sitk.VectorUInt32 vec = new sitk.VectorUInt32();
+            vec.Add(width);
+            vec.Add(height);
+
+            sitk.ResampleImageFilter resampleFilter = new sitk.ResampleImageFilter();
+            resampleFilter.SetSize(vec);
+            resampleFilter.SetOutputOrigin(img.GetOrigin());
+            resampleFilter.SetOutputDirection(img.GetDirection());
+            resampleFilter.SetOutputSpacing(img.GetSpacing());
+            resampleFilter.SetOutputPixelType(pixelType);
+            resampleFilter.SetDefaultPixelValue(255.0);
+            sitk.Image resultImage = resampleFilter.Execute(img);
+            img.Dispose();
+
+            return resultImage;
+        }
+
         public static sitk.Image ResizeImage(sitk.Image toResize, sitk.Image referenceImage)
         {
             if (toResize.GetWidth() == referenceImage.GetWidth() && toResize.GetHeight() == referenceImage.GetHeight())

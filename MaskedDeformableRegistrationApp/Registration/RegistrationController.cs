@@ -26,7 +26,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             _worker = worker;
 
             // create output directory
-            if (Directory.Exists(_parameters.OutputDirectory))
+            if (!Directory.Exists(_parameters.OutputDirectory))
             {
                 Directory.CreateDirectory(_parameters.OutputDirectory);
             }

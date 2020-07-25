@@ -239,6 +239,42 @@ namespace MaskedDeformableRegistrationApp.Forms
             // clean up?
         }
 
+        private void radioButtonTranslation_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonTranslation.Checked)
+            {
+                RegistrationParametersRigid.ParamMapToUse = null;
+                RegistrationParametersRigid.RegistrationDefaultParams = RegistrationDefaultParameters.translation;
+            }
+        }
+
+        private void radioButtonSimilarity_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonSimilarity.Checked)
+            {
+                RegistrationParametersRigid.ParamMapToUse = null;
+                RegistrationParametersRigid.RegistrationDefaultParams = RegistrationDefaultParameters.similarity;
+            }
+        }
+
+        private void radioButtonRigid_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonRigid.Checked)
+            {
+                RegistrationParametersRigid.ParamMapToUse = null;
+                RegistrationParametersRigid.RegistrationDefaultParams = RegistrationDefaultParameters.rigid;
+            }
+        }
+
+        private void radioButtonAffine_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonAffine.Checked)
+            {
+                RegistrationParametersRigid.ParamMapToUse = null;
+                RegistrationParametersRigid.RegistrationDefaultParams = RegistrationDefaultParameters.affine;
+            }
+        }
+
         #endregion
 
         #region BackgroundWorker
@@ -508,42 +544,48 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void UpdateRigidRegistrationType(RegistrationParameters parameters)
         {
-            if (radioButtonTranslation.Checked)
+            if(parameters.ParamMapToUse == null)
             {
-                SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.translation);
-            }
-            else if (radioButtonSimilarity.Checked)
-            {
-                SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.similarity);
-            }
-            else if (radioButtonRigid.Checked)
-            {
-                SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.rigid);
-            }
-            else if (radioButtonAffine.Checked)
-            {
-                SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.affine);
+                if (radioButtonTranslation.Checked)
+                {
+                    SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.translation);
+                }
+                else if (radioButtonSimilarity.Checked)
+                {
+                    SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.similarity);
+                }
+                else if (radioButtonRigid.Checked)
+                {
+                    SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.rigid);
+                }
+                else if (radioButtonAffine.Checked)
+                {
+                    SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.affine);
+                }
             }
             parameters.SubDirectory = parameters.RegistrationDefaultParams + "_" + DateTime.Now.ToShortDateString();
         }
 
         private void UpdateNonRigidRegistrationType(RegistrationParameters parameters)
         {
-            if (radioButtonAdvancedBspline.Checked)
+            if(parameters.ParamMapToUse == null)
             {
-                SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.bspline);
-            }
-            else if (radioButtonBsplineDiffusion.Checked)
-            {
-                SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.diffusion);
-            }
-            else if (radioButtonKernelSpline.Checked)
-            {
-                SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.spline);
-            }
-            else if (radioButtonSplineRecursive.Checked)
-            {
-                SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.recursive);
+                if (radioButtonAdvancedBspline.Checked)
+                {
+                    SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.bspline);
+                }
+                else if (radioButtonBsplineDiffusion.Checked)
+                {
+                    SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.diffusion);
+                }
+                else if (radioButtonKernelSpline.Checked)
+                {
+                    SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.spline);
+                }
+                else if (radioButtonSplineRecursive.Checked)
+                {
+                    SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.recursive);
+                }
             }
             parameters.SubDirectory = parameters.RegistrationDefaultParams + "_" + DateTime.Now.ToShortDateString();
         }
@@ -575,5 +617,6 @@ namespace MaskedDeformableRegistrationApp.Forms
         }
 
         #endregion
+
     }
 }

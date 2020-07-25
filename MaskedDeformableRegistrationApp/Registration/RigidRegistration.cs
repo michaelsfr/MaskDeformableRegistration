@@ -46,7 +46,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             //elastix.SetLogFileName(Path.Combine(outputDirectory, registrationParameters.ElastixLogFileName));
             elastix.LogToFileOn();
 
-            base.SetGeneralParameters();
+            //base.SetGeneralParameters();
         }
 
         public RigidRegistration(RegistrationParameters parameters) : base(parameters)
