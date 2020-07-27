@@ -47,6 +47,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             radioButtonAdvancedBspline.Checked = true;
             radioButtonNoPenalties.Checked = true;
             radioButtonWholeTissue.Checked = true;
+            radioButtonRigidNoMasking.Checked = true;
             buttonCancel.Enabled = false;
             buttonEvaluation.Enabled = false;
             buttonSegmentationInnerstructures.Enabled = true;
@@ -440,7 +441,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             Image<Gray, byte> mask = segImage.GetOutput().Clone();
             segImage.Dispose();
 
-            using (SegParamsInnerStructuresForm form = new SegParamsInnerStructuresForm(image, mask, RegistrationParametersRigid.InnerStructuresSegParams))
+            using (SegParamsInnerStructuresForm form = new SegParamsInnerStructuresForm(image, mask, RegistrationParametersNonRigid.InnerStructuresSegParams))
             {
                 Cursor.Current = Cursors.Default;
                 DialogResult result = form.ShowDialog();
@@ -511,9 +512,11 @@ namespace MaskedDeformableRegistrationApp.Forms
             } else if (radioButtonMaskWhole.Checked)
             {
                 parameters.RigidOptions = MaskedRigidRegistrationOptions.BinaryRegistrationWholeTissue;
+                parameters.UseInnerStructuresSegmentation = false;
             } else if (radioButtonMaskInner.Checked)
             {
                 parameters.RigidOptions = MaskedRigidRegistrationOptions.BinaryRegistrationInnerStructures;
+                parameters.UseInnerStructuresSegmentation = true;
             } else if (radioButtonComponent.Checked)
             {
                 parameters.RigidOptions = MaskedRigidRegistrationOptions.ComponentwiseRegistration;

@@ -1,5 +1,6 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
+using Emgu.CV.Util;
 using MaskedDeformableRegistrationApp.Segmentation;
 using MaskedDeformableRegistrationApp.Utils;
 using System;
@@ -61,7 +62,9 @@ namespace MaskedDeformableRegistrationApp.Registration
                 _parameters.FixedImageFilename = imageStack[_parameters.Iteration];
                 _worker.ReportProgress(0, "Load reference image...");
                 // load and resize fixed / reference image
-                sitk.Image referenceImage = LoadAndResizeImage(_parameters.FixedImageFilename, _parameters.FixedImageFilename);
+                sitk.Transform transFixed = null;
+                sitk.Image referenceImage = LoadAndResizeImage(_parameters.FixedImageFilename, out transFixed , _parameters.FixedImageFilename);
+                if (transFixed != null) _parameters.FixedPointSetTransform = transFixed;
 
                 // set mask if defined in parameters
                 sitk.Image fixedMask = null;
@@ -72,14 +75,16 @@ namespace MaskedDeformableRegistrationApp.Registration
 
                 _worker.ReportProgress(0, "Load template image...");
                 // load and resize moving / template image
-                sitk.Image templateImage = LoadAndResizeImage(imageStack[i], imageStack[i]);
+                sitk.Transform transMoving = null;
+                sitk.Image templateImage = LoadAndResizeImage(imageStack[i], out transMoving, imageStack[i]);
+                if (transMoving != null) _parameters.MovingPointSetTransform = transMoving;
 
                 _worker.ReportProgress(0, "Start registration.");
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
 
                 // start actual registration
-                sitk.VectorOfParameterMap transformparams = PerformRegistration(referenceImage, templateImage, fixedMask, imageStack[i]);
+                List<sitk.VectorOfParameterMap> transformparams = PerformRegistration(referenceImage, templateImage, fixedMask, imageStack[i]);
 
                 stopWatch.Stop();
                 string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
@@ -110,11 +115,16 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             _worker.ReportProgress(0, "Load reference image...");
             // load fixed / reference image once and resize
-            sitk.Image referenceImage = LoadAndResizeImage(_parameters.FixedImageFilename);
+            sitk.Transform transFixed = null;
+            sitk.Image referenceImage = LoadAndResizeImage(_parameters.FixedImageFilename, out transFixed);
+            if (transFixed != null) _parameters.FixedPointSetTransform = transFixed;
 
             // set fixed mask if defined in parameters
             sitk.Image fixedMask = null;
-            if (_parameters.UseFixedMask)
+            if (_parameters.UseFixedMask
+                || _parameters.RigidOptions == MaskedRigidRegistrationOptions.BinaryRegistrationInnerStructures 
+                || _parameters.RigidOptions == MaskedRigidRegistrationOptions.BinaryRegistrationWholeTissue
+                || _parameters.RigidOptions == MaskedRigidRegistrationOptions.ComponentwiseRegistration)
             {
                 fixedMask = GetMask(_parameters.FixedImageFilename);
             }
@@ -127,14 +137,16 @@ namespace MaskedDeformableRegistrationApp.Registration
 
                 _worker.ReportProgress(0, "Load template image...");
                 // load and resize moving / template image
-                sitk.Image templateImage = LoadAndResizeImage(filename, filename);
+                sitk.Transform transMoving = null;
+                sitk.Image templateImage = LoadAndResizeImage(filename, out transMoving, filename);
+                if (transMoving != null) _parameters.MovingPointSetTransform = transMoving;
 
                 _worker.ReportProgress(0, "Start registration.");
                 Stopwatch stopWatch = new Stopwatch();
                 stopWatch.Start();
 
                 // start actual registration
-                sitk.VectorOfParameterMap transformparams = PerformRegistration(referenceImage, templateImage, fixedMask, filename);
+                List<sitk.VectorOfParameterMap> transformparams = PerformRegistration(referenceImage, templateImage, fixedMask, filename);
 
                 stopWatch.Stop();
                 string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
@@ -153,10 +165,11 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <param name="filename">filename of the image to load</param>
         /// <param name="writeFilename">output filename if image should be written back to disk</param>
         /// <returns>simpleitk image</returns>
-        private sitk.Image LoadAndResizeImage(string filename, string writeFilename = null)
+        private sitk.Image LoadAndResizeImage(string filename, out sitk.Transform transform, string writeFilename = null)
         {
+            transform = null;
             sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(_parameters.FixedImageFilename);
-            sitk.Image refResized = ImageUtils.ResizeImage(refImage, _parameters.LargestImageWidth, _parameters.LargestImageHeight);
+            sitk.Image refResized = ImageUtils.ResizeImage(refImage, _parameters.LargestImageWidth, _parameters.LargestImageHeight, out transform);
 
             // write image if output filename is defined
             if (writeFilename != null)
@@ -175,10 +188,13 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <param name="fixedMask">fixed mask (can be null)</param>
         /// <param name="movingImageFilename">filename of the template image</param>
         /// <returns></returns>
-        private sitk.VectorOfParameterMap PerformRegistration(sitk.Image refImage, sitk.Image movImage, sitk.Image fixedMask, string movingImageFilename)
+        private List<sitk.VectorOfParameterMap> PerformRegistration(sitk.Image refImage, sitk.Image movImage, sitk.Image fixedMask, string movingImageFilename)
         {
             sitk.Image movingMask = null;
-            if (_parameters.UseMovingMask)
+            if (_parameters.UseMovingMask
+                || _parameters.RigidOptions == MaskedRigidRegistrationOptions.BinaryRegistrationInnerStructures
+                || _parameters.RigidOptions == MaskedRigidRegistrationOptions.BinaryRegistrationWholeTissue
+                || _parameters.RigidOptions == MaskedRigidRegistrationOptions.ComponentwiseRegistration)
             {
                 movingMask = GetMask(movingImageFilename);
             }
@@ -222,24 +238,24 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <param name="movingMask">moving mask</param>
         /// <param name="imageFilename">moving image filename</param>
         /// <returns>transform parameters</returns>
-        private sitk.VectorOfParameterMap PerformRigidRegistration(sitk.Image refImage, sitk.Image movImage, 
+        private List<sitk.VectorOfParameterMap> PerformRigidRegistration(sitk.Image refImage, sitk.Image movImage, 
             sitk.Image fixedMask, sitk.Image movingMask, string imageFilename)
         {
-            sitk.VectorOfParameterMap resultMap = null;
+            List<sitk.VectorOfParameterMap> resultMapList = new List<sitk.VectorOfParameterMap>();
             switch (_parameters.RigidOptions)
             {
                 case MaskedRigidRegistrationOptions.None:
-                    resultMap = DefaultRigidRegistration(refImage, movImage, fixedMask, movingMask, imageFilename);
+                    resultMapList.Add(DefaultRigidRegistration(refImage, movImage, fixedMask, movingMask, imageFilename));
                     break;
                 case MaskedRigidRegistrationOptions.BinaryRegistrationWholeTissue:
                 case MaskedRigidRegistrationOptions.BinaryRegistrationInnerStructures:
-                    resultMap = DefaultRigidRegistration(fixedMask, movingMask, null, null, imageFilename);
+                    resultMapList.Add(DefaultRigidRegistration(fixedMask, movingMask, null, null, imageFilename));
                     break;
                 case MaskedRigidRegistrationOptions.ComponentwiseRegistration:
-                    resultMap = ComponentWiseRigidRegistration(fixedMask, movingMask, 4, imageFilename);
+                    resultMapList = ComponentWiseRigidRegistration(fixedMask, movingMask, 4, imageFilename);
                     break;
             }
-            return resultMap;
+            return resultMapList;
         }
 
         /// <summary>
@@ -252,10 +268,56 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <param name="v">number of corresponding components</param>
         /// <param name="filename">moving image filename</param>
         /// <returns></returns>
-        private sitk.VectorOfParameterMap ComponentWiseRigidRegistration(sitk.Image fixedMask, sitk.Image movingMask, int v, string filename)
+        private List<sitk.VectorOfParameterMap> ComponentWiseRigidRegistration(sitk.Image fixedMask, sitk.Image movingMask, int v, string filename)
         {
-            // todo: see Registration utils
-            throw new NotImplementedException();
+            // convert from sitk to opencv
+            var fixedImage = ReadWriteUtils.ConvertSitkImageToOpenCv<Gray, byte>(fixedMask);
+            var movingImage = ReadWriteUtils.ConvertSitkImageToOpenCv<Gray, byte>(movingMask);
+
+            // find contours
+            VectorOfVectorOfPoint contoursFixed = new VectorOfVectorOfPoint();
+            VectorOfVectorOfPoint contoursMoving = new VectorOfVectorOfPoint();
+            CvInvoke.FindContours(fixedImage, contoursFixed, null, Emgu.CV.CvEnum.RetrType.Ccomp, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+            CvInvoke.FindContours(movingImage, contoursMoving, null, Emgu.CV.CvEnum.RetrType.Ccomp, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
+
+            // retireve dict with contour index and area size ordered by size
+            Dictionary<int, double> contoursFixedDict = RegistrationUtils.GetContourAreaDict(contoursFixed);
+            Dictionary<int, double> contoursMovingDict = RegistrationUtils.GetContourAreaDict(contoursMoving);
+
+            List<Tuple<string, string>> filenameOfMaskComponents = new List<Tuple<string, string>>();
+            for (int i = 0; i <= v; i++)
+            {
+                var contourFixed = contoursFixed[contoursFixedDict.ElementAt(i).Key];
+                var contourMoving = contoursMoving[contoursMovingDict.ElementAt(i).Key];
+
+                Image<Gray, byte> maskFixed = new Image<Gray, byte>(fixedImage.Width, fixedImage.Height, new Gray(0.0));
+                Image<Gray, byte> maskMoving = new Image<Gray, byte>(movingImage.Width, movingImage.Height, new Gray(0.0));
+                CvInvoke.DrawContours(maskFixed, contourFixed, -1, new MCvScalar(255.0), thickness: -1);
+                CvInvoke.DrawContours(maskMoving, contourMoving, -1, new MCvScalar(255.0), thickness: -1);
+
+                string filenameFixed = "C:\\temp\\fixed_0" + i + ".png";
+                string filenameMoving = "C:\\temp\\moving_0" + i + ".png";
+                maskFixed.Save(filenameFixed);
+                maskMoving.Save(filenameMoving);
+                Tuple<string, string> temp = new Tuple<string, string>(filenameFixed, filenameMoving);
+                filenameOfMaskComponents.Add(temp);
+            }
+
+            sitk.ParameterMap map = RegistrationUtils.GetDefaultParameterMap(_parameters.RegistrationDefaultParams);
+
+            List<sitk.VectorOfParameterMap> list = new List<sitk.VectorOfParameterMap>();
+            foreach (Tuple<string, string> tuple in filenameOfMaskComponents)
+            {
+                sitk.Image img01 = ReadWriteUtils.ReadITKImageFromFile(tuple.Item1);
+                sitk.Image img02 = ReadWriteUtils.ReadITKImageFromFile(tuple.Item2);
+                _parameters.ParamMapToUse = map;
+                RigidRegistration reg = new RigidRegistration(img01, img02, _parameters);
+                reg.Execute();
+                sitk.VectorOfParameterMap toAdd = new sitk.VectorOfParameterMap(reg.GetTransformationParameterMap());
+                list.Add(toAdd);
+                reg.Dispose();
+            }
+            return list;
         }
 
         /// <summary>
@@ -270,7 +332,6 @@ namespace MaskedDeformableRegistrationApp.Registration
         private sitk.VectorOfParameterMap DefaultRigidRegistration(sitk.Image refImage, sitk.Image movImage, sitk.Image fixedMask, sitk.Image movingMask, string imageFilename)
         {
             RigidRegistration regRigid = new RigidRegistration(refImage, movImage, _parameters);
-            regRigid.SetDefaultParameterMap(_parameters.RegistrationDefaultParams, _parameters.NumberOfResolutions);
 
             // set fixed mask if defined
             if (fixedMask != null)
@@ -300,20 +361,20 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <param name="movingMask">moving mask</param>
         /// <param name="imageFilename">filename of moving image</param>
         /// <returns></returns>
-        private sitk.VectorOfParameterMap PerformNonRigidRegistration(sitk.Image refImage, sitk.Image movImage, 
+        private List<sitk.VectorOfParameterMap> PerformNonRigidRegistration(sitk.Image refImage, sitk.Image movImage, 
             sitk.Image fixedMask, sitk.Image movingMask, string imageFilename)
         {
-            sitk.VectorOfParameterMap resultMap = null;
+            List<sitk.VectorOfParameterMap> resultMap = new List<sitk.VectorOfParameterMap>();
             switch(_parameters.NonRigidOptions)
             {
                 case MaskedNonRigidRegistrationOptions.None:
-                    resultMap = DefaultNonRigidRegistration(refImage, movImage, fixedMask, movingMask, imageFilename);
+                    resultMap.Add(DefaultNonRigidRegistration(refImage, movImage, fixedMask, movingMask, imageFilename));
                     break;
                 case MaskedNonRigidRegistrationOptions.BsplineWithPenaltyTerm:
-                    resultMap = NonRigidRegistrationWithPenalty(refImage, movImage, null, null, imageFilename);
+                    resultMap.Add(NonRigidRegistrationWithPenalty(refImage, movImage, null, null, imageFilename));
                     break;
                 case MaskedNonRigidRegistrationOptions.BsplineWithPenaltyTermAndCoefficientMap:
-                    resultMap = NonRigidRegistrationWithPenalty(refImage, movImage, fixedMask, null, imageFilename);
+                    resultMap.Add(NonRigidRegistrationWithPenalty(refImage, movImage, fixedMask, null, imageFilename));
                     break;
                 case MaskedNonRigidRegistrationOptions.ComposeIndependantRegistrations:
                     throw new NotImplementedException();
@@ -502,11 +563,17 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// </summary>
         /// <param name="filename"></param>
         /// <param name="transformparams"></param>
-        private void WriteTransform(string filename, sitk.VectorOfParameterMap transformparams)
+        private void WriteTransform(string filename, List<sitk.VectorOfParameterMap> transformparams)
         {
             string resultFilename = ReadWriteUtils.GetOutputDirectory(_parameters) + "\\" + Path.GetFileNameWithoutExtension(filename) + ".png";
+
             // add transform parameter map to registration parameters
+            if(_parameters.TransformationParameterMap.ContainsKey(resultFilename))
+            {
+                _parameters.TransformationParameterMap.Remove(resultFilename);
+            }
             _parameters.TransformationParameterMap.Add(resultFilename, transformparams);
+
             // read moving image from file
             sitk.Image movingImageToTransform = ReadWriteUtils.ReadITKImageFromFile(filename, sitk.PixelIDValueEnum.sitkVectorUInt8);
             // initialize transform instance

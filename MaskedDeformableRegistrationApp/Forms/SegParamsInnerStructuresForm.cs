@@ -39,14 +39,14 @@ namespace MaskedDeformableRegistrationApp.Forms
             splitContainer1.IsSplitterFixed = true;
 
             comboBoxChannel.SelectedIndexChanged -= comboBoxChannel_SelectedIndexChanged;
-            comboBoxColorspace.SelectedIndexChanged -= comboBoxChannel_SelectedIndexChanged;
+            comboBoxColorspace.SelectedIndexChanged -= comboBoxColorspace_SelectedIndexChanged;
             int[] channels = { 1, 2, 3 };
             comboBoxChannel.DataSource = channels;
             comboBoxChannel.SelectedIndex = segmentationParameters.Channel;
             comboBoxColorspace.DataSource = Enum.GetValues(typeof(ColorSpace));
             comboBoxColorspace.SelectedIndex = (int)segmentationParameters.Colorspace;
             comboBoxChannel.SelectedIndexChanged += comboBoxChannel_SelectedIndexChanged;
-            comboBoxColorspace.SelectedIndexChanged += comboBoxChannel_SelectedIndexChanged;
+            comboBoxColorspace.SelectedIndexChanged += comboBoxColorspace_SelectedIndexChanged;
 
             trackBar1.ValueChanged -= trackBar1_ValueChanged;
             trackBar1.Minimum = 0;

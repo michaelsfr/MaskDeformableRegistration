@@ -135,8 +135,10 @@ namespace MaskedDeformableRegistrationApp.Registration
 
         // evaluation
         public string FixedImageFilename { get; set; }
-        public Dictionary<string, sitk.VectorOfParameterMap> TransformationParameterMap { get; set; } = new Dictionary<string, sitk.VectorOfParameterMap>();
+        public Dictionary<string, List<sitk.VectorOfParameterMap>> TransformationParameterMap { get; set; } = new Dictionary<string, List<sitk.VectorOfParameterMap>>();
         public string MovingImagePointSetFilename { get; set; }
+        public sitk.Transform FixedPointSetTransform { get; set; } = null;
+        public sitk.Transform MovingPointSetTransform { get; set; } = null;
 
         // segmentaion
         public SegmentationParameters WholeTissueSegParams { get; set; } = new SegmentationParameters();

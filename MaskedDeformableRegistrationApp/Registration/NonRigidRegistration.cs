@@ -44,7 +44,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             elastix.LogToConsoleOn();
 
             // set non rigid parameters
-            base.SetGeneralParameters();
+            //base.SetGeneralParameters();
             SetParameters();
         }
 
@@ -52,7 +52,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             elastix = new sitk.ElastixImageFilter();
             parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationDefaultParams);
-            base.SetGeneralParameters();
+            //base.SetGeneralParameters();
             SetParameters();
         }
 

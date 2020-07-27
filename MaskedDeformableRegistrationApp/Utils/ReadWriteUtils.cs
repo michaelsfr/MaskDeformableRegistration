@@ -68,6 +68,13 @@ namespace MaskedDeformableRegistrationApp.Utils
             }
         }
 
+        public static Image<T, D> ConvertSitkImageToOpenCv<T, D>(sitk.Image image) where T : struct, IColor where D : new()
+        {
+            string filename = "C:\\temp\\temp_image.png";
+            WriteSitkImage(image, filename);
+            return ReadOpenCVImageFromFile<T, D>(filename);
+        }
+
         public static void WriteSitkImage(sitk.Image img, string outputFileName)
         {
             sitk.ImageFileWriter writer = new sitk.ImageFileWriter();

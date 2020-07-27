@@ -17,14 +17,14 @@ namespace MaskedDeformableRegistrationApp.Registration
         private sitk.Image movingImage = null;
         private sitk.Image transformedImage = null;
 
-        private sitk.VectorOfParameterMap parameterMaps = null;
+        private List<sitk.VectorOfParameterMap> parameterMaps = null;
         private sitk.InterpolatorEnum interpolationType = sitk.InterpolatorEnum.sitkLinear;
 
         private RegistrationParameters registrationParameters = null;
 
         private int interpolationOrder = -1;
 
-        public TransformRGB(sitk.Image movingImage, sitk.VectorOfParameterMap parameterMaps, RegistrationParameters parameters)
+        public TransformRGB(sitk.Image movingImage, List<sitk.VectorOfParameterMap> parameterMaps, RegistrationParameters parameters)
         {
             this.movingImage = movingImage;
             this.parameterMaps = parameterMaps;
@@ -47,27 +47,42 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.Image greenChannel = rgbVector.Execute(movingImage, 1, sitk.PixelIDValueEnum.sitkVectorUInt8);
             sitk.Image blueChannel = rgbVector.Execute(movingImage, 2, sitk.PixelIDValueEnum.sitkVectorUInt8);
 
-            foreach(var parameter in parameterMaps.AsEnumerable())
+            foreach (var parameterMap in parameterMaps)
             {
-                // will not be overwritten at the moment? todo
-
-                // resize moving image and set default pixels to white
-                uint mWidth = movingImage.GetWidth();
-                uint mHeight = movingImage.GetHeight();
-                uint pWidth = Convert.ToUInt32(parameter["Size"][0]);
-                uint pHeight = Convert.ToUInt32(parameter["Size"][1]);
-                parameter["Size"][0] = mWidth > pWidth ? mWidth.ToString() : pWidth.ToString();
-                parameter["Size"][1] = mHeight > pHeight ? mHeight.ToString() : pHeight.ToString();
-                parameter["DefaultPixelValue"][0] = "255.0";
-                
-                if(interpolationOrder != -1)
+                foreach (var parameter in parameterMap.AsEnumerable())
                 {
-                    parameter["FinalBSplineInterpolationOrder"][0] = interpolationOrder.ToString();
+                    // will not be overwritten at the moment? todo
+
+                    // resize moving image and set default pixels to white
+                    uint mWidth = movingImage.GetWidth();
+                    uint mHeight = movingImage.GetHeight();
+                    uint pWidth = Convert.ToUInt32(parameter["Size"][0]);
+                    uint pHeight = Convert.ToUInt32(parameter["Size"][1]);
+                    parameter["Size"][0] = mWidth > pWidth ? mWidth.ToString() : pWidth.ToString();
+                    parameter["Size"][1] = mHeight > pHeight ? mHeight.ToString() : pHeight.ToString();
+                    parameter["DefaultPixelValue"][0] = "255.0";
+
+                    if (interpolationOrder != -1)
+                    {
+                        parameter["FinalBSplineInterpolationOrder"][0] = interpolationOrder.ToString();
+                    }
                 }
             }
+            
             // initialize transformix
             transformix.SetOutputDirectory(outputDir);
-            transformix.SetTransformParameterMap(parameterMaps);
+            transformix.SetTransformParameterMap(parameterMaps.First());
+            if (parameterMaps.Count > 1)
+            {
+                for (int i = 1; i < parameterMaps.Count; i++)
+                {
+                    var vectorParameterMap = parameterMaps[i];
+                    foreach (var paramMap in vectorParameterMap.AsEnumerable())
+                    {
+                        transformix.AddTransformParameterMap(paramMap);
+                    }
+                }
+            }
             transformix.ComputeDeformationFieldOn();
             transformix.LogToFileOn();
 

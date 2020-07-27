@@ -119,7 +119,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.VectorOfParameterMap initialTransform = parameterMaps.First();
             parameterMaps.Remove(initialTransform);
 
-            TransformRGB transform = new TransformRGB(movingImage, initialTransform, parameters);
+            TransformRGB transform = new TransformRGB(movingImage, parameterMaps, parameters);
             
             foreach(sitk.VectorOfParameterMap vectorOfMaps in parameterMaps)
             {
@@ -164,7 +164,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 var contourMoving = contoursMoving[contoursMovingDict.ElementAt(i).Key];
 
                 Image<Gray, byte> maskFixed = new Image<Gray, byte>(fixedSegments.Width, fixedSegments.Height, new Gray(0.0));
-                Image<Gray, byte> maskMoving = new Image<Gray, byte>(movingSegments.Width, fixedSegments.Height, new Gray(0.0));
+                Image<Gray, byte> maskMoving = new Image<Gray, byte>(movingSegments.Width, movingSegments.Height, new Gray(0.0));
                 CvInvoke.DrawContours(maskFixed, contourFixed, -1, new MCvScalar(255.0), thickness: -1);
                 CvInvoke.DrawContours(maskMoving, contourMoving, -1, new MCvScalar(255.0), thickness: -1);
 
@@ -199,7 +199,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// </summary>
         /// <param name="contours">contours as a vector of vector of points</param>
         /// <returns>dictionary</returns>
-        private static Dictionary<int, double> GetContourAreaDict(VectorOfVectorOfPoint contours)
+        public static Dictionary<int, double> GetContourAreaDict(VectorOfVectorOfPoint contours)
         {
             Dictionary<int, double> contoursDict = new Dictionary<int, double>();
             for (int i = 0; i <= contours.Size; i++)

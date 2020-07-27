@@ -66,28 +66,25 @@ namespace MaskedDeformableRegistrationApp.Utils
             return GetITKImageFromBitmap(image.Bitmap);
         }
 
-        public static Bitmap ResizeImage(Bitmap image, int width, int height)
+        public static sitk.Image ResizeImage(sitk.Image image, uint newWidth, uint newHeight)
         {
-            /*var resized = image.Bitmap.Clone();
-            var brush = new SolidBrush(Color.Black);
-            float scale = Math.Min(width / image.Width, height / image.Height);
+            if (image.GetWidth() == newWidth && image.GetHeight() == newHeight)
+                return image;
 
-            var bmp = new Bitmap((int)width, (int)height);
-            var graph = Graphics.FromImage(bmp);
+            sitk.VectorUInt32 vec = new sitk.VectorUInt32();
+            vec.Add(newWidth);
+            vec.Add(newHeight);
 
-            // interpolation increases quality of image
-            //graph.InterpolationMode = InterpolationMode.High;
-            //graph.CompositingQuality = CompositingQuality.HighQuality;
-            //graph.SmoothingMode = SmoothingMode.AntiAlias;
+            sitk.ResampleImageFilter resampleFilter = new sitk.ResampleImageFilter();
+            resampleFilter.SetSize(vec);
+            resampleFilter.SetOutputOrigin(image.GetOrigin());
+            resampleFilter.SetOutputDirection(image.GetDirection());
+            resampleFilter.SetOutputSpacing(image.GetSpacing());
+            resampleFilter.SetOutputPixelType(image.GetPixelID());
+            resampleFilter.SetDefaultPixelValue(255.0);
+            sitk.Image resultImage = resampleFilter.Execute(image);
 
-            var scaleWidth = (int)(image.Width * scale);
-            var scaleHeight = (int)(image.Height * scale);
-
-            graph.FillRectangle(brush, new RectangleF(0, 0, width, height));
-            graph.DrawImage(resized, ((int)width - scaleWidth) / 2, ((int)height - scaleHeight) / 2, scaleWidth, scaleHeight);*/
-
-            Bitmap resized = new Bitmap(image, new Size(width, height));
-            return resized;
+            return resultImage;
         }
 
         public static sitk.Image GetITKImageFromBitmap(Bitmap image)
@@ -160,8 +157,9 @@ namespace MaskedDeformableRegistrationApp.Utils
             return hist;
         }
 
-        public static sitk.Image ResizeImage(sitk.Image image, uint newWidth, uint newHeight)
+        public static sitk.Image ResizeImage(sitk.Image image, uint newWidth, uint newHeight, out sitk.Transform transform)
         {
+            transform = null;
             if (image.GetWidth() == newWidth && image.GetHeight() == newHeight)
                 return image;
 
@@ -177,6 +175,7 @@ namespace MaskedDeformableRegistrationApp.Utils
             resampleFilter.SetOutputPixelType(image.GetPixelID());
             resampleFilter.SetDefaultPixelValue(255.0);
             sitk.Image resultImage = resampleFilter.Execute(image);
+            transform = resampleFilter.GetTransform();
 
             return resultImage;
         }

@@ -76,6 +76,33 @@ namespace MaskedDeformableRegistrationApp.Utils
             return result;
         }
 
+        public static sitk.Image GetCheckerBoardV2(string fImg01, string fImg02, uint size = 0)
+        {
+            sitk.Image img01 = ReadWriteUtils.ReadITKImageFromFile(fImg01);
+            sitk.Image img02 = ReadWriteUtils.ReadITKImageFromFile(fImg02);
+
+            uint width = img01.GetWidth() > img02.GetWidth() ? img01.GetWidth() : img02.GetWidth();
+            uint height = img01.GetHeight() > img02.GetHeight() ? img01.GetHeight() : img02.GetHeight();
+
+            sitk.Image reference = ImageUtils.ResizeImage(img01, width, height);
+            sitk.Image transformed = ImageUtils.ResizeImage(img02, width, height);
+
+            sitk.CheckerBoardImageFilter checkerBoard = new sitk.CheckerBoardImageFilter();
+            if (size != 0)
+            {
+                sitk.VectorUInt32 vec = new sitk.VectorUInt32();
+                vec.Add(size);
+                vec.Add(size);
+                checkerBoard.SetCheckerPattern(vec);
+            }
+            sitk.Image result = checkerBoard.Execute(reference, transformed);
+            img01.Dispose();
+            img02.Dispose();
+            reference.Dispose();
+            transformed.Dispose();
+            return result;
+        }
+
         /// <summary>
         /// Create a displacement field image by the transformation parameters.
         /// (Save as .mhd afterwards)
@@ -170,13 +197,24 @@ namespace MaskedDeformableRegistrationApp.Utils
         /// <param name="transformParameters">transform params</param>
         /// <param name="parameters">registration params</param>
         /// <returns>filename of transformed point set</returns>
-        public static string TransfromPointSet(sitk.VectorOfParameterMap transformParameters, RegistrationParameters parameters)
+        public static string TransfromPointSet(List<sitk.VectorOfParameterMap> transformParameters, RegistrationParameters parameters)
         {
             sitk.TransformixImageFilter transformix = null;
             try
             {
                 transformix = new sitk.TransformixImageFilter();
-                transformix.SetTransformParameterMap(transformParameters);
+                transformix.SetTransformParameterMap(transformParameters.First());
+                if (transformParameters.Count > 1)
+                {
+                    for (int i = 1; i < transformParameters.Count; i++)
+                    {
+                        var vectorParameterMap = transformParameters[i];
+                        foreach (var paramMap in vectorParameterMap.AsEnumerable())
+                        {
+                            transformix.AddTransformParameterMap(paramMap);
+                        }
+                    }
+                }
                 transformix.SetFixedPointSetFileName(parameters.MovingImagePointSetFilename);
                 transformix.SetOutputDirectory(ReadWriteUtils.GetOutputDirectory(parameters));
                 sitk.Image image = transformix.Execute();

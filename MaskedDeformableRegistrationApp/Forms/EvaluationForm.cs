@@ -85,12 +85,15 @@ namespace MaskedDeformableRegistrationApp.Forms
             Cursor.Current = Cursors.WaitCursor;
 
             string key = comboBoxMoving.SelectedValue.ToString();
-            sitk.VectorOfParameterMap map = registrationParameters.TransformationParameterMap[key];
+            List<sitk.VectorOfParameterMap> map = registrationParameters.TransformationParameterMap[key];
             registrationParameters.MovingImagePointSetFilename = filenameMovingPointSet;
 
             string filenameOutputPoints = VisualizationEvaluationUtils.TransfromPointSet(map, registrationParameters);
             var fixedPointsDict = ReadWriteUtils.ReadFixedPointSet(filenameFixedPointSet).Values.ToList();
             var transformedPointsDict = ReadWriteUtils.ReadTransformedPointSets(filenameOutputPoints).Values.ToList();
+
+            TransformPointSet(registrationParameters.FixedPointSetTransform, ref fixedPointsDict);
+            TransformPointSet(registrationParameters.MovingPointSetTransform, ref transformedPointsDict);
 
             RegistrationError registrationError = VisualizationEvaluationUtils.GetRegistrationError(fixedPointsDict, transformedPointsDict);
 
@@ -99,6 +102,23 @@ namespace MaskedDeformableRegistrationApp.Forms
             labelMax.Text = registrationError.MaximumRegistrationError.ToString("0.##");
 
             Cursor.Current = Cursors.Default;
+        }
+
+        private void TransformPointSet(sitk.Transform transform, ref List<CoordPoint> pointSetDict)
+        {
+            if(transform != null)
+            {
+                foreach(CoordPoint point in pointSetDict)
+                {
+                    sitk.VectorDouble vec = new sitk.VectorDouble();
+                    vec.Add(point.X);
+                    vec.Add(point.Y);
+                    vec.Add(0);
+                    sitk.VectorDouble resultVec = transform.TransformPoint(vec);
+                    point.X = resultVec[0];
+                    point.Y = resultVec[1];
+                }
+            }
         }
 
         private void buttonCalcCoef_Click(object sender, EventArgs e)
@@ -187,12 +207,12 @@ namespace MaskedDeformableRegistrationApp.Forms
             string movingImageFilename = comboBoxMovingImage.SelectedValue.ToString();
 
             // read images
-            var img01 = ReadWriteUtils.ReadITKImageFromFile(fixedImageFilename);
-            var img02 = ReadWriteUtils.ReadITKImageFromFile(movingImageFilename);
-            var checkerboard = VisualizationEvaluationUtils.GetCheckerBoard(img01, img02);
+            //var img01 = ReadWriteUtils.ReadITKImageFromFile(fixedImageFilename);
+            //var img02 = ReadWriteUtils.ReadITKImageFromFile(movingImageFilename);
+            var checkerboard = VisualizationEvaluationUtils.GetCheckerBoardV2(fixedImageFilename, movingImageFilename, 10);
             ReadWriteUtils.WriteSitkImage(checkerboard, registrationParameters.OutputDirectory + "\\checkerboard.png");
-            img01.Dispose();
-            img02.Dispose();
+            //img01.Dispose();
+            //img02.Dispose();
             checkerboard.Dispose();
 
             Cursor.Current = Cursors.Default;
