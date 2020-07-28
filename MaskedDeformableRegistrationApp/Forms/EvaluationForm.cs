@@ -51,6 +51,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             comboBoxMovingImage.ValueMember = "key";
             comboBoxSegmentationParams.Items.Insert(0, "Whole Particle Segmentation");
             comboBoxSegmentationParams.Items.Insert(1, "Inner Structure Segmentation");
+            numericUpDownCheckerSize.Value = 50;
         }
 
         private void buttonChooseFixedPS_Click(object sender, EventArgs e)
@@ -92,8 +93,8 @@ namespace MaskedDeformableRegistrationApp.Forms
             var fixedPointsDict = ReadWriteUtils.ReadFixedPointSet(filenameFixedPointSet).Values.ToList();
             var transformedPointsDict = ReadWriteUtils.ReadTransformedPointSets(filenameOutputPoints).Values.ToList();
 
-            TransformPointSet(registrationParameters.FixedPointSetTransform, ref fixedPointsDict);
-            TransformPointSet(registrationParameters.MovingPointSetTransform, ref transformedPointsDict);
+            //TransformPointSet(registrationParameters.FixedPointSetTransform, ref fixedPointsDict);
+            //TransformPointSet(registrationParameters.MovingPointSetTransform, ref transformedPointsDict);
 
             RegistrationError registrationError = VisualizationEvaluationUtils.GetRegistrationError(fixedPointsDict, transformedPointsDict);
 
@@ -205,11 +206,12 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             string fixedImageFilename = registrationParameters.FixedImageFilename;
             string movingImageFilename = comboBoxMovingImage.SelectedValue.ToString();
+            int size = (int)numericUpDownCheckerSize.Value;
 
             // read images
             //var img01 = ReadWriteUtils.ReadITKImageFromFile(fixedImageFilename);
             //var img02 = ReadWriteUtils.ReadITKImageFromFile(movingImageFilename);
-            var checkerboard = VisualizationEvaluationUtils.GetCheckerBoardV2(fixedImageFilename, movingImageFilename, 10);
+            var checkerboard = VisualizationEvaluationUtils.GetCheckerBoardV2(fixedImageFilename, movingImageFilename, size);
             ReadWriteUtils.WriteSitkImage(checkerboard, registrationParameters.OutputDirectory + "\\checkerboard.png");
             //img01.Dispose();
             //img02.Dispose();

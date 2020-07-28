@@ -62,9 +62,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 _parameters.FixedImageFilename = imageStack[_parameters.Iteration];
                 _worker.ReportProgress(0, "Load reference image...");
                 // load and resize fixed / reference image
-                sitk.Transform transFixed = null;
-                sitk.Image referenceImage = LoadAndResizeImage(_parameters.FixedImageFilename, out transFixed , _parameters.FixedImageFilename);
-                if (transFixed != null) _parameters.FixedPointSetTransform = transFixed;
+                sitk.Image referenceImage = LoadAndResizeImage(_parameters.FixedImageFilename, _parameters.FixedImageFilename);
 
                 // set mask if defined in parameters
                 sitk.Image fixedMask = null;
@@ -75,9 +73,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 
                 _worker.ReportProgress(0, "Load template image...");
                 // load and resize moving / template image
-                sitk.Transform transMoving = null;
-                sitk.Image templateImage = LoadAndResizeImage(imageStack[i], out transMoving, imageStack[i]);
-                if (transMoving != null) _parameters.MovingPointSetTransform = transMoving;
+                sitk.Image templateImage = LoadAndResizeImage(imageStack[i], imageStack[i]);
 
                 _worker.ReportProgress(0, "Start registration.");
                 Stopwatch stopWatch = new Stopwatch();
@@ -115,9 +111,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             _worker.ReportProgress(0, "Load reference image...");
             // load fixed / reference image once and resize
-            sitk.Transform transFixed = null;
-            sitk.Image referenceImage = LoadAndResizeImage(_parameters.FixedImageFilename, out transFixed);
-            if (transFixed != null) _parameters.FixedPointSetTransform = transFixed;
+            sitk.Image referenceImage = LoadAndResizeImage(_parameters.FixedImageFilename);
 
             // set fixed mask if defined in parameters
             sitk.Image fixedMask = null;
@@ -137,9 +131,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 
                 _worker.ReportProgress(0, "Load template image...");
                 // load and resize moving / template image
-                sitk.Transform transMoving = null;
-                sitk.Image templateImage = LoadAndResizeImage(filename, out transMoving, filename);
-                if (transMoving != null) _parameters.MovingPointSetTransform = transMoving;
+                sitk.Image templateImage = LoadAndResizeImage(filename, filename);
 
                 _worker.ReportProgress(0, "Start registration.");
                 Stopwatch stopWatch = new Stopwatch();
@@ -165,16 +157,15 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <param name="filename">filename of the image to load</param>
         /// <param name="writeFilename">output filename if image should be written back to disk</param>
         /// <returns>simpleitk image</returns>
-        private sitk.Image LoadAndResizeImage(string filename, out sitk.Transform transform, string writeFilename = null)
+        private sitk.Image LoadAndResizeImage(string filename, string writeFilename = null)
         {
-            transform = null;
-            sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(_parameters.FixedImageFilename);
-            sitk.Image refResized = ImageUtils.ResizeImage(refImage, _parameters.LargestImageWidth, _parameters.LargestImageHeight, out transform);
+            sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filename);
+            sitk.Image refResized = ImageUtils.ResizeImage(refImage, _parameters.LargestImageWidth, _parameters.LargestImageHeight);
 
             // write image if output filename is defined
             if (writeFilename != null)
             {
-                ReadWriteUtils.WriteSitkImage(refResized, Path.Combine(_parameters.OutputDirectory, Path.GetFileName(_parameters.FixedImageFilename)));
+                ReadWriteUtils.WriteSitkImage(refResized, Path.Combine(_parameters.OutputDirectory, Path.GetFileName(writeFilename)));
             }
 
             return refResized;
@@ -241,6 +232,8 @@ namespace MaskedDeformableRegistrationApp.Registration
         private List<sitk.VectorOfParameterMap> PerformRigidRegistration(sitk.Image refImage, sitk.Image movImage, 
             sitk.Image fixedMask, sitk.Image movingMask, string imageFilename)
         {
+            CalculateMetrics(fixedMask, movingMask);
+
             List<sitk.VectorOfParameterMap> resultMapList = new List<sitk.VectorOfParameterMap>();
             switch (_parameters.RigidOptions)
             {
@@ -256,6 +249,38 @@ namespace MaskedDeformableRegistrationApp.Registration
                     break;
             }
             return resultMapList;
+        }
+
+        /// <summary>
+        /// Only for debug / evaluation use.
+        /// </summary>
+        /// <param name="fixedMask"></param>
+        /// <param name="movingMask"></param>
+        private void CalculateMetrics(sitk.Image fixedMask, sitk.Image movingMask)
+        {
+            if (fixedMask != null && movingMask != null)
+            {
+                sitk.LabelOverlapMeasuresImageFilter overlapFilter = VisualizationEvaluationUtils.GetOverlapImageFilter(fixedMask, movingMask);
+                
+                if (overlapFilter != null)
+                {
+                    double diceCoef = overlapFilter.GetDiceCoefficient();
+                    double falseNegative = overlapFilter.GetFalseNegativeError();
+                    double falsePositive = overlapFilter.GetFalsePositiveError();
+                    double jaccard = overlapFilter.GetJaccardCoefficient();
+                    double meanOverlap = overlapFilter.GetMeanOverlap();
+                    double unionOverlap = overlapFilter.GetUnionOverlap();
+
+                    string dice = diceCoef.ToString("0.##");
+                    string jacc = jaccard.ToString("0.##");
+                    string negPos = string.Format("{0} / {1}", falseNegative.ToString("0.##"), falsePositive.ToString("0.##"));
+
+                    Console.WriteLine("### Metrics ###");
+                    Console.WriteLine("Dice: " + dice);
+                    Console.WriteLine("Jaccard: " + jacc);
+                    Console.WriteLine("False negative / false positive: " + negPos);
+                }
+            }
         }
 
         /// <summary>

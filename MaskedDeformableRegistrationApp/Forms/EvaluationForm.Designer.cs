@@ -40,6 +40,8 @@
             this.openFileDialogMoving = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBoxEuclidDist = new System.Windows.Forms.GroupBox();
+            this.labelMax = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
             this.labelStdDev = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.labelMeanDiff = new System.Windows.Forms.Label();
@@ -64,8 +66,8 @@
             this.groupBoxMisc = new System.Windows.Forms.GroupBox();
             this.buttonCheckerBoard = new System.Windows.Forms.Button();
             this.buttonDiffImage = new System.Windows.Forms.Button();
-            this.labelMax = new System.Windows.Forms.Label();
-            this.label9 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.numericUpDownCheckerSize = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -77,6 +79,7 @@
             this.splitContainer2.SuspendLayout();
             this.groupBoxDiceJaccard.SuspendLayout();
             this.groupBoxMisc.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCheckerSize)).BeginInit();
             this.SuspendLayout();
             // 
             // textBoxFixedPointSet
@@ -197,6 +200,24 @@
             this.groupBoxEuclidDist.TabIndex = 8;
             this.groupBoxEuclidDist.TabStop = false;
             this.groupBoxEuclidDist.Text = "Euclidean distance";
+            // 
+            // labelMax
+            // 
+            this.labelMax.AutoSize = true;
+            this.labelMax.Location = new System.Drawing.Point(189, 228);
+            this.labelMax.Name = "labelMax";
+            this.labelMax.Size = new System.Drawing.Size(13, 13);
+            this.labelMax.TabIndex = 13;
+            this.labelMax.Text = "0";
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(16, 228);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(55, 13);
+            this.label9.TabIndex = 12;
+            this.label9.Text = "Max TRE:";
             // 
             // labelStdDev
             // 
@@ -412,6 +433,8 @@
             // 
             // groupBoxMisc
             // 
+            this.groupBoxMisc.Controls.Add(this.numericUpDownCheckerSize);
+            this.groupBoxMisc.Controls.Add(this.label6);
             this.groupBoxMisc.Controls.Add(this.buttonCheckerBoard);
             this.groupBoxMisc.Controls.Add(this.buttonDiffImage);
             this.groupBoxMisc.Location = new System.Drawing.Point(3, 3);
@@ -423,9 +446,9 @@
             // 
             // buttonCheckerBoard
             // 
-            this.buttonCheckerBoard.Location = new System.Drawing.Point(6, 215);
+            this.buttonCheckerBoard.Location = new System.Drawing.Point(10, 126);
             this.buttonCheckerBoard.Name = "buttonCheckerBoard";
-            this.buttonCheckerBoard.Size = new System.Drawing.Size(185, 23);
+            this.buttonCheckerBoard.Size = new System.Drawing.Size(181, 23);
             this.buttonCheckerBoard.TabIndex = 1;
             this.buttonCheckerBoard.Text = "Create Checkerboard";
             this.buttonCheckerBoard.UseVisualStyleBackColor = true;
@@ -433,7 +456,7 @@
             // 
             // buttonDiffImage
             // 
-            this.buttonDiffImage.Location = new System.Drawing.Point(6, 186);
+            this.buttonDiffImage.Location = new System.Drawing.Point(6, 19);
             this.buttonDiffImage.Name = "buttonDiffImage";
             this.buttonDiffImage.Size = new System.Drawing.Size(185, 23);
             this.buttonDiffImage.TabIndex = 0;
@@ -441,23 +464,21 @@
             this.buttonDiffImage.UseVisualStyleBackColor = true;
             this.buttonDiffImage.Click += new System.EventHandler(this.buttonDiffImage_Click);
             // 
-            // labelMax
+            // label6
             // 
-            this.labelMax.AutoSize = true;
-            this.labelMax.Location = new System.Drawing.Point(189, 228);
-            this.labelMax.Name = "labelMax";
-            this.labelMax.Size = new System.Drawing.Size(13, 13);
-            this.labelMax.TabIndex = 13;
-            this.labelMax.Text = "0";
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(10, 81);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(98, 13);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Checkerboard size:";
             // 
-            // label9
+            // numericUpDownCheckerSize
             // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(16, 228);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(55, 13);
-            this.label9.TabIndex = 12;
-            this.label9.Text = "Max TRE:";
+            this.numericUpDownCheckerSize.Location = new System.Drawing.Point(13, 100);
+            this.numericUpDownCheckerSize.Name = "numericUpDownCheckerSize";
+            this.numericUpDownCheckerSize.Size = new System.Drawing.Size(95, 20);
+            this.numericUpDownCheckerSize.TabIndex = 3;
             // 
             // EvaluationForm
             // 
@@ -481,6 +502,8 @@
             this.groupBoxDiceJaccard.ResumeLayout(false);
             this.groupBoxDiceJaccard.PerformLayout();
             this.groupBoxMisc.ResumeLayout(false);
+            this.groupBoxMisc.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownCheckerSize)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -525,5 +548,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label labelMax;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.NumericUpDown numericUpDownCheckerSize;
     }
 }

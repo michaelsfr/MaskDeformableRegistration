@@ -13,22 +13,9 @@ namespace MaskedDeformableRegistrationApp.Registration
     {
         public RigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
         {
-            sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
-            castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
-            sitk.Image vector1 = castImageFilter.Execute(fixedImage);
-            sitk.Image vector2 = castImageFilter.Execute(movingImage);
-
-            sitk.VectorIndexSelectionCastImageFilter vectorFilter = new sitk.VectorIndexSelectionCastImageFilter();
-            sitk.Image tempImage1 = vectorFilter.Execute(vector1, 0, sitk.PixelIDValueEnum.sitkFloat32);
-            sitk.Image tempImage2 = vectorFilter.Execute(vector2, 0, sitk.PixelIDValueEnum.sitkFloat32);
-
-            this.fixedImage = tempImage1;
-            this.movingImage = tempImage2;
+            this.fixedImage = CastImage(fixedImage);
+            this.movingImage = CastImage(movingImage);
             this.registrationParameters = parameters;
-
-            vector1.Dispose();
-            vector2.Dispose();
-            vectorFilter.Dispose();
             
             elastix = new sitk.ElastixImageFilter();
             if (parameterMap == null)
@@ -47,6 +34,21 @@ namespace MaskedDeformableRegistrationApp.Registration
             elastix.LogToFileOn();
 
             //base.SetGeneralParameters();
+        }
+
+        private sitk.Image CastImage(sitk.Image img)
+        {
+            sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
+            castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
+            sitk.Image vector = castImageFilter.Execute(img);
+
+            sitk.VectorIndexSelectionCastImageFilter vectorFilter = new sitk.VectorIndexSelectionCastImageFilter();
+            sitk.Image tempImage = vectorFilter.Execute(vector, 0, sitk.PixelIDValueEnum.sitkFloat32);
+
+            castImageFilter.Dispose();
+            vector.Dispose();
+
+            return tempImage;
         }
 
         public RigidRegistration(RegistrationParameters parameters) : base(parameters)
