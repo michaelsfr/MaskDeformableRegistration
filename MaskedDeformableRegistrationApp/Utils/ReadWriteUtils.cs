@@ -70,7 +70,7 @@ namespace MaskedDeformableRegistrationApp.Utils
 
         public static Image<T, D> ConvertSitkImageToOpenCv<T, D>(sitk.Image image) where T : struct, IColor where D : new()
         {
-            string filename = "C:\\temp\\temp_image.png";
+            string filename = Path.GetTempPath() + "\\temp_image.png";
             WriteSitkImage(image, filename);
             return ReadOpenCVImageFromFile<T, D>(filename);
         }

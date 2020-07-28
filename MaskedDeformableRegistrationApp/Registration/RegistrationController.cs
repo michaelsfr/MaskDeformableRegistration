@@ -281,8 +281,8 @@ namespace MaskedDeformableRegistrationApp.Registration
             CvInvoke.FindContours(movingImage, contoursMoving, null, Emgu.CV.CvEnum.RetrType.Ccomp, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
 
             // retireve dict with contour index and area size ordered by size
-            Dictionary<int, double> contoursFixedDict = RegistrationUtils.GetContourAreaDict(contoursFixed);
-            Dictionary<int, double> contoursMovingDict = RegistrationUtils.GetContourAreaDict(contoursMoving);
+            Dictionary<int, double> contoursFixedDict = RegistrationUtils.GetContourAreaDict(ref contoursFixed);
+            Dictionary<int, double> contoursMovingDict = RegistrationUtils.GetContourAreaDict(ref contoursMoving);
 
             List<Tuple<string, string>> filenameOfMaskComponents = new List<Tuple<string, string>>();
             for (int i = 0; i <= v; i++)
@@ -295,8 +295,8 @@ namespace MaskedDeformableRegistrationApp.Registration
                 CvInvoke.DrawContours(maskFixed, contourFixed, -1, new MCvScalar(255.0), thickness: -1);
                 CvInvoke.DrawContours(maskMoving, contourMoving, -1, new MCvScalar(255.0), thickness: -1);
 
-                string filenameFixed = "C:\\temp\\fixed_0" + i + ".png";
-                string filenameMoving = "C:\\temp\\moving_0" + i + ".png";
+                string filenameFixed = Path.GetTempPath() + "\\fixed_0" + i + ".png";
+                string filenameMoving = Path.GetTempPath() + "\\moving_0" + i + ".png";
                 maskFixed.Save(filenameFixed);
                 maskMoving.Save(filenameMoving);
                 Tuple<string, string> temp = new Tuple<string, string>(filenameFixed, filenameMoving);

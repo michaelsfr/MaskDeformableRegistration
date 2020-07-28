@@ -4,6 +4,7 @@ using Emgu.CV.Util;
 using MaskedDeformableRegistrationApp.Utils;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -154,8 +155,8 @@ namespace MaskedDeformableRegistrationApp.Registration
             CvInvoke.FindContours(movingSegments, contoursMoving, null, Emgu.CV.CvEnum.RetrType.Ccomp, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
 
             // retireve dict with contour index and area size ordered by size
-            Dictionary<int, double> contoursFixedDict = GetContourAreaDict(contoursFixed);
-            Dictionary<int, double> contoursMovingDict = GetContourAreaDict(contoursMoving);
+            Dictionary<int, double> contoursFixedDict = GetContourAreaDict(ref contoursFixed);
+            Dictionary<int, double> contoursMovingDict = GetContourAreaDict(ref contoursMoving);
 
             List<Tuple<string, string>> filenameOfMaskComponents = new List<Tuple<string, string>>();
             for(int i = 0; i <= numberOfComposedTransformations; i++)
@@ -168,8 +169,8 @@ namespace MaskedDeformableRegistrationApp.Registration
                 CvInvoke.DrawContours(maskFixed, contourFixed, -1, new MCvScalar(255.0), thickness: -1);
                 CvInvoke.DrawContours(maskMoving, contourMoving, -1, new MCvScalar(255.0), thickness: -1);
 
-                string filenameFixed = "C:\\temp\\fixed_0" + i + ".png";
-                string filenameMoving = "C:\\temp\\moving_0" + i + ".png";
+                string filenameFixed = Path.GetTempPath() + "\\fixed_0" + i + ".png";
+                string filenameMoving = Path.GetTempPath() + "\\moving_0" + i + ".png";
                 maskFixed.Save(filenameFixed);
                 maskMoving.Save(filenameMoving);
                 Tuple<string, string> temp = new Tuple<string, string>(filenameFixed, filenameMoving);
@@ -199,10 +200,10 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// </summary>
         /// <param name="contours">contours as a vector of vector of points</param>
         /// <returns>dictionary</returns>
-        public static Dictionary<int, double> GetContourAreaDict(VectorOfVectorOfPoint contours)
+        public static Dictionary<int, double> GetContourAreaDict(ref VectorOfVectorOfPoint contours)
         {
             Dictionary<int, double> contoursDict = new Dictionary<int, double>();
-            for (int i = 0; i <= contours.Size; i++)
+            for (int i = 0; i < contours.Size; i++)
             {
                 double area = CvInvoke.ContourArea(contours[i]);
                 contoursDict.Add(i, area);
