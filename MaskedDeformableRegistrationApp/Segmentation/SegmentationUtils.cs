@@ -17,7 +17,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
 {
     public static class SegmentationUtils
     {
-        public static Bgr[] clusterColors = new Bgr[] 
+        public static Bgr[] _clusterColors = new Bgr[] 
         {
             new Bgr(0,0,255),
             new Bgr(0, 255, 0),
@@ -25,7 +25,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             new Bgr(255,0,255),
         };
 
-        public static Gray[] clusterColorsGray = new Gray[]
+        public static Gray[] _clusterColorsGray = new Gray[]
         {
             new Gray(255.0),
             new Gray(192.0),

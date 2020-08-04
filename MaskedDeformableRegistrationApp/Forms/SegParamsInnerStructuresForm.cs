@@ -96,8 +96,6 @@ namespace MaskedDeformableRegistrationApp.Forms
                 Cursor.Current = Cursors.WaitCursor;
 
                 InnerTissueSegmentation seg = new InnerTissueSegmentation(image.Clone(), mask.Clone(), segmentationParameters);
-                seg.SetColorSpace(segmentationParameters.Colorspace);
-                seg.SetChannel(segmentationParameters.Channel);
                 seg.Execute();
                 List<UMat> result = seg.GetOutput();
                 UMat a = new UMat();

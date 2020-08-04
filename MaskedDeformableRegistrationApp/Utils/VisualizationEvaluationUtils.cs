@@ -197,7 +197,7 @@ namespace MaskedDeformableRegistrationApp.Utils
         /// <param name="transformParameters">transform params</param>
         /// <param name="parameters">registration params</param>
         /// <returns>filename of transformed point set</returns>
-        public static string TransfromPointSet(List<sitk.VectorOfParameterMap> transformParameters, RegistrationParameters parameters)
+        public static string TransfromPointSet(List<sitk.VectorOfParameterMap> transformParameters, RegistrationParameters parameters, string movingImageName = null)
         {
             sitk.TransformixImageFilter transformix = null;
             try
@@ -217,6 +217,13 @@ namespace MaskedDeformableRegistrationApp.Utils
                 }
                 transformix.SetFixedPointSetFileName(parameters.MovingImagePointSetFilename);
                 transformix.SetOutputDirectory(ReadWriteUtils.GetOutputDirectory(parameters));
+                
+                if (movingImageName != null)
+                {
+                    sitk.Image movImg = ReadWriteUtils.ReadITKImageFromFile(movingImageName, sitk.PixelIDValueEnum.sitkFloat32);
+                    transformix.SetMovingImage(movImg);
+                }
+
                 sitk.Image image = transformix.Execute();
                 string output = ReadWriteUtils.GetOutputDirectory(parameters) + "\\outputpoints.txt";
                 image.Dispose();
@@ -260,8 +267,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             result.MaximumRegistrationError = distances.Max();
             result.MeanRegistrationError = result.AbsoluteRegistrationError / distances.Count;
             double sumOfSquares = distances.Select(val => Math.Pow((Math.Abs(val) - result.MeanRegistrationError), 2)).Sum();
-            Console.WriteLine(sumOfSquares);
             result.StdDevRegistrationError = Math.Sqrt(sumOfSquares / distances.Count);
+
+            Console.WriteLine(string.Format("Absolute TRE: {0}", result.AbsoluteRegistrationError));
+            Console.WriteLine(string.Format("Max TRE: {0}", result.MaximumRegistrationError));
+            Console.WriteLine(string.Format("Mean TRE: {0}", result.MeanRegistrationError));
+            Console.WriteLine(string.Format("Std deviation RE: {0}", result.StdDevRegistrationError));
 
             return result;
         }
@@ -339,12 +350,12 @@ namespace MaskedDeformableRegistrationApp.Utils
         /// <summary>
         /// Calculate euclidean distance for a pair od coordinates.
         /// </summary>
-        /// <param name="pt01">first coordinate pair</param>
-        /// <param name="pt02">second coordinate pair</param>
+        /// <param name="p">first coordinate pair</param>
+        /// <param name="q">second coordinate pair</param>
         /// <returns>euclidean distance of given points</returns>
-        private static double EuclideanDistance(CoordPoint pt01, CoordPoint pt02)
+        private static double EuclideanDistance(CoordPoint p, CoordPoint q)
         {
-            return Math.Sqrt((Math.Pow((pt01.X - pt02.X), 2) + Math.Pow((pt01.Y - pt02.Y), 2)));
+            return Math.Sqrt((Math.Pow((p.X - q.X), 2) + Math.Pow((p.Y - q.Y), 2)));
         }
 
         /// <summary>

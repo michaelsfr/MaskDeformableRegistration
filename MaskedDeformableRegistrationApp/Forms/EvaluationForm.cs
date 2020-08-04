@@ -89,7 +89,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             List<sitk.VectorOfParameterMap> map = registrationParameters.TransformationParameterMap[key];
             registrationParameters.MovingImagePointSetFilename = filenameMovingPointSet;
 
-            string filenameOutputPoints = VisualizationEvaluationUtils.TransfromPointSet(map, registrationParameters);
+            string filenameOutputPoints = VisualizationEvaluationUtils.TransfromPointSet(map, registrationParameters, key);
             var fixedPointsDict = ReadWriteUtils.ReadFixedPointSet(filenameFixedPointSet).Values.ToList();
             var transformedPointsDict = ReadWriteUtils.ReadTransformedPointSets(filenameOutputPoints).Values.ToList();
 
@@ -98,9 +98,9 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             RegistrationError registrationError = VisualizationEvaluationUtils.GetRegistrationError(fixedPointsDict, transformedPointsDict);
 
-            labelMeanDiff.Text = registrationError.MeanRegistrationError.ToString("0.##");
-            labelStdDev.Text = registrationError.StdDevRegistrationError.ToString("0.##");
-            labelMax.Text = registrationError.MaximumRegistrationError.ToString("0.##");
+            labelMeanDiff.Text = registrationError.MeanRegistrationError.ToString("0.###");
+            labelStdDev.Text = registrationError.StdDevRegistrationError.ToString("0.###");
+            labelMax.Text = registrationError.MaximumRegistrationError.ToString("0.###");
 
             Cursor.Current = Cursors.Default;
         }
@@ -171,11 +171,11 @@ namespace MaskedDeformableRegistrationApp.Forms
                 double meanOverlap = overlapFilter.GetMeanOverlap();
                 double unionOverlap = overlapFilter.GetUnionOverlap();
 
-                labelDice.Text = diceCoef.ToString("0.##");
-                labelJacc.Text = jaccard.ToString("0.##");
-                labelfalseNegPos.Text = string.Format("{0} / {1}", falseNegative.ToString("0.##"), falsePositive.ToString("0.##"));
-                labelMeanOverlap.Text = meanOverlap.ToString("0.##");
-                labelUnionOverlap.Text = unionOverlap.ToString("0.##");
+                labelDice.Text = diceCoef.ToString("0.###");
+                labelJacc.Text = jaccard.ToString("0.###");
+                labelfalseNegPos.Text = string.Format("{0} / {1}", falseNegative.ToString("0.###"), falsePositive.ToString("0.###"));
+                labelMeanOverlap.Text = meanOverlap.ToString("0.###");
+                labelUnionOverlap.Text = unionOverlap.ToString("0.###");
             }
 
             Cursor.Current = Cursors.Default;
@@ -206,7 +206,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             string fixedImageFilename = registrationParameters.FixedImageFilename;
             string movingImageFilename = comboBoxMovingImage.SelectedValue.ToString();
-            int size = (int)numericUpDownCheckerSize.Value;
+            uint size = (uint)numericUpDownCheckerSize.Value;
 
             // read images
             //var img01 = ReadWriteUtils.ReadITKImageFromFile(fixedImageFilename);

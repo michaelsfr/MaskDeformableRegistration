@@ -233,6 +233,9 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.Image fixedMask, sitk.Image movingMask, string imageFilename)
         {
             CalculateMetrics(fixedMask, movingMask);
+            string fixedPTS = Path.GetDirectoryName(imageFilename) + "\\_landmarks\\195286_0-landmarks_global.pts";
+            string movPTS = Path.GetDirectoryName(imageFilename) + "\\_landmarks\\195287_0-landmarks_global.pts";
+            CalculateTRE(fixedPTS, movPTS);
 
             List<sitk.VectorOfParameterMap> resultMapList = new List<sitk.VectorOfParameterMap>();
             switch (_parameters.RigidOptions)
@@ -249,6 +252,22 @@ namespace MaskedDeformableRegistrationApp.Registration
                     break;
             }
             return resultMapList;
+        }
+
+        /// <summary>
+        /// Only for debug / evaluation use.
+        /// </summary>
+        /// <param name="pointsetFixed"></param>
+        /// <param name="pointsetMov"></param>
+        private void CalculateTRE(string pointsetFixed, string pointsetMov)
+        {
+            var fixedPointsDict = ReadWriteUtils.ReadFixedPointSet(pointsetFixed).Values.ToList();
+            var movPointsDict = ReadWriteUtils.ReadFixedPointSet(pointsetMov).Values.ToList();
+            RegistrationError registrationError = VisualizationEvaluationUtils.GetRegistrationError(fixedPointsDict, movPointsDict);
+            //Console.WriteLine(string.Format("Absolute TRE: {0}", registrationError.AbsoluteRegistrationError));
+            //Console.WriteLine(string.Format("Max TRE: {0}", registrationError.MaximumRegistrationError));
+            //Console.WriteLine(string.Format("Mean TRE: {0}", registrationError.MeanRegistrationError));
+            //Console.WriteLine(string.Format("Std deviation RE: {0}", registrationError.StdDevRegistrationError));
         }
 
         /// <summary>
@@ -542,7 +561,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             string outputFilename = ReadWriteUtils.GetOutputDirectory(_parameters, _parameters.Iteration) + "\\mask_" + Path.GetFileName(filename);
             InnerTissueSegmentation seg = GetInnerStructureSegmentation(filename);
-            seg.GetOutput().First().Save(filename);
+            seg.GetOutput()[0].Save(filename);
             seg.Dispose();
             return filename;
         }
@@ -556,7 +575,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             string outputFilename = ReadWriteUtils.GetOutputDirectory(_parameters, _parameters.Iteration) + "\\mask_" + Path.GetFileName(filename);
             InnerTissueSegmentation seg = GetInnerStructureSegmentation(filename);
-            seg.GetOutput().First().Save(outputFilename);
+            seg.GetOutput()[0].Save(outputFilename);
             seg.Dispose();
             sitk.Image mask = ReadWriteUtils.ReadITKImageFromFile(outputFilename);
 
@@ -573,7 +592,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(filename);
 
-            WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, _parameters.InnerStructuresSegParams);
+            WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, _parameters.WholeTissueSegParams);
             segImage.Execute();
             Image<Gray, byte> wholeMask = segImage.GetOutput().Clone();
             segImage.Dispose();

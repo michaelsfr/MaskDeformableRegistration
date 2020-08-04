@@ -22,8 +22,6 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         private List<UMat> masks = new List<UMat>();
 
         SegmentationParameters segmentationParameters = null;
-        private ColorSpace colorSpace = ColorSpace.HaematoxylinDAB;
-        private int channel = 2;
 
         public InnerTissueSegmentation(Image<Bgr, byte> image, Image<Gray, byte> particleMask, SegmentationParameters segmentationParameters)
         {
@@ -69,7 +67,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         private void KmeansSegmentation(UMat uMatChannel)
         {
             Image<Gray, byte> newImage = new Image<Gray, byte>(uMatChannel.Bitmap);
-            Image<Gray, byte> clusteredImage = SegmentationUtils.KMeansClustering<Gray, byte, byte>(newImage.Clone(), 3, SegmentationUtils.clusterColorsGray);
+            Image<Gray, byte> clusteredImage = SegmentationUtils.KMeansClustering<Gray, byte, byte>(newImage.Clone(), 3, SegmentationUtils._clusterColorsGray);
 
             // TODO
             // Find contours
@@ -182,16 +180,6 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             // add masks to list
             masks.Add(convertedMask);
             masks.Add(convertedMask2);
-        }
-
-        public void SetColorSpace(ColorSpace colorSpace)
-        {
-            this.colorSpace = colorSpace;
-        }
-
-        public void SetChannel(int channel)
-        {
-            this.channel = channel;
         }
 
         public List<UMat> GetOutput()
