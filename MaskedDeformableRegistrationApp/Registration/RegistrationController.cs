@@ -69,6 +69,8 @@ namespace MaskedDeformableRegistrationApp.Registration
                 if (_parameters.UseFixedMask)
                 {
                     fixedMask = GetMask(_parameters.FixedImageFilename);
+                    ReadWriteUtils.WriteSitkImage(fixedMask, _parameters.OutputDirectory + "\\fixed_mask.png");
+
                 }
 
                 _worker.ReportProgress(0, "Load template image...");
@@ -121,6 +123,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 || _parameters.RigidOptions == MaskedRigidRegistrationOptions.ComponentwiseRegistration)
             {
                 fixedMask = GetMask(_parameters.FixedImageFilename);
+                ReadWriteUtils.WriteSitkImage(fixedMask, _parameters.OutputDirectory + "\\fixed_mask.png");
             }
 
             int i = 0;
@@ -188,6 +191,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 || _parameters.RigidOptions == MaskedRigidRegistrationOptions.ComponentwiseRegistration)
             {
                 movingMask = GetMask(movingImageFilename);
+                ReadWriteUtils.WriteSitkImage(movingMask, _parameters.OutputDirectory + "\\moving_mask.png");
             }
 
             if (_parameters.Type == RegistrationType.Rigid)
@@ -232,10 +236,11 @@ namespace MaskedDeformableRegistrationApp.Registration
         private List<sitk.VectorOfParameterMap> PerformRigidRegistration(sitk.Image refImage, sitk.Image movImage, 
             sitk.Image fixedMask, sitk.Image movingMask, string imageFilename)
         {
-            CalculateMetrics(fixedMask, movingMask);
-            string fixedPTS = Path.GetDirectoryName(imageFilename) + "\\_landmarks\\195286_0-landmarks_global.pts";
-            string movPTS = Path.GetDirectoryName(imageFilename) + "\\_landmarks\\195287_0-landmarks_global.pts";
-            CalculateTRE(fixedPTS, movPTS);
+            // debug
+            //CalculateMetrics(fixedMask, movingMask);
+            //string fixedPTS = Path.GetDirectoryName(imageFilename) + "\\_landmarks\\195286_0-landmarks_global.pts";
+            //string movPTS = Path.GetDirectoryName(imageFilename) + "\\_landmarks\\195287_0-landmarks_global.pts";
+            //CalculateTRE(fixedPTS, movPTS);
 
             List<sitk.VectorOfParameterMap> resultMapList = new List<sitk.VectorOfParameterMap>();
             switch (_parameters.RigidOptions)

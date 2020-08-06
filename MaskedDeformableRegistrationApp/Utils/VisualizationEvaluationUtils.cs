@@ -88,11 +88,14 @@ namespace MaskedDeformableRegistrationApp.Utils
             sitk.Image transformed = ImageUtils.ResizeImage(img02, width, height);
 
             sitk.CheckerBoardImageFilter checkerBoard = new sitk.CheckerBoardImageFilter();
+            uint lx = size;
+            uint ly = width / (height / size); 
+
             if (size != 0)
             {
                 sitk.VectorUInt32 vec = new sitk.VectorUInt32();
-                vec.Add(size);
-                vec.Add(size);
+                vec.Add(ly);
+                vec.Add(lx);
                 checkerBoard.SetCheckerPattern(vec);
             }
             sitk.Image result = checkerBoard.Execute(reference, transformed);
@@ -204,6 +207,11 @@ namespace MaskedDeformableRegistrationApp.Utils
             {
                 transformix = new sitk.TransformixImageFilter();
                 transformix.SetTransformParameterMap(transformParameters.First());
+                transformix.LogToConsoleOn();
+                transformix.LogToFileOn();
+                transformix.SetLogFileName("transformix.log");
+                //transformix.SetLogToFile(true);
+
                 if (transformParameters.Count > 1)
                 {
                     for (int i = 1; i < transformParameters.Count; i++)
@@ -215,8 +223,12 @@ namespace MaskedDeformableRegistrationApp.Utils
                         }
                     }
                 }
-                transformix.SetFixedPointSetFileName(parameters.MovingImagePointSetFilename);
+
+                //transformix.SetFixedPointSetFileName(parameters.MovingImagePointSetFilename);
+                transformix.SetFixedPointSetFileName(parameters.FixedImagePointSetFilename);
                 transformix.SetOutputDirectory(ReadWriteUtils.GetOutputDirectory(parameters));
+                //transformix.SetTransformParameter(0, "UseBinaryFormatForTransformationParameters", "true" );
+                var par = transformix.GetTransformParameter(0, "TransformParameters");
                 
                 if (movingImageName != null)
                 {

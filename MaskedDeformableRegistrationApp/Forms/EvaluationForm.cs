@@ -84,25 +84,66 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void buttonCalcMetrics_Click(object sender, EventArgs e)
         {
             Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                string key = comboBoxMoving.SelectedValue.ToString();
+                List<sitk.VectorOfParameterMap> map = registrationParameters.TransformationParameterMap[key];
+                /*string parametersFilename = registrationParameters.OutputDirectory + "\\1\\TransformParameters.0.txt";
+                List<sitk.VectorOfParameterMap> map = new List<sitk.VectorOfParameterMap>();
+                map.Add(InvertTransformParameters(parametersFilename));*/
 
-            string key = comboBoxMoving.SelectedValue.ToString();
-            List<sitk.VectorOfParameterMap> map = registrationParameters.TransformationParameterMap[key];
-            registrationParameters.MovingImagePointSetFilename = filenameMovingPointSet;
+                registrationParameters.MovingImagePointSetFilename = filenameMovingPointSet;
+                registrationParameters.FixedImagePointSetFilename = filenameFixedPointSet;
 
-            string filenameOutputPoints = VisualizationEvaluationUtils.TransfromPointSet(map, registrationParameters, key);
-            var fixedPointsDict = ReadWriteUtils.ReadFixedPointSet(filenameFixedPointSet).Values.ToList();
-            var transformedPointsDict = ReadWriteUtils.ReadTransformedPointSets(filenameOutputPoints).Values.ToList();
+                string filenameOutputPoints = VisualizationEvaluationUtils.TransfromPointSet(map, registrationParameters);
+                var movingPointsDict = ReadWriteUtils.ReadFixedPointSet(filenameMovingPointSet).Values.ToList();
+                var transformedPointsDict = ReadWriteUtils.ReadTransformedPointSets(filenameOutputPoints).Values.ToList();
 
-            //TransformPointSet(registrationParameters.FixedPointSetTransform, ref fixedPointsDict);
-            //TransformPointSet(registrationParameters.MovingPointSetTransform, ref transformedPointsDict);
+                RegistrationError registrationError = VisualizationEvaluationUtils.GetRegistrationError(movingPointsDict, transformedPointsDict);
 
-            RegistrationError registrationError = VisualizationEvaluationUtils.GetRegistrationError(fixedPointsDict, transformedPointsDict);
-
-            labelMeanDiff.Text = registrationError.MeanRegistrationError.ToString("0.###");
-            labelStdDev.Text = registrationError.StdDevRegistrationError.ToString("0.###");
-            labelMax.Text = registrationError.MaximumRegistrationError.ToString("0.###");
+                labelMeanDiff.Text = registrationError.MeanRegistrationError.ToString("0.###");
+                labelStdDev.Text = registrationError.StdDevRegistrationError.ToString("0.###");
+                labelMax.Text = registrationError.MaximumRegistrationError.ToString("0.###");
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            } 
 
             Cursor.Current = Cursors.Default;
+        }
+
+        private sitk.VectorOfParameterMap InvertTransformParameters(string parameterFilename)
+        {
+            sitk.Image fixedImage = ReadWriteUtils.ReadITKImageFromFile(registrationParameters.FixedImageFilename, sitk.PixelIDValueEnum.sitkFloat32);
+            sitk.ElastixImageFilter elastix = null;
+            try
+            {
+                // elastix manual 6.1.6: DisplacementMagnitudePenalty
+                elastix = new sitk.ElastixImageFilter();
+                elastix.SetInitialTransformParameterFileName(parameterFilename);
+                elastix.SetParameterMap(sitk.SimpleITK.GetDefaultParameterMap("rigid"));
+                elastix.SetFixedImage(fixedImage);
+                elastix.SetMovingImage(fixedImage);
+                elastix.SetParameter("HowToCombineTransforms", "Compose");
+                elastix.SetParameter("Metric", "DisplacementMagnitudePenalty");
+                elastix.SetParameter("NumberOfResolutions", "1");
+                elastix.Execute();
+                return elastix.GetTransformParameterMap();
+
+                /*sitk.TransformixImageFilter transformix = new sitk.TransformixImageFilter();
+                transformix.SetTransformParameterMap(elastix.GetTransformParameterMap());
+                transformix.SetTransformParameter("InitialTransformParametersFileName", "NoInitialTransform");
+                transformix.Execute();*/
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            } finally
+            {
+                elastix.Dispose();
+                fixedImage.Dispose();
+            }
         }
 
         private void TransformPointSet(sitk.Transform transform, ref List<CoordPoint> pointSetDict)
