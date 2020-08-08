@@ -63,43 +63,31 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             if(fixedImage != null && movingImage != null)
             {
-                // set image masks
+                // set parameter vector here?
+               elastix.SetParameterMap(parameterMap);
+
+                // only use when kappa statistics is used as metric
+                if (registrationParameters.RigidOptions != MaskedRigidRegistrationOptions.None)
+                {
+                    fixedImage = ImageUtils.MakeImageBinary(fixedImage);
+                    movingImage = ImageUtils.MakeImageBinary(movingImage);
+                }
+
+                // set fixed and moving images
+                elastix.AddFixedImage(fixedImage);
                 if (fixedMask != null)
                 {
                     elastix.SetFixedMask(fixedMask);
                     AddParameter(Constants.cFixedImagePyramid, ImagePyramid.FixedSmoothingImagePyramid);
                 }
 
+                elastix.AddMovingImage(movingImage);
                 if (movingMask != null)
                 {
                     elastix.SetMovingMask(movingMask);
                     AddParameter(Constants.cMovingImagePyramid, ImagePyramid.MovingSmoothingImagePyramid);
                 }
 
-                // set parameter vector here?
-                elastix.SetParameterMap(parameterMap);
-
-                // only use when kappa statistics is used as metric
-                /*if (registrationParameters.RigidOptions != MaskedRigidRegistrationOptions.None)
-                {
-                    sitk.BinaryThresholdImageFilter binaryFilter1 = new sitk.BinaryThresholdImageFilter();
-                    binaryFilter1.SetLowerThreshold(127);
-                    binaryFilter1.SetUpperThreshold(255);
-                    binaryFilter1.SetInsideValue(1);
-                    binaryFilter1.SetOutsideValue(0);
-                    fixedImage = binaryFilter1.Execute(fixedImage);
-
-                    sitk.BinaryThresholdImageFilter binaryFilter2 = new sitk.BinaryThresholdImageFilter();
-                    binaryFilter2.SetLowerThreshold(127);
-                    binaryFilter2.SetUpperThreshold(255);
-                    binaryFilter2.SetInsideValue(1);
-                    binaryFilter2.SetOutsideValue(0);
-                    movingImage = binaryFilter2.Execute(movingImage);
-                }*/
-
-                // set fixed and moving images
-                elastix.AddFixedImage(fixedImage);
-                elastix.AddMovingImage(movingImage);
                 elastix.WriteParameterFile(parameterMap, Path.Combine(outputDirectory, "parameters.txt"));
 
                 try

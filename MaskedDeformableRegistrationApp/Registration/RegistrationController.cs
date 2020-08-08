@@ -253,7 +253,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                     resultMapList.Add(DefaultRigidRegistration(fixedMask, movingMask, null, null, imageFilename));
                     break;
                 case MaskedRigidRegistrationOptions.ComponentwiseRegistration:
-                    resultMapList = ComponentWiseRigidRegistration(fixedMask, movingMask, 4, imageFilename);
+                    resultMapList = ComponentWiseRigidRegistration(fixedMask, movingMask, 3, imageFilename);
                     break;
             }
             return resultMapList;
@@ -330,19 +330,21 @@ namespace MaskedDeformableRegistrationApp.Registration
             CvInvoke.FindContours(movingImage, contoursMoving, null, Emgu.CV.CvEnum.RetrType.Ccomp, Emgu.CV.CvEnum.ChainApproxMethod.ChainApproxSimple);
 
             // retireve dict with contour index and area size ordered by size
-            Dictionary<int, double> contoursFixedDict = RegistrationUtils.GetContourAreaDict(ref contoursFixed);
-            Dictionary<int, double> contoursMovingDict = RegistrationUtils.GetContourAreaDict(ref contoursMoving);
+            var contoursFixedDict = RegistrationUtils.GetContourAreaDict(ref contoursFixed).OrderByDescending(it => it.Value);
+            var contoursMovingDict = RegistrationUtils.GetContourAreaDict(ref contoursMoving).OrderByDescending(it => it.Value);
 
             List<Tuple<string, string>> filenameOfMaskComponents = new List<Tuple<string, string>>();
-            for (int i = 0; i <= v; i++)
+            for (int i = 1; i < v; i++)
             {
-                var contourFixed = contoursFixed[contoursFixedDict.ElementAt(i).Key];
-                var contourMoving = contoursMoving[contoursMovingDict.ElementAt(i).Key];
+                var contourFixed = contoursFixed[contoursFixedDict.ElementAt(i).Key].ToArray();
+                var contourMoving = contoursMoving[contoursMovingDict.ElementAt(i).Key].ToArray();
 
                 Image<Gray, byte> maskFixed = new Image<Gray, byte>(fixedImage.Width, fixedImage.Height, new Gray(0.0));
                 Image<Gray, byte> maskMoving = new Image<Gray, byte>(movingImage.Width, movingImage.Height, new Gray(0.0));
-                CvInvoke.DrawContours(maskFixed, contourFixed, -1, new MCvScalar(255.0), thickness: -1);
-                CvInvoke.DrawContours(maskMoving, contourMoving, -1, new MCvScalar(255.0), thickness: -1);
+                maskFixed.Draw(contourFixed, new Gray(255.0), -1);
+                maskMoving.Draw(contourMoving, new Gray(255.0), -1);
+                //CvInvoke.DrawContours(maskFixed, contourFixed, -1, new MCvScalar(255.0), thickness: -1);
+                //CvInvoke.DrawContours(maskMoving, contourMoving, -1, new MCvScalar(255.0), thickness: -1);
 
                 string filenameFixed = Path.GetTempPath() + "\\fixed_0" + i + ".png";
                 string filenameMoving = Path.GetTempPath() + "\\moving_0" + i + ".png";

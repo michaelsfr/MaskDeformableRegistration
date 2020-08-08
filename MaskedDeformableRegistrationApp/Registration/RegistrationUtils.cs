@@ -208,7 +208,6 @@ namespace MaskedDeformableRegistrationApp.Registration
                 double area = CvInvoke.ContourArea(contours[i]);
                 contoursDict.Add(i, area);
             }
-            contoursDict.OrderBy(it => it.Value);
             return contoursDict;
         }
     }

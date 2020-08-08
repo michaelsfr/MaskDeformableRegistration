@@ -158,11 +158,17 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             }
         }
 
-        public static UMat ThresholdOtsu(UMat input)
+        public static UMat ThresholdOtsu(UMat input, bool maskWhitePixels = false)
         {
             UMat result = new UMat();
             //CvInvoke.Threshold(input, result, 0, 255, ThresholdType.Otsu);
-            CvInvoke.Threshold(input, result, 0, 255, ThresholdType.Otsu | ThresholdType.Binary);
+            double otsu_threshold = CvInvoke.Threshold(input, result, 0, 255, ThresholdType.Otsu | ThresholdType.Binary);
+
+            if (maskWhitePixels)
+            {
+                CvInvoke.Threshold(input, result, otsu_threshold, 255, ThresholdType.BinaryInv);
+            }
+
             input.Dispose();
             return result;
         }

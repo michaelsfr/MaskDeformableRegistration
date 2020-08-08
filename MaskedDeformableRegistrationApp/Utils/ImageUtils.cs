@@ -189,5 +189,15 @@ namespace MaskedDeformableRegistrationApp.Utils
             resampleImageFilter.SetOutputSpacing(img.GetSpacing());
             return resampleImageFilter.Execute(img);
         }
+
+        public static sitk.Image MakeImageBinary(sitk.Image img, int lowerT = 127, int upperT = 255)
+        {
+            sitk.BinaryThresholdImageFilter binaryFilter1 = new sitk.BinaryThresholdImageFilter();
+            binaryFilter1.SetLowerThreshold(lowerT);
+            binaryFilter1.SetUpperThreshold(upperT);
+            binaryFilter1.SetInsideValue(1);
+            binaryFilter1.SetOutsideValue(0);
+            return binaryFilter1.Execute(img);
+        }
     }
 }
