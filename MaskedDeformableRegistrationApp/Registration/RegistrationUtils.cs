@@ -39,11 +39,11 @@ namespace MaskedDeformableRegistrationApp.Registration
                 if(type == RegistrationDefaultParameters.spline 
                     || type == RegistrationDefaultParameters.bspline
                     || type == RegistrationDefaultParameters.nonrigid)
-                    return GetParameterMap(type);
+                    return GetDefaultNonRigidParameterMap();
                 else
                 {
-                    sitk.ParameterMap parameterMap = GetParameterMap(RegistrationDefaultParameters.nonrigid);
-                    if(type == RegistrationDefaultParameters.diffusion)
+                    sitk.ParameterMap parameterMap = GetDefaultNonRigidParameterMap();
+                    if (type == RegistrationDefaultParameters.diffusion)
                     {
                         parameterMap["Transform"][0] = "BSplineTransformWithDiffusion";
                         // default parameters for bspline diffusion registration
@@ -102,6 +102,42 @@ namespace MaskedDeformableRegistrationApp.Registration
             {
                 return elastix.GetDefaultParameterMap(registrationType.ToString());
             }
+        }
+
+        private static sitk.ParameterMap GetDefaultNonRigidParameterMap()
+        {
+            sitk.ParameterMap paramMap = new sitk.ParameterMap();
+            paramMap.Add("FixedInternalImagePixelType", GetVectorString("float"));
+            paramMap.Add("MovingInternalImagePixelType", GetVectorString("float"));
+            paramMap.Add("FixedImageDimension", GetVectorString("2"));
+            paramMap.Add("MovingImageDimension", GetVectorString("2"));
+            paramMap.Add("UseDirectionCosines", GetVectorString("true"));
+            paramMap.Add("Registration", GetVectorString("MultiResolutionRegistration"));
+            paramMap.Add("Interpolator", GetVectorString("BSplineInterpolator"));
+            paramMap.Add("ResampleInterpolator", GetVectorString("FinalBSplineInterpolator"));
+            paramMap.Add("Resampler", GetVectorString("DefaultResampler"));
+            paramMap.Add("FixedImagePyramid", GetVectorString("FixedRecursiveImagePyramid"));
+            paramMap.Add("MovingImagePyramid", GetVectorString("MovingRecursiveImagePyramid"));
+            paramMap.Add("Optimizer", GetVectorString("AdaptiveStochasticGradientDescent"));
+            paramMap.Add("Transform", GetVectorString("BSplineTransform"));
+            paramMap.Add("Metric", GetVectorString("AdvancedMeanSquares"));
+            paramMap.Add("FinalGridSpacingInPhysicalUnits", GetVectorString("15"));
+            paramMap.Add("GridSpacingSchedule", GetVectorString("4.0", "4.0", "3.0", "3.0", "2.0", "2.0", "1.5", "1.5", "1.0", "1.0"));
+            paramMap.Add("HowToCombineTransforms", GetVectorString("Compose"));
+            paramMap.Add("ErodeMask", GetVectorString("false"));
+            paramMap.Add("NumberOfResolutions", GetVectorString("5"));
+            paramMap.Add("MaximumNumberOfIterations", GetVectorString("1024"));
+            paramMap.Add("NumberOfSpatialSamples", GetVectorString("4096"));
+            paramMap.Add("NewSamplesEveryIteration", GetVectorString("true"));
+            paramMap.Add("ImageSampler", GetVectorString("Random"));
+            paramMap.Add("BSplineInterpolationOrder", GetVectorString("3"));
+            paramMap.Add("FinalBSplineInterpolationOrder", GetVectorString("3"));
+            paramMap.Add("DefaultPixelValue", GetVectorString("255.0"));
+            paramMap.Add("WriteResultImage", GetVectorString("true"));
+            paramMap.Add("ResultImagePixelType", GetVectorString("unsigned char"));
+            paramMap.Add("ResultImageFormat", GetVectorString("mhd"));
+
+            return paramMap;
         }
 
         /// <summary>

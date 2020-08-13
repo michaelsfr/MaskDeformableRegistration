@@ -199,6 +199,7 @@
     <Compile Include="Utils\Enums.cs" />
     <Compile Include="Utils\FileUtils.cs" />
     <Compile Include="Utils\ImageUtils.cs" />
+    <Compile Include="Utils\MiscUtils.cs" />
     <Compile Include="Utils\ReadWriteUtils.cs" />
     <Compile Include="Utils\VisualizationEvaluationUtils.cs" />
     <Compile Include="WSIExtraction\Extraction.cs" />

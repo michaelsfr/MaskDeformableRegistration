@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Drawing;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -253,10 +254,66 @@ namespace MaskedDeformableRegistrationApp.Registration
                     resultMapList.Add(DefaultRigidRegistration(fixedMask, movingMask, null, null, imageFilename));
                     break;
                 case MaskedRigidRegistrationOptions.ComponentwiseRegistration:
-                    resultMapList = ComponentWiseRigidRegistration(fixedMask, movingMask, 3, imageFilename);
+                    var temp = ComponentWiseRigidRegistration(fixedMask, movingMask, 3, imageFilename);
+                    if (true)
+                    {
+                        resultMapList = MergeTransformParameters(temp);
+                    } else
+                    {
+                        resultMapList = temp;
+                    }
                     break;
             }
             return resultMapList;
+        }
+
+        /// <summary>
+        /// Merge transform parameters 
+        /// </summary>
+        /// <param name="parammap"></param>
+        /// <returns></returns>
+        private List<sitk.VectorOfParameterMap> MergeTransformParameters(List<sitk.VectorOfParameterMap> parammap)
+        {
+            List<sitk.VectorOfParameterMap> resultMap = new List<sitk.VectorOfParameterMap>();
+            resultMap.Add(parammap.First());
+
+            List<sitk.VectorString> tParams = new List<sitk.VectorString>();
+            foreach (sitk.VectorOfParameterMap vec in parammap)
+            {
+                if(vec[0].ContainsKey("TransformParameters"))
+                {
+                    tParams.Add(vec[0]["TransformParameters"]);
+                }
+            }
+
+            double[] avgParams = new double[tParams.First().Count];
+            for (int i = 0; i < tParams.First().Count; i++)
+            {
+                double sum = 0;
+                for (int j = 0; j < tParams.Count; j++)
+                {
+                    string sParam = tParams[j][i];
+                    double parsed = Double.Parse(sParam.Replace(',', '.'), CultureInfo.InvariantCulture);
+                    sum += parsed;
+                }
+                avgParams[i] = sum / tParams.Count;
+            }
+
+            sitk.VectorString resultVec = new sitk.VectorString();
+            foreach (double avgParam in avgParams)
+            {
+                resultVec.Add(avgParam.ToString());
+            }
+
+            if (resultMap.First()[0].ContainsKey("TransformParameters"))
+            {
+                resultMap.First()[0]["TransformParameters"] = resultVec;
+            } else
+            {
+                resultMap.First()[0].Add(new KeyValuePair<string, sitk.VectorString>("TransformParameters", resultVec));
+            }
+            
+            return resultMap;
         }
 
         /// <summary>
@@ -480,6 +537,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 nonRigidRegistration.SetMovingMask(movingMask);
             }
 
+            //_parameters.IsBinaryTransform = true;
             ExecuteRegistration(nonRigidRegistration);
             sitk.VectorOfParameterMap transformparams = nonRigidRegistration.GetTransformationParameterMap();
             nonRigidRegistration.Dispose();
