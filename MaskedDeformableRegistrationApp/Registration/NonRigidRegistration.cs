@@ -28,9 +28,16 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             // initiate elastix and set default registration params
             elastix = new sitk.ElastixImageFilter();
-            if(parameterMap == null)
+            if (parameterMap == null)
             {
                 parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationDefaultParams);
+            }
+
+            // coefficient map is used for penalty term
+            if (parameters.CoefficientMapFilename != null)
+            {
+                parameterMap.Add("UseFixedSegmentation", RegistrationUtils.GetVectorString("true"));
+                parameterMap.Add("FixedSegmentationFileName", RegistrationUtils.GetVectorString(parameters.CoefficientMapFilename));
             }
 
             // set output dir and log file
@@ -45,7 +52,6 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             // set non rigid parameters
             //base.SetGeneralParameters();
-            SetParameters();
         }
 
         public NonRigidRegistration(RegistrationParameters parameters) : base(parameters)
@@ -53,7 +59,6 @@ namespace MaskedDeformableRegistrationApp.Registration
             elastix = new sitk.ElastixImageFilter();
             parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationDefaultParams);
             //base.SetGeneralParameters();
-            SetParameters();
         }
 
         public override object Execute()
@@ -98,85 +103,6 @@ namespace MaskedDeformableRegistrationApp.Registration
                 }
             }
             return null;
-        }
-
-        private void SetParameters()
-        {
-            if (registrationParameters.RegistrationDefaultParams == RegistrationDefaultParameters.bspline)
-            {
-
-            } else if (registrationParameters.RegistrationDefaultParams == RegistrationDefaultParameters.diffusion)
-            {
-                // todo
-            } else if (registrationParameters.RegistrationDefaultParams == RegistrationDefaultParameters.spline)
-            {
-                // todo
-            } else if (registrationParameters.RegistrationDefaultParams == RegistrationDefaultParameters.recursive)
-            {
-                // todo
-            }
-
-            SetPenaltyTerm();
-        }
-
-        private void SetPenaltyTerm()
-        {
-            if (registrationParameters.Penaltyterm != PenaltyTerm.None)
-            {
-                AddPenaltyTermToParameterMap(registrationParameters.Penaltyterm);
-
-                if (registrationParameters.Penaltyterm == PenaltyTerm.TransformRigidityPenalty)
-                {
-                    SetTransformRigidityPenaltyParameters();
-                }
-                if (registrationParameters.Penaltyterm == PenaltyTerm.DistancePreservingRigidityPenalty)
-                {
-                    AddParameter(Constants.cSegmentedImageName, registrationParameters.SegmentedImageFilename);
-                    AddParameter(Constants.cPenaltyGridSpacingInVoxels, registrationParameters.PenaltyGridSpacingInVoxels);
-                }
-            }
-            
-        }
-
-        private void SetTransformRigidityPenaltyParameters()
-        {
-            if (!string.IsNullOrEmpty(registrationParameters.CoefficientMapFilename))
-            {
-                AddParameter(Constants.cMovingRigidityImageName, registrationParameters.CoefficientMapFilename);
-            }
-            if (registrationParameters.LinearityConditionWeight != 1)
-            {
-                AddParameter(Constants.cLinearityConditionWeight, registrationParameters.LinearityConditionWeight.ToString());
-            }
-            if(registrationParameters.OrthonormalityConditionWeight != 1)
-            {
-                AddParameter(Constants.cOrthonormalityConditionWeight, registrationParameters.OrthonormalityConditionWeight.ToString());
-            }
-            if (registrationParameters.PropernessConditionWeight != 1)
-            {
-                AddParameter(Constants.cPropernessConditionWeight, registrationParameters.PropernessConditionWeight.ToString());
-            }
-        }
-
-        private void AddPenaltyTermToParameterMap(PenaltyTerm pt)
-        {
-            AddParameter(Constants.cRegistration, RegistrationStrategy.MultiMetricMultiResolutionRegistration.ToString());
-
-            if(parameterMap.ContainsKey(Constants.cMetric))
-            {
-                sitk.VectorString metric = parameterMap[Constants.cMetric];
-                metric.Add(pt.ToString());
-            }
-
-            // add weight for metric / penalty
-            if(!parameterMap.ContainsKey(Constants.cMetric0Weight))
-            {
-                AddParameter(Constants.cMetric0Weight, "1.0");
-            }
-            if (!parameterMap.ContainsKey(Constants.cMetric1Weight))
-            {
-                AddParameter(Constants.cMetric1Weight, "1.0");
-            }
         }
     }
 }

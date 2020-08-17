@@ -407,6 +407,7 @@
             this.checkBoxUseCoefficientmap.TabIndex = 1;
             this.checkBoxUseCoefficientmap.Text = "Use coefficient map";
             this.checkBoxUseCoefficientmap.UseVisualStyleBackColor = true;
+            this.checkBoxUseCoefficientmap.CheckedChanged += new System.EventHandler(this.checkBoxUseCoefficientmap_CheckedChanged);
             // 
             // checkBoxJaccobian
             // 

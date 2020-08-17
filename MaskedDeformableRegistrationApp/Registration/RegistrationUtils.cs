@@ -81,7 +81,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// </summary>
         /// <param name="values">string values</param>
         /// <returns>simple itk vector of strings</returns>
-        private static sitk.VectorString GetVectorString(params string[] values)
+        public static sitk.VectorString GetVectorString(params string[] values)
         {
             sitk.VectorString vec = new sitk.VectorString();
             foreach(string value in values)

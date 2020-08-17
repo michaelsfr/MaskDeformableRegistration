@@ -497,20 +497,18 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// </summary>
         /// <param name="refImage"></param>
         /// <param name="movImage"></param>
-        /// <param name="fixedImage"></param>
-        /// <param name="movingImage"></param>
+        /// <param name="fixedMask"></param>
+        /// <param name="movingMask"></param>
         /// <param name="imageFilename"></param>
         /// <returns></returns>
         private sitk.VectorOfParameterMap NonRigidRegistrationWithPenalty(sitk.Image refImage, sitk.Image movImage,
-            sitk.Image fixedImage, sitk.Image movingImage, string imageFilename)
+            sitk.Image fixedMask, sitk.Image movingMask, string imageFilename)
         {
-            // todo 
-
             // coef map
-            //string coefficientMapFilename = GetInnerStructureSegmentationsAsCoefficientMap(movingImageFilename, RegistrationParametersNonRigid);
-            //RegistrationParametersNonRigid.CoefficientMapFilename = coefficientMapFilename;
+            string coefficientMapFilename = GetInnerStructureSegmentationsAsCoefficientMap(imageFilename);
+            _parameters.CoefficientMapFilename = coefficientMapFilename;
 
-            throw new NotImplementedException();
+            return DefaultNonRigidRegistration(refImage, movImage, fixedMask, movImage, imageFilename);
         }
 
         /// <summary>

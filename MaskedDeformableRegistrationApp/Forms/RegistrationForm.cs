@@ -660,5 +660,19 @@ namespace MaskedDeformableRegistrationApp.Forms
                 RegistrationUtils.AddDistancePreservingRigidityPenaltyToParamMap(RegistrationParametersNonRigid.ParamMapToUse);
             }
         }
+
+        private void checkBoxUseCoefficientmap_CheckedChanged(object sender, EventArgs e)
+        {
+            if (checkBoxUseCoefficientmap.Checked)
+            {
+                RegistrationParametersNonRigid.UseInnerStructuresSegmentation = true;
+                RegistrationParametersNonRigid.NonRigidOptions = MaskedNonRigidRegistrationOptions.BsplineWithPenaltyTermAndCoefficientMap;
+            } else
+            {
+                RegistrationParametersNonRigid.UseInnerStructuresSegmentation = false;
+                RegistrationParametersNonRigid.NonRigidOptions = MaskedNonRigidRegistrationOptions.BsplineWithPenaltyTerm;
+            }
+            
+        }
     }
 }
