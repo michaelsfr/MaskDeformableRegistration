@@ -75,6 +75,18 @@ namespace MaskedDeformableRegistrationApp.Utils
             return ReadOpenCVImageFromFile<T, D>(filename);
         }
 
+        public static void WriteSitkImageWithPreCast(sitk.Image img, string outputFilename)
+        {
+            sitk.ResampleImageFilter resampleImageFilter = new sitk.ResampleImageFilter();
+            resampleImageFilter.SetSize(img.GetSize());
+            resampleImageFilter.SetOutputSpacing(img.GetSpacing());
+            resampleImageFilter.SetOutputOrigin(img.GetOrigin());
+            resampleImageFilter.SetDefaultPixelValue(0.0);
+            resampleImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkUInt8);
+            sitk.Image temp = resampleImageFilter.Execute(img);
+            WriteSitkImage(temp, outputFilename);
+        }
+
         public static void WriteSitkImage(sitk.Image img, string outputFileName)
         {
             sitk.ImageFileWriter writer = new sitk.ImageFileWriter();

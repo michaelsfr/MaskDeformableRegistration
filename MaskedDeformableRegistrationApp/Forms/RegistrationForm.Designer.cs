@@ -50,8 +50,9 @@
             this.progressBarRigid = new System.Windows.Forms.ProgressBar();
             this.tabPageNonRigid = new System.Windows.Forms.TabPage();
             this.splitContainer4 = new System.Windows.Forms.SplitContainer();
-            this.groupBoxMaskNonRigid = new System.Windows.Forms.GroupBox();
-            this.radioButton1 = new System.Windows.Forms.RadioButton();
+            this.groupBoxMisc = new System.Windows.Forms.GroupBox();
+            this.checkBoxUseCoefficientmap = new System.Windows.Forms.CheckBox();
+            this.checkBoxJaccobian = new System.Windows.Forms.CheckBox();
             this.buttonEditParamsNonRigid = new System.Windows.Forms.Button();
             this.groupBoxPenalty = new System.Windows.Forms.GroupBox();
             this.radioButtonDistancePreserving = new System.Windows.Forms.RadioButton();
@@ -106,7 +107,7 @@
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
-            this.groupBoxMaskNonRigid.SuspendLayout();
+            this.groupBoxMisc.SuspendLayout();
             this.groupBoxPenalty.SuspendLayout();
             this.groupBoxTransformationNonRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
@@ -374,7 +375,7 @@
             // 
             // splitContainer4.Panel1
             // 
-            this.splitContainer4.Panel1.Controls.Add(this.groupBoxMaskNonRigid);
+            this.splitContainer4.Panel1.Controls.Add(this.groupBoxMisc);
             this.splitContainer4.Panel1.Controls.Add(this.buttonEditParamsNonRigid);
             this.splitContainer4.Panel1.Controls.Add(this.groupBoxPenalty);
             this.splitContainer4.Panel1.Controls.Add(this.groupBoxTransformationNonRigid);
@@ -386,26 +387,36 @@
             this.splitContainer4.SplitterDistance = 134;
             this.splitContainer4.TabIndex = 1;
             // 
-            // groupBoxMaskNonRigid
+            // groupBoxMisc
             // 
-            this.groupBoxMaskNonRigid.Controls.Add(this.radioButton1);
-            this.groupBoxMaskNonRigid.Location = new System.Drawing.Point(185, 3);
-            this.groupBoxMaskNonRigid.Name = "groupBoxMaskNonRigid";
-            this.groupBoxMaskNonRigid.Size = new System.Drawing.Size(195, 125);
-            this.groupBoxMaskNonRigid.TabIndex = 4;
-            this.groupBoxMaskNonRigid.TabStop = false;
-            this.groupBoxMaskNonRigid.Text = "Masking Non Rigid";
+            this.groupBoxMisc.Controls.Add(this.checkBoxUseCoefficientmap);
+            this.groupBoxMisc.Controls.Add(this.checkBoxJaccobian);
+            this.groupBoxMisc.Location = new System.Drawing.Point(350, 3);
+            this.groupBoxMisc.Name = "groupBoxMisc";
+            this.groupBoxMisc.Size = new System.Drawing.Size(195, 125);
+            this.groupBoxMisc.TabIndex = 4;
+            this.groupBoxMisc.TabStop = false;
+            this.groupBoxMisc.Text = "Misc";
             // 
-            // radioButton1
+            // checkBoxUseCoefficientmap
             // 
-            this.radioButton1.AutoSize = true;
-            this.radioButton1.Location = new System.Drawing.Point(7, 20);
-            this.radioButton1.Name = "radioButton1";
-            this.radioButton1.Size = new System.Drawing.Size(85, 17);
-            this.radioButton1.TabIndex = 0;
-            this.radioButton1.TabStop = true;
-            this.radioButton1.Text = "radioButton1";
-            this.radioButton1.UseVisualStyleBackColor = true;
+            this.checkBoxUseCoefficientmap.AutoSize = true;
+            this.checkBoxUseCoefficientmap.Location = new System.Drawing.Point(7, 44);
+            this.checkBoxUseCoefficientmap.Name = "checkBoxUseCoefficientmap";
+            this.checkBoxUseCoefficientmap.Size = new System.Drawing.Size(120, 17);
+            this.checkBoxUseCoefficientmap.TabIndex = 1;
+            this.checkBoxUseCoefficientmap.Text = "Use coefficient map";
+            this.checkBoxUseCoefficientmap.UseVisualStyleBackColor = true;
+            // 
+            // checkBoxJaccobian
+            // 
+            this.checkBoxJaccobian.AutoSize = true;
+            this.checkBoxJaccobian.Location = new System.Drawing.Point(7, 20);
+            this.checkBoxJaccobian.Name = "checkBoxJaccobian";
+            this.checkBoxJaccobian.Size = new System.Drawing.Size(180, 17);
+            this.checkBoxJaccobian.TabIndex = 0;
+            this.checkBoxJaccobian.Text = "Compute Jaccobian Determinant";
+            this.checkBoxJaccobian.UseVisualStyleBackColor = true;
             // 
             // buttonEditParamsNonRigid
             // 
@@ -423,7 +434,7 @@
             this.groupBoxPenalty.Controls.Add(this.radioButtonBendEnergy);
             this.groupBoxPenalty.Controls.Add(this.radioButtonTransformRigidity);
             this.groupBoxPenalty.Controls.Add(this.radioButtonNoPenalties);
-            this.groupBoxPenalty.Location = new System.Drawing.Point(386, 3);
+            this.groupBoxPenalty.Location = new System.Drawing.Point(185, 3);
             this.groupBoxPenalty.Name = "groupBoxPenalty";
             this.groupBoxPenalty.Size = new System.Drawing.Size(159, 125);
             this.groupBoxPenalty.TabIndex = 2;
@@ -440,6 +451,7 @@
             this.radioButtonDistancePreserving.TabStop = true;
             this.radioButtonDistancePreserving.Text = "Distance Preserving";
             this.radioButtonDistancePreserving.UseVisualStyleBackColor = true;
+            this.radioButtonDistancePreserving.CheckedChanged += new System.EventHandler(this.radioButtonDistancePreserving_CheckedChanged);
             // 
             // radioButtonBendEnergy
             // 
@@ -451,6 +463,7 @@
             this.radioButtonBendEnergy.TabStop = true;
             this.radioButtonBendEnergy.Text = "Bending Energy";
             this.radioButtonBendEnergy.UseVisualStyleBackColor = true;
+            this.radioButtonBendEnergy.CheckedChanged += new System.EventHandler(this.radioButtonBendEnergy_CheckedChanged);
             // 
             // radioButtonTransformRigidity
             // 
@@ -462,6 +475,7 @@
             this.radioButtonTransformRigidity.TabStop = true;
             this.radioButtonTransformRigidity.Text = "Transform Rigidity";
             this.radioButtonTransformRigidity.UseVisualStyleBackColor = true;
+            this.radioButtonTransformRigidity.CheckedChanged += new System.EventHandler(this.radioButtonTransformRigidity_CheckedChanged);
             // 
             // radioButtonNoPenalties
             // 
@@ -473,6 +487,7 @@
             this.radioButtonNoPenalties.TabStop = true;
             this.radioButtonNoPenalties.Text = "None";
             this.radioButtonNoPenalties.UseVisualStyleBackColor = true;
+            this.radioButtonNoPenalties.CheckedChanged += new System.EventHandler(this.radioButtonNoPenalties_CheckedChanged);
             // 
             // groupBoxTransformationNonRigid
             // 
@@ -831,8 +846,8 @@
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
-            this.groupBoxMaskNonRigid.ResumeLayout(false);
-            this.groupBoxMaskNonRigid.PerformLayout();
+            this.groupBoxMisc.ResumeLayout(false);
+            this.groupBoxMisc.PerformLayout();
             this.groupBoxPenalty.ResumeLayout(false);
             this.groupBoxPenalty.PerformLayout();
             this.groupBoxTransformationNonRigid.ResumeLayout(false);
@@ -918,7 +933,8 @@
         private System.Windows.Forms.RadioButton radioButtonMaskInner;
         private System.Windows.Forms.RadioButton radioButtonMaskWhole;
         private System.Windows.Forms.RadioButton radioButtonRigidNoMasking;
-        private System.Windows.Forms.GroupBox groupBoxMaskNonRigid;
-        private System.Windows.Forms.RadioButton radioButton1;
+        private System.Windows.Forms.GroupBox groupBoxMisc;
+        private System.Windows.Forms.CheckBox checkBoxUseCoefficientmap;
+        private System.Windows.Forms.CheckBox checkBoxJaccobian;
     }
 }

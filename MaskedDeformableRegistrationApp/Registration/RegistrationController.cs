@@ -163,7 +163,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <returns>simpleitk image</returns>
         private sitk.Image LoadAndResizeImage(string filename, string writeFilename = null)
         {
-            sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filename);
+            sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filename, sitk.PixelIDValueEnum.sitkUInt8);
             sitk.Image refResized = ImageUtils.ResizeImage(refImage, _parameters.LargestImageWidth, _parameters.LargestImageHeight);
 
             // write image if output filename is defined
@@ -416,8 +416,8 @@ namespace MaskedDeformableRegistrationApp.Registration
             List<sitk.VectorOfParameterMap> list = new List<sitk.VectorOfParameterMap>();
             foreach (Tuple<string, string> tuple in filenameOfMaskComponents)
             {
-                sitk.Image img01 = ReadWriteUtils.ReadITKImageFromFile(tuple.Item1);
-                sitk.Image img02 = ReadWriteUtils.ReadITKImageFromFile(tuple.Item2);
+                sitk.Image img01 = ReadWriteUtils.ReadITKImageFromFile(tuple.Item1, sitk.PixelIDValueEnum.sitkUInt8);
+                sitk.Image img02 = ReadWriteUtils.ReadITKImageFromFile(tuple.Item2, sitk.PixelIDValueEnum.sitkUInt8);
                 _parameters.ParamMapToUse = map;
                 RigidRegistration reg = new RigidRegistration(img01, img02, _parameters);
                 reg.Execute();

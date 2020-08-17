@@ -43,28 +43,26 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             // split rgb channels
             sitk.VectorIndexSelectionCastImageFilter rgbVector = new sitk.VectorIndexSelectionCastImageFilter();
-            sitk.Image redChannel = rgbVector.Execute(movingImage, 0, sitk.PixelIDValueEnum.sitkVectorUInt8);
-            sitk.Image greenChannel = rgbVector.Execute(movingImage, 1, sitk.PixelIDValueEnum.sitkVectorUInt8);
-            sitk.Image blueChannel = rgbVector.Execute(movingImage, 2, sitk.PixelIDValueEnum.sitkVectorUInt8);
+            sitk.Image redChannel = rgbVector.Execute(movingImage, 0, sitk.PixelIDValueEnum.sitkFloat32);
+            sitk.Image greenChannel = rgbVector.Execute(movingImage, 1, sitk.PixelIDValueEnum.sitkFloat32);
+            sitk.Image blueChannel = rgbVector.Execute(movingImage, 2, sitk.PixelIDValueEnum.sitkFloat32);
 
             foreach (var parameterMap in parameterMaps)
             {
                 foreach (var parameter in parameterMap.AsEnumerable())
                 {
-                    // will not be overwritten at the moment? todo
-
-                    // resize moving image and set default pixels to white
-                    uint mWidth = movingImage.GetWidth();
-                    uint mHeight = movingImage.GetHeight();
-                    uint pWidth = Convert.ToUInt32(parameter["Size"][0]);
-                    uint pHeight = Convert.ToUInt32(parameter["Size"][1]);
-                    parameter["Size"][0] = mWidth > pWidth ? mWidth.ToString() : pWidth.ToString();
-                    parameter["Size"][1] = mHeight > pHeight ? mHeight.ToString() : pHeight.ToString();
                     parameter["DefaultPixelValue"][0] = "255.0";
+                    parameter["ResultImagePixelType"][0] = "short";
+
+                    if(parameter.ContainsKey("UseBinaryFormatForTransformationParameters"))
+                        parameter.Remove("UseBinaryFormatForTransformationParameters");
 
                     if (interpolationOrder != -1)
                     {
                         parameter["FinalBSplineInterpolationOrder"][0] = interpolationOrder.ToString();
+                    } else
+                    {
+                        parameter["FinalBSplineInterpolationOrder"][0] = "3";
                     }
                 }
             }
@@ -84,6 +82,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                     }
                 }
             }
+
             transformix.ComputeDeformationFieldOn();
             transformix.LogToFileOn();
 
@@ -96,34 +95,31 @@ namespace MaskedDeformableRegistrationApp.Registration
             // red
             transformix.SetMovingImage(redChannel);
             sitk.Image resultRedChannel = transformix.Execute();
-            /*if (registrationParameters.Type == RegistrationType.NonRigid)
+            if (registrationParameters.Type == RegistrationType.NonRigid)
             {
-                sitk.ExpandImageFilter expandImageFilterRed = new sitk.ExpandImageFilter();
-                expandImageFilterRed.SetInterpolator(sitk.InterpolatorEnum.sitkHammingWindowedSinc);
-                resultRedChannel = expandImageFilterRed.Execute(resultRedChannel);
-            }*/
-
+                resultRedChannel = InterpolateImage(resultRedChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
+            }
+            //ReadWriteUtils.WriteSitkImageWithPreCast(resultRedChannel, registrationParameters.OutputDirectory + "\\red_channel.png");
 
             // green
             transformix.SetMovingImage(greenChannel);
             sitk.Image resultGreenChannel = transformix.Execute();
-            /*if (registrationParameters.Type == RegistrationType.NonRigid)
+            if (registrationParameters.Type == RegistrationType.NonRigid)
             {
-                sitk.ExpandImageFilter expandImageFilterGreen = new sitk.ExpandImageFilter();
-                expandImageFilterGreen.SetInterpolator(sitk.InterpolatorEnum.sitkHammingWindowedSinc);
-                resultGreenChannel = expandImageFilterGreen.Execute(resultGreenChannel);
-            }*/
+                resultGreenChannel = InterpolateImage(resultGreenChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
+            }
+            //ReadWriteUtils.WriteSitkImageWithPreCast(resultGreenChannel, registrationParameters.OutputDirectory + "\\green_channel.png");
 
 
             // blue
             transformix.SetMovingImage(blueChannel);
             sitk.Image resultBlueChannel = transformix.Execute();
-            /*if (registrationParameters.Type == RegistrationType.NonRigid)
+            if (registrationParameters.Type == RegistrationType.NonRigid)
             {
-                sitk.ExpandImageFilter expandImageFilterBlue = new sitk.ExpandImageFilter();
-                expandImageFilterBlue.SetInterpolator(sitk.InterpolatorEnum.sitkHammingWindowedSinc);
-                resultBlueChannel = expandImageFilterBlue.Execute(resultBlueChannel);
-            }*/
+                resultBlueChannel = InterpolateImage(resultBlueChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
+            }
+            //ReadWriteUtils.WriteSitkImageWithPreCast(resultBlueChannel, registrationParameters.OutputDirectory + "\\blue_channel.png");
+
 
 
             // compose image channels
@@ -134,13 +130,31 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.ComposeImageFilter composeImageFilter = new sitk.ComposeImageFilter();
             sitk.Image composedImage = composeImageFilter.Execute(vectorImages);
 
+            if (registrationParameters.Type == RegistrationType.NonRigid)
+            {
+                transformedImage = InterpolateImage(composedImage, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, composedImage.GetPixelID());
+            }
+
             // interpolation of output image (needs to be improved -> currently theres a little loss in quality)
             // possible solution: interpolate grayscale images and compose afterwards
-            sitk.ExpandImageFilter expandImageFilter = new sitk.ExpandImageFilter();
+            /*sitk.ExpandImageFilter expandImageFilter = new sitk.ExpandImageFilter();
             expandImageFilter.SetInterpolator(sitk.InterpolatorEnum.sitkLinear);
-            transformedImage = expandImageFilter.Execute(composedImage);
+            transformedImage = expandImageFilter.Execute(composedImage);*/
 
             //transformedImage = composedImage;
+        }
+
+        public sitk.Image InterpolateImage(sitk.Image img, sitk.InterpolatorEnum interpolator, sitk.PixelIDValueEnum pixelIDValueEnum)
+        {
+            sitk.ResampleImageFilter resampleImageFilter = new sitk.ResampleImageFilter();
+            resampleImageFilter.SetSize(img.GetSize());
+            resampleImageFilter.SetOutputOrigin(img.GetOrigin());
+            resampleImageFilter.SetOutputDirection(img.GetDirection());
+            resampleImageFilter.SetOutputSpacing(img.GetSpacing());
+            resampleImageFilter.SetInterpolator(interpolator);
+            resampleImageFilter.SetOutputPixelType(pixelIDValueEnum);
+            resampleImageFilter.SetDefaultPixelValue(0.0);
+            return resampleImageFilter.Execute(img);
         }
 
         public void AddVectorOfParameterMap(sitk.VectorOfParameterMap vectorOfParametermap)

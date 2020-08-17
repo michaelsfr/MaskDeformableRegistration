@@ -53,6 +53,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             buttonSegmentationInnerstructures.Enabled = true;
             buttonCancelNonRigidReg.Enabled = false;
             buttonEvaluateNonRigidReg.Enabled = false;
+            checkBoxUseCoefficientmap.Enabled = false;
         }
 
         /// <summary>
@@ -161,6 +162,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             if (backgroundWorkerRigid.WorkerSupportsCancellation == true)
             {
+                // todo: kill process
                 backgroundWorkerRigid.CancelAsync();
 
                 progressBarRigid.Value = 0;
@@ -230,6 +232,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             if (backgroundWorkerNonRigid.WorkerSupportsCancellation == true)
             {
+                // todo: kill process
                 backgroundWorkerNonRigid.CancelAsync();
 
                 progressBarNonRigid.Value = 0;
@@ -465,8 +468,8 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             GatherGeneralParameters(RegistrationParametersNonRigid);
             UpdateNonRigidRegistrationType(RegistrationParametersNonRigid);
-            UpdatePenalty(RegistrationParametersNonRigid);
-            UpdateNonRigidMaskOptions(RegistrationParametersNonRigid);
+            //UpdatePenalty(RegistrationParametersNonRigid);
+            UpdateMiscOptions(RegistrationParametersNonRigid);
         }
 
         private void GatherGeneralParameters(RegistrationParameters parameters)
@@ -523,10 +526,14 @@ namespace MaskedDeformableRegistrationApp.Forms
             }
         }
 
-        private void UpdateNonRigidMaskOptions(RegistrationParameters registrationParametersNonRigid)
+        private void UpdateMiscOptions(RegistrationParameters registrationParametersNonRigid)
         {
-            // TODO
-            //throw new NotImplementedException();
+            if (checkBoxJaccobian.Checked)
+            {
+                registrationParametersNonRigid.ComputeJaccobian = true;
+            } else if (checkBoxUseCoefficientmap.Checked) {
+
+            }
         }
 
         private RegistrationOrder GetRegistrationOrder()
@@ -621,5 +628,37 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         #endregion
 
+        private void radioButtonTransformRigidity_CheckedChanged(object sender, EventArgs e)
+        {
+            checkBoxUseCoefficientmap.Enabled = radioButtonTransformRigidity.Checked;
+            if (RegistrationParametersNonRigid != null && RegistrationParametersNonRigid.ParamMapToUse != null)
+            {
+                RegistrationUtils.AddTransformRigidityPenaltyToParamMap(RegistrationParametersNonRigid.ParamMapToUse);
+            }
+        }
+
+        private void radioButtonNoPenalties_CheckedChanged(object sender, EventArgs e)
+        {
+            if (RegistrationParametersNonRigid != null && RegistrationParametersNonRigid.ParamMapToUse != null)
+            {
+                RegistrationUtils.RemovePenaltyTerm(RegistrationParametersNonRigid.ParamMapToUse);
+            }
+        }
+
+        private void radioButtonBendEnergy_CheckedChanged(object sender, EventArgs e)
+        {
+            if (RegistrationParametersNonRigid != null && RegistrationParametersNonRigid.ParamMapToUse != null)
+            {
+                RegistrationUtils.AddBendingEnergyPenaltyToParamMap(RegistrationParametersNonRigid.ParamMapToUse);
+            }
+        }
+
+        private void radioButtonDistancePreserving_CheckedChanged(object sender, EventArgs e)
+        {
+            if (RegistrationParametersNonRigid != null && RegistrationParametersNonRigid.ParamMapToUse != null)
+            {
+                RegistrationUtils.AddDistancePreservingRigidityPenaltyToParamMap(RegistrationParametersNonRigid.ParamMapToUse);
+            }
+        }
     }
 }

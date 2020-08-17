@@ -224,8 +224,13 @@ namespace MaskedDeformableRegistrationApp.Utils
                     }
                 }
 
-                //transformix.SetFixedPointSetFileName(parameters.MovingImagePointSetFilename);
-                transformix.SetFixedPointSetFileName(parameters.FixedImagePointSetFilename);
+                if (parameters.Type == RegistrationType.Rigid)
+                {
+                    transformix.SetFixedPointSetFileName(parameters.FixedImagePointSetFilename);
+                } else
+                {
+                    transformix.SetFixedPointSetFileName(parameters.MovingImagePointSetFilename);
+                }
                 transformix.SetOutputDirectory(ReadWriteUtils.GetOutputDirectory(parameters));
                 //transformix.SetTransformParameter(0, "UseBinaryFormatForTransformationParameters", "true" );
                 var par = transformix.GetTransformParameter(0, "TransformParameters");

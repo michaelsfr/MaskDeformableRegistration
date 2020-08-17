@@ -104,6 +104,10 @@ namespace MaskedDeformableRegistrationApp.Registration
             }
         }
 
+        /// <summary>
+        /// Create default non rigid parameter map.
+        /// </summary>
+        /// <returns>default paramerets</returns>
         private static sitk.ParameterMap GetDefaultNonRigidParameterMap()
         {
             sitk.ParameterMap paramMap = new sitk.ParameterMap();
@@ -121,23 +125,149 @@ namespace MaskedDeformableRegistrationApp.Registration
             paramMap.Add("Optimizer", GetVectorString("AdaptiveStochasticGradientDescent"));
             paramMap.Add("Transform", GetVectorString("BSplineTransform"));
             paramMap.Add("Metric", GetVectorString("AdvancedMeanSquares"));
-            paramMap.Add("FinalGridSpacingInPhysicalUnits", GetVectorString("15"));
-            paramMap.Add("GridSpacingSchedule", GetVectorString("4.0", "4.0", "3.0", "3.0", "2.0", "2.0", "1.5", "1.5", "1.0", "1.0"));
+            paramMap.Add("FinalGridSpacingInPhysicalUnits", GetVectorString("16"));
+            paramMap.Add("GridSpacingSchedule", GetVectorString("5.0", "5.0", "4.0", "4.0", "3.0", "3.0", "2.0", "2.0", "1.0", "1.0"));
             paramMap.Add("HowToCombineTransforms", GetVectorString("Compose"));
             paramMap.Add("ErodeMask", GetVectorString("false"));
             paramMap.Add("NumberOfResolutions", GetVectorString("5"));
             paramMap.Add("MaximumNumberOfIterations", GetVectorString("1024"));
-            paramMap.Add("NumberOfSpatialSamples", GetVectorString("4096"));
+            paramMap.Add("NumberOfSpatialSamples", GetVectorString("2048"));
             paramMap.Add("NewSamplesEveryIteration", GetVectorString("true"));
             paramMap.Add("ImageSampler", GetVectorString("Random"));
-            paramMap.Add("BSplineInterpolationOrder", GetVectorString("3"));
+            paramMap.Add("BSplineInterpolationOrder", GetVectorString("1"));
             paramMap.Add("FinalBSplineInterpolationOrder", GetVectorString("3"));
             paramMap.Add("DefaultPixelValue", GetVectorString("255.0"));
             paramMap.Add("WriteResultImage", GetVectorString("true"));
-            paramMap.Add("ResultImagePixelType", GetVectorString("unsigned char"));
+            paramMap.Add("ResultImagePixelType", GetVectorString("short"));
             paramMap.Add("ResultImageFormat", GetVectorString("mhd"));
 
             return paramMap;
+        }
+
+        /// <summary>
+        /// Add transform bending energy penalty to parameter file.
+        /// </summary>
+        /// <param name="paramMap">parameter file</param>
+        /// <param name="metricWeight0">weight of metric 0</param>
+        /// <param name="metricWeight1">weight of metric 1</param>
+        /// <returns>parameter file with penalty</returns>
+        public static sitk.ParameterMap AddBendingEnergyPenaltyToParamMap(sitk.ParameterMap paramMap, int metricWeight0 = 1, int metricWeight1 = 1)
+        {
+            paramMap = RemovePenaltyTerm(paramMap);
+            ChangeOrAddParamIfNotExist(ref paramMap, "Registration", GetVectorString("MultiMetricMultiResolutionRegistration"));
+            ChangeOrAddParamIfNotExist(ref paramMap, "Metric", GetVectorString("AdvancedMeanSquares", "TransformBendingEnergyPenalty"));
+            ChangeOrAddParamIfNotExist(ref paramMap, "Metric0Weight", GetVectorString(metricWeight0.ToString()));
+            ChangeOrAddParamIfNotExist(ref paramMap, "Metric1Weight", GetVectorString(metricWeight1.ToString()));
+            return paramMap;
+        }
+
+        /// <summary>
+        /// Add transform rigidity penalty term to parameter file.
+        /// If linearity, orthonormality and properness conditions are set to smaller than zero, they will be deactivated.
+        /// </summary>
+        /// <param name="paramMap">reference to parameter map</param>
+        /// <param name="metricWeight0">weight of metric 0</param>
+        /// <param name="metricWeight1">weight of metric 1</param>
+        /// <param name="linearityConditionWeight">linearity condition weight (if set to smaller zero, it will not be calculated)</param>
+        /// <param name="orthonormalityConditionWeight">orthonormality condition weight (if set to smaller zero, it will not be calculated)</param>
+        /// <param name="propernessConditionWeight">properness condition weight (if set to smaller zero, it will not be calculated)</param>
+        /// <returns></returns>
+        public static sitk.ParameterMap AddTransformRigidityPenaltyToParamMap(sitk.ParameterMap paramMap,
+            int metricWeight0 = 1, 
+            int metricWeight1 = 1,
+            int linearityConditionWeight = 1,
+            int orthonormalityConditionWeight = 1,
+            int propernessConditionWeight = 1)
+        {
+            paramMap = RemovePenaltyTerm(paramMap);
+            ChangeOrAddParamIfNotExist(ref paramMap, "Registration", GetVectorString("MultiMetricMultiResolutionRegistration"));
+            ChangeOrAddParamIfNotExist(ref paramMap, "Metric", GetVectorString("AdvancedMeanSquares", "TransformRigidityPenalty"));
+            ChangeOrAddParamIfNotExist(ref paramMap, "Metric0Weight", GetVectorString(metricWeight0.ToString()));
+            ChangeOrAddParamIfNotExist(ref paramMap, "Metric1Weight", GetVectorString(metricWeight1.ToString()));
+
+            if (linearityConditionWeight > 0)
+            {
+                ChangeOrAddParamIfNotExist(ref paramMap, "LinearityConditionWeight", GetVectorString(linearityConditionWeight.ToString()));
+            } else
+            {
+                ChangeOrAddParamIfNotExist(ref paramMap, "UseLinearityCondition", GetVectorString("false"));
+            }
+
+            if (orthonormalityConditionWeight > 0)
+            {
+                ChangeOrAddParamIfNotExist(ref paramMap, "OrthonormalityConditionWeight", GetVectorString(orthonormalityConditionWeight.ToString()));
+            }
+            else
+            {
+                ChangeOrAddParamIfNotExist(ref paramMap, "UseOrthonormalityCondition", GetVectorString("false"));
+            }
+
+            if (propernessConditionWeight > 0)
+            {
+                ChangeOrAddParamIfNotExist(ref paramMap, "PropernessConditionWeight", GetVectorString(propernessConditionWeight.ToString()));
+            }
+            else
+            {
+                ChangeOrAddParamIfNotExist(ref paramMap, "UsePropernessCondition", GetVectorString("false"));
+            }
+
+            return paramMap;
+        }
+
+        public static sitk.ParameterMap AddDistancePreservingRigidityPenaltyToParamMap(sitk.ParameterMap paramMap)
+        {
+            paramMap = RemovePenaltyTerm(paramMap);
+            // todo add segmentation in registration class
+            ChangeOrAddParamIfNotExist(ref paramMap, "Registration", GetVectorString("MultiMetricMultiResolutionRegistration"));
+            ChangeOrAddParamIfNotExist(ref paramMap, "Metric", GetVectorString("AdvancedMeanSquares", "DistancePreservingRigidityPenalty"));
+            return paramMap;
+        }
+
+        /// <summary>
+        /// Remove Penalties fromparameter file if one exist.
+        /// </summary>
+        /// <param name="paramMap"></param>
+        /// <returns></returns>
+        public static sitk.ParameterMap RemovePenaltyTerm(sitk.ParameterMap paramMap)
+        {
+            ChangeOrAddParamIfNotExist(ref paramMap, "Registration", GetVectorString("MultiResolutionRegistration"));
+            ChangeOrAddParamIfNotExist(ref paramMap, "Metric", GetVectorString("AdvancedMeanSquares"));
+            RemoveParameter(ref paramMap, "Metric0Weight");
+            RemoveParameter(ref paramMap, "Metric1Weight");
+            RemoveParameter(ref paramMap, "LinearityConditionWeight");
+            RemoveParameter(ref paramMap, "UseLinearityCondition");
+            RemoveParameter(ref paramMap, "OrthonormalityConditionWeight");
+            RemoveParameter(ref paramMap, "UseOrthonormalityCondition");
+            RemoveParameter(ref paramMap, "PropernessConditionWeight");
+            RemoveParameter(ref paramMap, "UsePropernessCondition");
+
+            return paramMap;
+        }
+
+        private static void RemoveParameter(ref sitk.ParameterMap map, string key)
+        {
+            if (map.ContainsKey(key))
+            {
+                map.Remove(key);
+            }
+        }
+
+        /// <summary>
+        /// Change or add a parameter (if param does not exist) to parameter map.
+        /// </summary>
+        /// <param name="paramMap">reference to parameter map</param>
+        /// <param name="key">parameter key</param>
+        /// <param name="value">values as a vector of strings</param>
+        private static void ChangeOrAddParamIfNotExist(ref sitk.ParameterMap paramMap, string key, sitk.VectorString value)
+        {
+            if (paramMap.ContainsKey(key))
+            {
+                paramMap[key] = value;
+            }
+            else
+            {
+                paramMap.Add(key, value);
+            }
         }
 
         /// <summary>
