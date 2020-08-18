@@ -16,12 +16,19 @@ namespace MaskedDeformableRegistrationApp.Utils
 {
     public static class ReadWriteUtils
     {
-        public static Image<T, D> ReadOpenCVImageFromFile<T, D>(string file) where T : struct, IColor where D : new()
+        /// <summary>
+        /// Read opencv image from file.
+        /// </summary>
+        /// <typeparam name="T">color space / type</typeparam>
+        /// <typeparam name="D">pixel data tyoe</typeparam>
+        /// <param name="filename">filename</param>
+        /// <returns>image</returns>
+        public static Image<T, D> ReadOpenCVImageFromFile<T, D>(string filename) where T : struct, IColor where D : new()
         {
             Image<T, D> image = null;
             try
             {
-                image = new Image<T, D>(file);
+                image = new Image<T, D>(filename);
             } catch (Exception ex)
             {
                 Console.WriteLine(ex);
@@ -29,24 +36,32 @@ namespace MaskedDeformableRegistrationApp.Utils
             return image;
         }
 
+        /// <summary>
+        /// Writes an unsigned mat to file.
+        /// </summary>
+        /// <param name="filename">filename</param>
+        /// <param name="image">image</param>
         public static void WriteUMatToFile(string filename, UMat image)
         {
             CvInvoke.Imwrite(filename, image);
         }
 
-        public static sitk.Image RescaleImageToFloat(sitk.Image img)
-        {
-            sitk.RescaleIntensityImageFilter filter = new sitk.RescaleIntensityImageFilter();
-            filter.SetOutputMinimum(0);
-            filter.SetOutputMaximum(1);
-            return filter.Execute(img);
-        }
-
+        /// <summary>
+        /// Reads an ITK image from file.
+        /// </summary>
+        /// <param name="file">filename</param>
+        /// <returns>image</returns>
         public static sitk.Image ReadITKImageFromFile(string file)
         {
             return sitk.SimpleITK.ReadImage(file);
         }
 
+        /// <summary>
+        /// Reads an ITK image from file, specifying the output pixel type.
+        /// </summary>
+        /// <param name="file">filename</param>
+        /// <param name="outputType">output pixel type</param>
+        /// <returns>image</returns>
         public static sitk.Image ReadITKImageFromFile(string file, sitk.PixelIDValueEnum outputType)
         {
             sitk.ImageFileReader reader = new sitk.ImageFileReader();
@@ -55,19 +70,42 @@ namespace MaskedDeformableRegistrationApp.Utils
             return reader.Execute();
         }
 
+        /// <summary>
+        /// Write a bitmap as Png.
+        /// </summary>
+        /// <param name="bmp">bitmap</param>
+        /// <param name="outputFileName">output filename</param>
         public static void WriteBitmapAsPng(Bitmap bmp, string outputFileName)
+        {
+            WriteBitmapAsType(bmp, outputFileName, ImageFormat.Png);
+        }
+
+        /// <summary>
+        /// Write a bitmap as image format type.
+        /// </summary>
+        /// <param name="bmp">bitmap</param>
+        /// <param name="outputFileName">output filename</param>
+        /// <param name="formatType">image format type</param>
+        public static void WriteBitmapAsType(Bitmap bmp, string outputFileName, ImageFormat formatType)
         {
             using (MemoryStream memory = new MemoryStream())
             {
                 using (FileStream fs = new FileStream(outputFileName, FileMode.Create, FileAccess.ReadWrite))
                 {
-                    bmp.Save(memory, ImageFormat.Png);
+                    bmp.Save(memory, formatType);
                     byte[] bytes = memory.ToArray();
                     fs.Write(bytes, 0, bytes.Length);
                 }
             }
         }
 
+        /// <summary>
+        /// Convert ITK image to openCV image.
+        /// </summary>
+        /// <typeparam name="T">color space / type</typeparam>
+        /// <typeparam name="D">pixel datatype</typeparam>
+        /// <param name="image">itk image</param>
+        /// <returns>opencv image</returns>
         public static Image<T, D> ConvertSitkImageToOpenCv<T, D>(sitk.Image image) where T : struct, IColor where D : new()
         {
             string filename = Path.GetTempPath() + "\\temp_image.png";
@@ -75,27 +113,20 @@ namespace MaskedDeformableRegistrationApp.Utils
             return ReadOpenCVImageFromFile<T, D>(filename);
         }
 
-        public static void WriteSitkImageWithPreCast(sitk.Image img, string outputFilename)
-        {
-            sitk.ResampleImageFilter resampleImageFilter = new sitk.ResampleImageFilter();
-            resampleImageFilter.SetSize(img.GetSize());
-            resampleImageFilter.SetOutputSpacing(img.GetSpacing());
-            resampleImageFilter.SetOutputOrigin(img.GetOrigin());
-            resampleImageFilter.SetDefaultPixelValue(0.0);
-            resampleImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkUInt8);
-            sitk.Image temp = resampleImageFilter.Execute(img);
-            WriteSitkImage(temp, outputFilename);
-        }
-
+        /// <summary>
+        /// Write ITK image to file.
+        /// </summary>
+        /// <param name="img">image</param>
+        /// <param name="outputFileName">output filename</param>
         public static void WriteSitkImage(sitk.Image img, string outputFileName)
         {
             sitk.ImageFileWriter writer = new sitk.ImageFileWriter();
             writer.SetFileName(outputFileName);
             writer.Execute(img);
             writer.Dispose();
-            //img.Dispose();
         }
         
+        [Obsolete("Unused at the moment.")]
         public static Dictionary<string, string> GetParameterDictionaryFromFile(string filename)
         {
             Dictionary<string, string> dict = new Dictionary<string, string>();
@@ -121,6 +152,11 @@ namespace MaskedDeformableRegistrationApp.Utils
             return dict;
         }
 
+        /// <summary>
+        /// Read fixed point set from file.
+        /// </summary>
+        /// <param name="filenamePointSets">filename</param>
+        /// <returns>dictionary with point sets</returns>
         public static Dictionary<int, CoordPoint> ReadFixedPointSet(string filenamePointSets)
         {
             if (File.Exists(filenamePointSets))
@@ -142,6 +178,11 @@ namespace MaskedDeformableRegistrationApp.Utils
             return null;
         }
 
+        /// <summary>
+        /// Read transformed point sets from file.
+        /// </summary>
+        /// <param name="filenameTransformedFilename">filename</param>
+        /// <returns>dictionary of point sets</returns>
         public static Dictionary<int, CoordPoint> ReadTransformedPointSets(string filenameTransformedFilename)
         {
             if (File.Exists(filenameTransformedFilename))
@@ -168,6 +209,11 @@ namespace MaskedDeformableRegistrationApp.Utils
             return null;
         }
 
+        /// <summary>
+        /// Extract coord points from a string of form "[ x.xx y.yy ]"
+        /// </summary>
+        /// <param name="sCoord">coord string</param>
+        /// <returns>point as CoordPoint</returns>
         private static CoordPoint ExractCoordsFromString(string sCoord)
         {
             string[] temp = sCoord.Split(new char[] { '[', ']' }, StringSplitOptions.RemoveEmptyEntries);
@@ -175,6 +221,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             return new CoordPoint(coords[0], coords[1]);
         }
 
+        /// <summary>
+        /// Serialize an object to JSON and save to file.
+        /// </summary>
+        /// <typeparam name="T">object type</typeparam>
+        /// <param name="toSerialize">object to serialize</param>
+        /// <param name="filename">filename</param>
         public static void SerializeObjectToJSON<T>(T toSerialize, string filename)
         {
             using (StreamWriter file = File.CreateText(filename))
@@ -184,6 +236,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             }
         }
 
+        /// <summary>
+        /// Serialize object list to JSON and save to file.
+        /// </summary>
+        /// <typeparam name="T">object type</typeparam>
+        /// <param name="toSerialize">object list to serialize</param>
+        /// <param name="filename">filename</param>
         public static void SerializeObjectListToJSON<T>(List<T> toSerialize, string filename)
         {
             using (StreamWriter file = File.CreateText(filename))
@@ -193,6 +251,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             }
         }
 
+        /// <summary>
+        /// Deserialize an object list from JSON-file.
+        /// </summary>
+        /// <typeparam name="T">object type</typeparam>
+        /// <param name="filename">filename</param>
+        /// <returns>list of deserialized objects</returns>
         public static List<T> DeserializeObjectListFromJSON<T>(string filename)
         {
             using (StreamReader file = File.OpenText(filename))
@@ -203,6 +267,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             }
         }
 
+        /// <summary>
+        /// Deserialize an object from JSON-file.
+        /// </summary>
+        /// <typeparam name="T">object type</typeparam>
+        /// <param name="filename">filename</param>
+        /// <returns>deserialized object</returns>
         public static T DeserializeObjectFromJSON<T>(string filename)
         {
             using (StreamReader file = File.OpenText(filename))
@@ -213,6 +283,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             }
         }
 
+        /// <summary>
+        /// Get output directory from registration parameters and optional iteration.
+        /// </summary>
+        /// <param name="parameters">params</param>
+        /// <param name="i">iteration</param>
+        /// <returns>output directory</returns>
         public static string GetOutputDirectory(RegistrationParameters parameters, int i = -1)
         {
             string path = Path.Combine(ApplicationContext.OutputPath, parameters.SubDirectory);

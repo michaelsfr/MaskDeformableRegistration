@@ -17,6 +17,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
 {
     public static class SegmentationUtils
     {
+        // cluster colors / intensities
         public static Bgr[] _clusterColors = new Bgr[] 
         {
             new Bgr(0,0,255),
@@ -33,8 +34,14 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             new Gray(64.0)
         };
 
-
-        public static UMat IncreaseContrast(UMat input, double clipLimit, int tileGridSize)
+        /// <summary>
+        /// Enhance contrast of an image given as UMat.
+        /// </summary>
+        /// <param name="input">input image</param>
+        /// <param name="clipLimit">clip limit (default is 5)</param>
+        /// <param name="tileGridSize">tile size (default is 8)</param>
+        /// <returns>image with enhanced contrast</returns>
+        public static UMat IncreaseContrast(UMat input, double clipLimit = 5.0, int tileGridSize = 8)
         {
             UMat lab = new UMat(), cl = new UMat(), result = new UMat();
             CvInvoke.CvtColor(input, lab, ColorConversion.Bgr2Lab);
@@ -46,6 +53,13 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return result;
         }
 
+        /// <summary>
+        /// Blur image.
+        /// </summary>
+        /// <param name="input">input image</param>
+        /// <param name="kernelSize">kernel size for blurring</param>
+        /// <param name="sigma">sigma</param>
+        /// <returns>blurred image</returns>
         public static UMat Blur(UMat input, int kernelSize, double sigma)
         {
             UMat temp = new UMat();
@@ -54,6 +68,11 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return temp;
         }
 
+        /// <summary>
+        /// Sharp image with default values.
+        /// </summary>
+        /// <param name="input">input image</param>
+        /// <returns>sharpened image</returns>
         public static UMat Sharp(UMat input)
         {
             UMat temp = new UMat();
@@ -63,6 +82,13 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return temp;
         }
 
+        /// <summary>
+        /// Get a color channel for a given color space and channel
+        /// </summary>
+        /// <param name="colorSpace">color space / model</param>
+        /// <param name="image">input image</param>
+        /// <param name="channel">channel</param>
+        /// <returns>color channel as grayscale image</returns>
         public static UMat GetColorChannelAsUMat(ColorSpace colorSpace, Image<Bgr, byte> image, int channel)
         {
             using(Image<Bgr, byte> imageCopy = image.Clone())
@@ -89,6 +115,13 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             }
         }
 
+        /// <summary>
+        /// Get color channel of a known stain.
+        /// </summary>
+        /// <param name="image">input image</param>
+        /// <param name="stain">known stain</param>
+        /// <param name="channel">channel of the known stain</param>
+        /// <returns>color channel</returns>
         public static UMat GetColorDeconvolutedChannelAsUMat(Bitmap image, ColorDeconvolution.KnownStain stain,int channel)
         {
             Bitmap copy = (Bitmap)image.Clone();
@@ -113,6 +146,13 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return umat;
         }
 
+        /// <summary>
+        /// Get default color model and channel from openCV.
+        /// </summary>
+        /// <param name="input">input image</param>
+        /// <param name="type">color model / color conversion type</param>
+        /// <param name="channel">color channel</param>
+        /// <returns>extracted color channel</returns>
         public static UMat GetColorChannel(UMat input, ColorConversion type, int channel)
         {
             UMat channels = new UMat();
@@ -158,6 +198,12 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             }
         }
 
+        /// <summary>
+        /// Do Otsu thresholding on grayscale UMat.
+        /// </summary>
+        /// <param name="input">grayscale image</param>
+        /// <param name="maskWhitePixels">flag to specify if white pixels should be masked</param>
+        /// <returns>thresholded image</returns>
         public static UMat ThresholdOtsu(UMat input, bool maskWhitePixels = false)
         {
             UMat result = new UMat();
@@ -173,6 +219,12 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return result;
         }
 
+        /// <summary>
+        /// Apply a threshold segmentation to a grayscale image.
+        /// </summary>
+        /// <param name="input">grayscale image input</param>
+        /// <param name="threshold">threshold</param>
+        /// <returns>thresholded image</returns>
         public static UMat Threshold(UMat input, int threshold)
         {
             UMat result = new UMat();
@@ -182,6 +234,13 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         }
 
 
+        /// <summary>
+        /// Apply morphological operation closing on image.
+        /// Closing is erosion followed by dilation with the same structuring element.
+        /// </summary>
+        /// <param name="input">input image</param>
+        /// <param name="kernelSize">size of the structuring element</param>
+        /// <returns>modified image</returns>
         public static UMat Closing(UMat input, int kernelSize)
         {
             UMat temp = new UMat();
@@ -192,6 +251,13 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return result;
         }
 
+        /// <summary>
+        /// Apply morphological operation opening on image.
+        /// Opening is dilation followed by erosion with the same structuring element.
+        /// </summary>
+        /// <param name="input">input image</param>
+        /// <param name="kernelSize">size of the structuring element</param>
+        /// <returns>modified image</returns>
         public static UMat Opening(UMat input, int kernelSize)
         {
             UMat temp = new UMat();
@@ -202,6 +268,12 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return result;
         }
 
+        /// <summary>
+        /// Apply morphological operation erosion on image.
+        /// </summary>
+        /// <param name="input">input image</param>
+        /// <param name="kernelSize">kernel size</param>
+        /// <returns>eroded image</returns>
         public static UMat Erode(UMat input, int kernelSize)
         {
             UMat result = new UMat();
@@ -210,6 +282,12 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return result;
         }
 
+        /// <summary>
+        /// Apply morphological operation dilation on image.
+        /// </summary>
+        /// <param name="input">input image</param>
+        /// <param name="kernelSize">kernel size</param>
+        /// <returns>dilated image</returns>
         public static UMat Dilate(UMat input, int kernelSize)
         {
             UMat result = new UMat();
@@ -218,6 +296,16 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             return result;
         }
 
+        /// <summary>
+        /// Generic method to apply k-Means-Clustering on an opencv image of unknown type.
+        /// </summary>
+        /// <typeparam name="T">color space type of the image</typeparam>
+        /// <typeparam name="V">pixel data type</typeparam>
+        /// <typeparam name="K">color / intensities datatype</typeparam>
+        /// <param name="image">input image</param>
+        /// <param name="k">amount of clusters k</param>
+        /// <param name="colors">array of colors used to represent the clusters</param>
+        /// <returns>clustered image</returns>
         public static Image<T, V> KMeansClustering<T, V, K>(Image<T, K> image, int k, T[] colors) where T : struct, IColor where K : new() where V : new()
         {
             if (k > 4)
