@@ -34,10 +34,17 @@ namespace MaskedDeformableRegistrationApp.Registration
             }
 
             // coefficient map is used for penalty term
-            if (parameters.CoefficientMapFilename != null)
+            if (parameters.CoefficientMapFilename != null && parameters.NonRigidOptions == MaskedNonRigidRegistrationOptions.BsplineWithPenaltyTermAndCoefficientMap)
             {
-                parameterMap.Add("UseFixedSegmentation", RegistrationUtils.GetVectorString("true"));
-                parameterMap.Add("FixedSegmentationFileName", RegistrationUtils.GetVectorString(parameters.CoefficientMapFilename));
+                RegistrationUtils.ChangeOrAddParamIfNotExist(ref parameterMap, "DilateRigidityImages", RegistrationUtils.GetVectorString("true"));
+                RegistrationUtils.ChangeOrAddParamIfNotExist(ref parameterMap, "FixedRigidityImageName", RegistrationUtils.GetVectorString(parameters.CoefficientMapFilename));
+            }
+
+            // coefficient map is used for diffuse registration
+            if (parameters.CoefficientMapFilename != null && parameters.NonRigidOptions == MaskedNonRigidRegistrationOptions.DiffuseRegistration)
+            {
+                RegistrationUtils.ChangeOrAddParamIfNotExist(ref parameterMap, "UseMovingSegmentation", RegistrationUtils.GetVectorString("true"));
+                RegistrationUtils.ChangeOrAddParamIfNotExist(ref parameterMap, "MovingSegmentationFileName", RegistrationUtils.GetVectorString(parameters.CoefficientMapFilename));
             }
 
             // set output dir and log file

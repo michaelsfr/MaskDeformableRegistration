@@ -587,6 +587,7 @@ namespace MaskedDeformableRegistrationApp.Forms
                 else if (radioButtonBsplineDiffusion.Checked)
                 {
                     SetRegistrationParameterMap(parameters, RegistrationDefaultParameters.diffusion);
+                    parameters.NonRigidOptions = MaskedNonRigidRegistrationOptions.DiffuseRegistration;
                 }
                 else if (radioButtonKernelSpline.Checked)
                 {
@@ -673,6 +674,20 @@ namespace MaskedDeformableRegistrationApp.Forms
                 RegistrationParametersNonRigid.NonRigidOptions = MaskedNonRigidRegistrationOptions.BsplineWithPenaltyTerm;
             }
             
+        }
+
+        private void radioButtonBsplineDiffusion_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioButtonBsplineDiffusion.Checked)
+            {
+                RegistrationParametersNonRigid.NonRigidOptions = MaskedNonRigidRegistrationOptions.DiffuseRegistration;
+                RegistrationParametersNonRigid.ParamMapToUse = RegistrationUtils.GetDefaultParameterMap(RegistrationDefaultParameters.diffusion);
+            }
+        }
+
+        private void radioButtonAdvancedBspline_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

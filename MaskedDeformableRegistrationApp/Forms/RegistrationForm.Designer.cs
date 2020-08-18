@@ -532,6 +532,7 @@
             this.radioButtonBsplineDiffusion.TabIndex = 1;
             this.radioButtonBsplineDiffusion.Text = "Bspline with diffusion";
             this.radioButtonBsplineDiffusion.UseVisualStyleBackColor = true;
+            this.radioButtonBsplineDiffusion.CheckedChanged += new System.EventHandler(this.radioButtonBsplineDiffusion_CheckedChanged);
             // 
             // radioButtonAdvancedBspline
             // 
@@ -541,6 +542,7 @@
             this.radioButtonAdvancedBspline.TabIndex = 0;
             this.radioButtonAdvancedBspline.Text = "Advanced Bspline (def)";
             this.radioButtonAdvancedBspline.UseVisualStyleBackColor = true;
+            this.radioButtonAdvancedBspline.CheckedChanged += new System.EventHandler(this.radioButtonAdvancedBspline_CheckedChanged);
             // 
             // splitContainer5
             // 

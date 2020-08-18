@@ -58,8 +58,8 @@ namespace MaskedDeformableRegistrationApp.Registration
                         parameterMap.Add("ThresholdBool", GetVectorString("true"));
                         parameterMap.Add("ThresholdHU", GetVectorString("150"));
                         parameterMap.Add("GrayValueImageAlsoBasedOnFixedImage", GetVectorString("true"));
-                        parameterMap.Add("UseFixedSegmentation", GetVectorString("false"));
-                        parameterMap.Add("FixedSegmentationFileName", GetVectorString("filename"));
+                        //parameterMap.Add("UseFixedSegmentation", GetVectorString("false"));
+                        //parameterMap.Add("FixedSegmentationFileName", GetVectorString("filename"));
                         parameterMap.Add("UseMovingSegmentation", GetVectorString("false"));
                         parameterMap.Add("MovingSegmentationFileName", GetVectorString("filename"));
                         return parameterMap;
@@ -258,7 +258,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <param name="paramMap">reference to parameter map</param>
         /// <param name="key">parameter key</param>
         /// <param name="value">values as a vector of strings</param>
-        private static void ChangeOrAddParamIfNotExist(ref sitk.ParameterMap paramMap, string key, sitk.VectorString value)
+        public static void ChangeOrAddParamIfNotExist(ref sitk.ParameterMap paramMap, string key, sitk.VectorString value)
         {
             if (paramMap.ContainsKey(key))
             {

@@ -487,9 +487,20 @@ namespace MaskedDeformableRegistrationApp.Registration
                 case MaskedNonRigidRegistrationOptions.ComposeIndependantRegistrations:
                     throw new NotImplementedException();
                 case MaskedNonRigidRegistrationOptions.DiffuseRegistration:
-                    throw new NotImplementedException();
+                    resultMap.Add(BSplineWithDiffusion(refImage, movImage, imageFilename));
+                    break;
+                default:
+                    throw new NotImplementedException("Registration option does not exist.");
             }
             return resultMap;
+        }
+
+        private sitk.VectorOfParameterMap BSplineWithDiffusion(sitk.Image refImage, sitk.Image movImage, string imageFilename)
+        {
+            string coefficientMapFilename = GetInnerStructureSegmentationsAsCoefficientMap(imageFilename);
+            _parameters.CoefficientMapFilename = coefficientMapFilename;
+
+            return DefaultNonRigidRegistration(refImage, movImage, null, null, imageFilename);
         }
 
         /// <summary>

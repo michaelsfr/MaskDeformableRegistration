@@ -27,40 +27,6 @@ namespace MaskedDeformableRegistrationApp.Registration
             this.parameterMap = parameters.ParamMapToUse;
         }
 
-        protected void SetGeneralParameters()
-        {
-            SetImageSampler();
-            SetImagePyramid();
-            SetSimilarityMetric();
-            SetOptimizer();
-        }
-
-        private void SetOptimizer()
-        {
-            // TODO
-        }
-
-        private void SetSimilarityMetric()
-        {
-            AddParameter(Constants.cMetric, registrationParameters.Metric.ToString());
-
-            if (registrationParameters.Metric == SimilarityMetric.AdvancedMattesMutualInformation 
-                && registrationParameters.NumberOfHistogramBins != new int[] { 32 })
-            {
-                AddParameter(Constants.cNumberOfHistogramBins, registrationParameters.NumberOfHistogramBins);
-            }
-        }
-
-        private void SetImagePyramid()
-        {
-            // TODO
-        }
-
-        private void SetImageSampler()
-        {
-            // TODO
-        }
-
         public virtual void Dispose()
         {
             if (elastix != null) elastix.Dispose();
