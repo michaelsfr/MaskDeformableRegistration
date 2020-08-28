@@ -88,7 +88,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             if (registrationParameters.ComputeJaccobian)
             {
-                //transformix.ComputeSpatialJacobianOn();
+                transformix.ComputeSpatialJacobianOn();
                 transformix.ComputeDeterminantOfSpatialJacobianOn();
             }
 
@@ -109,8 +109,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 resultGreenChannel = InterpolateImage(resultGreenChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
             }
             //ReadWriteUtils.WriteSitkImageWithPreCast(resultGreenChannel, registrationParameters.OutputDirectory + "\\green_channel.png");
-
-
+            
             // blue
             transformix.SetMovingImage(blueChannel);
             sitk.Image resultBlueChannel = transformix.Execute();
@@ -119,8 +118,6 @@ namespace MaskedDeformableRegistrationApp.Registration
                 resultBlueChannel = InterpolateImage(resultBlueChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
             }
             //ReadWriteUtils.WriteSitkImageWithPreCast(resultBlueChannel, registrationParameters.OutputDirectory + "\\blue_channel.png");
-
-
 
             // compose image channels
             sitk.VectorOfImage vectorImages = new sitk.VectorOfImage();
@@ -133,6 +130,9 @@ namespace MaskedDeformableRegistrationApp.Registration
             if (registrationParameters.Type == RegistrationType.NonRigid)
             {
                 transformedImage = InterpolateImage(composedImage, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, composedImage.GetPixelID());
+            } else
+            {
+                transformedImage = composedImage;
             }
 
             // interpolation of output image (needs to be improved -> currently theres a little loss in quality)

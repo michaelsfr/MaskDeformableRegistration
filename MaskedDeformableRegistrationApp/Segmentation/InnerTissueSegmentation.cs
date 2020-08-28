@@ -164,18 +164,26 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             // creat mask with rigid structures
             Image<Gray, byte> mask = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0));
             CvInvoke.DrawContours(mask, contoursRelevant, -1, new MCvScalar(255.0), thickness: -1);
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\mask.png", mask.ToUMat());
             UMat inv1 = new UMat();
             CvInvoke.BitwiseNot(mask, inv1);
             UMat convertedMask = new UMat();
             inv1.ConvertTo(convertedMask, DepthType.Cv32F);
 
             // create mask with non rigid structures
-            Image<Gray, byte> mask2 = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0));
-            CvInvoke.Subtract(particleMask, mask, mask2);
+            Image<Gray, byte> convMask = new Image<Gray, byte>(convertedMask.Bitmap);
+            Image<Gray, byte> mask2 = new Image<Gray, byte>(image.Width, image.Height, new Gray(255.0));
+            CvInvoke.Subtract(particleMask, convMask, mask2);
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\INV_mask.png", mask2.ToUMat());
             UMat inv2 = new UMat();
-            CvInvoke.BitwiseNot(mask2, inv2);
+            //CvInvoke.BitwiseNot(mask2, inv2);
+            CvInvoke.BitwiseAnd(mask2, mask, inv2);
+            inv2 = SegmentationUtils.Dilate(inv2, 10);
             UMat convertedMask2 = new UMat();
             inv2.ConvertTo(convertedMask2, DepthType.Cv32F);
+
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\_mask1.png", convertedMask);
+            //ReadWriteUtils.WriteUMatToFile(ApplicationContext.OutputPath + "\\_mask2.png", convertedMask2);
 
             // add masks to list
             masks.Add(convertedMask);

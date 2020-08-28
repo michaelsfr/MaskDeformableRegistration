@@ -76,7 +76,9 @@
             this.backgroundWorkerRigid = new System.ComponentModel.BackgroundWorker();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.groupBoxMaskingGeneral = new System.Windows.Forms.GroupBox();
+            this.buttonLoadMasks = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.radioButtonPreDefMasks = new System.Windows.Forms.RadioButton();
             this.radioButtonInnerStructures = new System.Windows.Forms.RadioButton();
             this.radioButtonWholeTissue = new System.Windows.Forms.RadioButton();
             this.radioButtonFixedAndMovingMask = new System.Windows.Forms.RadioButton();
@@ -621,9 +623,9 @@
             // 
             // buttonSegmentationInnerstructures
             // 
-            this.buttonSegmentationInnerstructures.Location = new System.Drawing.Point(295, 67);
+            this.buttonSegmentationInnerstructures.Location = new System.Drawing.Point(303, 46);
             this.buttonSegmentationInnerstructures.Name = "buttonSegmentationInnerstructures";
-            this.buttonSegmentationInnerstructures.Size = new System.Drawing.Size(124, 40);
+            this.buttonSegmentationInnerstructures.Size = new System.Drawing.Size(211, 28);
             this.buttonSegmentationInnerstructures.TabIndex = 4;
             this.buttonSegmentationInnerstructures.Text = "Adjust inner structures params";
             this.buttonSegmentationInnerstructures.UseVisualStyleBackColor = true;
@@ -631,11 +633,11 @@
             // 
             // buttonSegmentationParams
             // 
-            this.buttonSegmentationParams.Location = new System.Drawing.Point(295, 11);
+            this.buttonSegmentationParams.Location = new System.Drawing.Point(303, 14);
             this.buttonSegmentationParams.Name = "buttonSegmentationParams";
-            this.buttonSegmentationParams.Size = new System.Drawing.Size(124, 51);
+            this.buttonSegmentationParams.Size = new System.Drawing.Size(211, 28);
             this.buttonSegmentationParams.TabIndex = 4;
-            this.buttonSegmentationParams.Text = "Adjust fore-/ background segmentation params";
+            this.buttonSegmentationParams.Text = "Adjust fore-/ background params";
             this.buttonSegmentationParams.UseVisualStyleBackColor = true;
             this.buttonSegmentationParams.Click += new System.EventHandler(this.buttonSegmentationParams_Click);
             // 
@@ -661,6 +663,7 @@
             // 
             // groupBoxMaskingGeneral
             // 
+            this.groupBoxMaskingGeneral.Controls.Add(this.buttonLoadMasks);
             this.groupBoxMaskingGeneral.Controls.Add(this.groupBox1);
             this.groupBoxMaskingGeneral.Controls.Add(this.radioButtonFixedAndMovingMask);
             this.groupBoxMaskingGeneral.Controls.Add(this.buttonSegmentationInnerstructures);
@@ -670,21 +673,44 @@
             this.groupBoxMaskingGeneral.Controls.Add(this.radioButtonNoMask);
             this.groupBoxMaskingGeneral.Location = new System.Drawing.Point(263, 28);
             this.groupBoxMaskingGeneral.Name = "groupBoxMaskingGeneral";
-            this.groupBoxMaskingGeneral.Size = new System.Drawing.Size(427, 113);
+            this.groupBoxMaskingGeneral.Size = new System.Drawing.Size(520, 113);
             this.groupBoxMaskingGeneral.TabIndex = 3;
             this.groupBoxMaskingGeneral.TabStop = false;
             this.groupBoxMaskingGeneral.Text = "Masking";
             // 
+            // buttonLoadMasks
+            // 
+            this.buttonLoadMasks.Location = new System.Drawing.Point(303, 79);
+            this.buttonLoadMasks.Name = "buttonLoadMasks";
+            this.buttonLoadMasks.Size = new System.Drawing.Size(211, 28);
+            this.buttonLoadMasks.TabIndex = 12;
+            this.buttonLoadMasks.Text = "Load masks from disk";
+            this.buttonLoadMasks.UseVisualStyleBackColor = true;
+            this.buttonLoadMasks.Click += new System.EventHandler(this.buttonLoadMasks_Click);
+            // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.radioButtonPreDefMasks);
             this.groupBox1.Controls.Add(this.radioButtonInnerStructures);
             this.groupBox1.Controls.Add(this.radioButtonWholeTissue);
-            this.groupBox1.Location = new System.Drawing.Point(159, 11);
+            this.groupBox1.Location = new System.Drawing.Point(167, 11);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(130, 74);
+            this.groupBox1.Size = new System.Drawing.Size(130, 96);
             this.groupBox1.TabIndex = 11;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Mask option";
+            // 
+            // radioButtonPreDefMasks
+            // 
+            this.radioButtonPreDefMasks.AutoSize = true;
+            this.radioButtonPreDefMasks.Location = new System.Drawing.Point(7, 68);
+            this.radioButtonPreDefMasks.Name = "radioButtonPreDefMasks";
+            this.radioButtonPreDefMasks.Size = new System.Drawing.Size(115, 17);
+            this.radioButtonPreDefMasks.TabIndex = 2;
+            this.radioButtonPreDefMasks.TabStop = true;
+            this.radioButtonPreDefMasks.Text = "Load predef masks";
+            this.radioButtonPreDefMasks.UseVisualStyleBackColor = true;
+            this.radioButtonPreDefMasks.CheckedChanged += new System.EventHandler(this.radioButtonPreDefMasks_CheckedChanged);
             // 
             // radioButtonInnerStructures
             // 
@@ -939,5 +965,7 @@
         private System.Windows.Forms.GroupBox groupBoxMisc;
         private System.Windows.Forms.CheckBox checkBoxUseCoefficientmap;
         private System.Windows.Forms.CheckBox checkBoxJaccobian;
+        private System.Windows.Forms.RadioButton radioButtonPreDefMasks;
+        private System.Windows.Forms.Button buttonLoadMasks;
     }
 }

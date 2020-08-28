@@ -538,15 +538,16 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             if (fixedMask != null)
             {
+                //fixedMask = ImageUtils.Binarize(fixedMask);
                 nonRigidRegistration.SetFixedMask(fixedMask);
             }
 
             if (movingMask != null)
             {
+                //movingMask = ImageUtils.Binarize(movingMask);
                 nonRigidRegistration.SetMovingMask(movingMask);
             }
 
-            //_parameters.IsBinaryTransform = true;
             ExecuteRegistration(nonRigidRegistration);
             sitk.VectorOfParameterMap transformparams = nonRigidRegistration.GetTransformationParameterMap();
             nonRigidRegistration.Dispose();
@@ -635,7 +636,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             string outputFilename = ReadWriteUtils.GetOutputDirectory(_parameters, _parameters.Iteration) + "\\mask_" + Path.GetFileName(filename);
             InnerTissueSegmentation seg = GetInnerStructureSegmentation(filename);
-            seg.GetOutput()[0].Save(filename);
+            seg.GetOutput()[1].Save(filename);
             seg.Dispose();
             return filename;
         }
@@ -649,7 +650,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             string outputFilename = ReadWriteUtils.GetOutputDirectory(_parameters, _parameters.Iteration) + "\\mask_" + Path.GetFileName(filename);
             InnerTissueSegmentation seg = GetInnerStructureSegmentation(filename);
-            seg.GetOutput()[0].Save(outputFilename);
+            seg.GetOutput()[1].Save(outputFilename);
             seg.Dispose();
             sitk.Image mask = ReadWriteUtils.ReadITKImageFromFile(outputFilename);
 

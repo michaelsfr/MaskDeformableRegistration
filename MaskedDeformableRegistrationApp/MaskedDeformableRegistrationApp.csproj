@@ -85,8 +85,9 @@
     <Reference Include="OpenTK.GLControl, Version=1.1.0.0, Culture=neutral, PublicKeyToken=bad199fe84eb3df4, processorArchitecture=MSIL">
       <HintPath>..\packages\OpenTK.GLControl.1.1.2225.0\lib\net20\OpenTK.GLControl.dll</HintPath>
     </Reference>
-    <Reference Include="SimpleITKCSharpManaged">
-      <HintPath>..\packages\SimpleITK\SimpleITKCSharpManaged.dll</HintPath>
+    <Reference Include="SimpleITKCSharpManaged, Version=2.0.33676.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\packages\SimpleITK\wDiff\SimpleITKCSharpManaged.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -131,6 +132,12 @@
     </Compile>
     <Compile Include="Forms\EvaluationForm.Designer.cs">
       <DependentUpon>EvaluationForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LoadMaskForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LoadMaskForm.Designer.cs">
+      <DependentUpon>LoadMaskForm.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\LoadStackForm.cs">
       <SubType>Form</SubType>
@@ -214,6 +221,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\EvaluationForm.resx">
       <DependentUpon>EvaluationForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LoadMaskForm.resx">
+      <DependentUpon>LoadMaskForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\LoadStackForm.resx">
       <DependentUpon>LoadStackForm.cs</DependentUpon>

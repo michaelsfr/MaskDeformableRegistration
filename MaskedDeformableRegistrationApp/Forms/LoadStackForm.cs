@@ -18,7 +18,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         private string Stackname { get; set; } = null;
 
         private const string _dialogFilterStack = "json files (*.json)|*.json";
-        private const string _dialogFilterImages = "image files (*.png)|*.png|(*.tif)|*.tif|(*.bmp)|*.bmp";
+        private const string _dialogFilterImages = "image files (*.png)|*.png|(*.mhd)|*.mhd|(*.tif)|*.tif|(*.bmp)|*.bmp";
 
         private readonly string _initDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 

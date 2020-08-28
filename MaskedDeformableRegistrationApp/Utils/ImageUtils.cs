@@ -190,7 +190,7 @@ namespace MaskedDeformableRegistrationApp.Utils
             return resampleImageFilter.Execute(img);
         }
 
-        public static sitk.Image MakeImageBinary(sitk.Image img, int lowerT = 127, int upperT = 255)
+        public static sitk.Image Binarize(sitk.Image img, int lowerT = 127, int upperT = 255)
         {
             sitk.BinaryThresholdImageFilter binaryFilter1 = new sitk.BinaryThresholdImageFilter();
             binaryFilter1.SetLowerThreshold(lowerT);

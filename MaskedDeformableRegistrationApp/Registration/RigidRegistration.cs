@@ -69,8 +69,8 @@ namespace MaskedDeformableRegistrationApp.Registration
                 // only use when kappa statistics is used as metric
                 if (registrationParameters.RigidOptions != MaskedRigidRegistrationOptions.None)
                 {
-                    fixedImage = ImageUtils.MakeImageBinary(fixedImage);
-                    movingImage = ImageUtils.MakeImageBinary(movingImage);
+                    fixedImage = ImageUtils.Binarize(fixedImage);
+                    movingImage = ImageUtils.Binarize(movingImage);
                 }
 
                 // set fixed and moving images

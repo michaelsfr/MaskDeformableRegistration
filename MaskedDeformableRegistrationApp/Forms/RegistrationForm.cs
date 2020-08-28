@@ -54,6 +54,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             buttonCancelNonRigidReg.Enabled = false;
             buttonEvaluateNonRigidReg.Enabled = false;
             checkBoxUseCoefficientmap.Enabled = false;
+            buttonLoadMasks.Enabled = false;
         }
 
         /// <summary>
@@ -688,6 +689,25 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void radioButtonAdvancedBspline_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void radioButtonPreDefMasks_CheckedChanged(object sender, EventArgs e)
+        {
+            buttonLoadMasks.Enabled = radioButtonPreDefMasks.Checked;
+        }
+
+        private void buttonLoadMasks_Click(object sender, EventArgs e)
+        {
+            using (LoadMaskForm form = new LoadMaskForm(parametersR: RegistrationParametersRigid, parametersNR: RegistrationParametersNonRigid))
+            {
+                DialogResult result = form.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    RegistrationParametersRigid = form.registrationParametersRigid;
+                    RegistrationParametersNonRigid = form.registrationParametersNonRigid;
+                }
+            }
         }
     }
 }

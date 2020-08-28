@@ -73,9 +73,9 @@
             // 
             // buttonChooseStack
             // 
-            this.buttonChooseStack.Location = new System.Drawing.Point(215, 35);
+            this.buttonChooseStack.Location = new System.Drawing.Point(215, 37);
             this.buttonChooseStack.Name = "buttonChooseStack";
-            this.buttonChooseStack.Size = new System.Drawing.Size(75, 23);
+            this.buttonChooseStack.Size = new System.Drawing.Size(75, 20);
             this.buttonChooseStack.TabIndex = 3;
             this.buttonChooseStack.Text = "Choose";
             this.buttonChooseStack.UseVisualStyleBackColor = true;
@@ -90,9 +90,9 @@
             // 
             // buttonChoosePNGs
             // 
-            this.buttonChoosePNGs.Location = new System.Drawing.Point(215, 87);
+            this.buttonChoosePNGs.Location = new System.Drawing.Point(216, 90);
             this.buttonChoosePNGs.Name = "buttonChoosePNGs";
-            this.buttonChoosePNGs.Size = new System.Drawing.Size(75, 23);
+            this.buttonChoosePNGs.Size = new System.Drawing.Size(75, 20);
             this.buttonChoosePNGs.TabIndex = 5;
             this.buttonChoosePNGs.Text = "Choose";
             this.buttonChoosePNGs.UseVisualStyleBackColor = true;

@@ -33,7 +33,6 @@ namespace MaskedDeformableRegistrationApp.Registration
             parameters.Type = RegistrationType.NonRigid;
             parameters.RegistrationDefaultParams = RegistrationDefaultParameters.bspline;
             parameters.NumberOfResolutions = 5;
-            parameters.Metric = SimilarityMetric.AdvancedMattesMutualInformation;
             parameters.RegistrationStrategy = RegistrationStrategy.MultiMetricMultiResolutionRegistration;
             parameters.Penaltyterm = PenaltyTerm.None;
             return parameters;
@@ -95,6 +94,14 @@ namespace MaskedDeformableRegistrationApp.Registration
         public bool UseMovingMask { get; set; } = false;
         public bool UseInnerStructuresSegmentation { get; set; } = false;
 
+        // use manual masks
+        public bool UseFixedMaskFromDisk { get; set; }  = false;
+        public string FixedMaskFromDisk { get; set; } = null;
+        public bool UseMovingMasksFromDisk { get; set; } = false;
+        public List<string> MovingMasksFromDisk { get; set; } = null;
+        public bool UseCoefficientMapsFromDisk { get; set; } = false;
+        public List<string> CoefficientMapsFromDisk { get; set; } = null;
+
         public bool IsBinaryTransform { get; set; } = false;
         public bool ComputeJaccobian { get; set; } = false;
 
@@ -103,17 +110,6 @@ namespace MaskedDeformableRegistrationApp.Registration
         public MaskedRigidRegistrationOptions RigidOptions { get; set; } = MaskedRigidRegistrationOptions.None;
         // type
         public RegistrationDefaultParameters RegistrationDefaultParams { get; set; }
-
-        // metric
-        public SimilarityMetric Metric { get; set; } = SimilarityMetric.AdvancedMeanSquares;
-        public int[] NumberOfHistogramBins { get; set; } = { 32 };
-
-        // image pyramid
-        public ImagePyramid FixedImagePyramid { get; set; } = ImagePyramid.FixedRecursiveImagePyramid;
-        public ImagePyramid MovingImagePyramid { get; set; } = ImagePyramid.MovingRecursiveImagePyramid;
-
-        // optimizer
-        public Optimizer Optimizer { get; set; } = Optimizer.AdaptiveStochasticGradientDescent;
 
         // reg strategy
         public RegistrationStrategy RegistrationStrategy { get; set; } = RegistrationStrategy.MultiResolutionRegistration;
