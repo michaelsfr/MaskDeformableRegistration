@@ -30,6 +30,8 @@ namespace MaskedDeformableRegistrationApp.Forms
         private uint LargestImageWidth { get; set; } = 0;
         private uint LargestImageHeight { get; set; } = 0;
 
+        private List<string> ParameterFilenames = new List<string>();
+
         public RegistrationForm(List<string> filenamesToRegistrate)
         {
             InitializeComponent();
@@ -55,6 +57,16 @@ namespace MaskedDeformableRegistrationApp.Forms
             buttonEvaluateNonRigidReg.Enabled = false;
             checkBoxUseCoefficientmap.Enabled = false;
             buttonLoadMasks.Enabled = false;
+            labelOrder.Enabled = false;
+            comboBoxInterpolationOrder.Enabled = false;
+
+            comboBoxInterpolationOrder.Items.AddRange(new object[] { 0, 1, 2, 3, 4, 5 });
+            comboBoxInterpolationOrder.SelectedIndex = 3;
+            radioButtonCompose.Checked = true;
+
+            numericUpDownDefaultPixelValue.Minimum = 0;
+            numericUpDownDefaultPixelValue.Maximum = 255;
+            numericUpDownDefaultPixelValue.Value = 0;
         }
 
         /// <summary>
@@ -708,6 +720,51 @@ namespace MaskedDeformableRegistrationApp.Forms
                     RegistrationParametersNonRigid = form.registrationParametersNonRigid;
                 }
             }
+        }
+
+        private void radioButtonBSpline_CheckedChanged(object sender, EventArgs e)
+        {
+            labelOrder.Enabled = radioButtonBSpline.Checked;
+            comboBoxInterpolationOrder.Enabled = radioButtonBSpline.Checked;
+        }
+
+        private void buttonChooseParamFiles_Click(object sender, EventArgs e)
+        {
+            if(ParameterFilenames.Count > 0)
+            {
+                ParameterFilenames.Clear();
+            }
+
+            openFileDialogTransformParam.Multiselect = true;
+            openFileDialogTransformParam.Filter = "parameter files(*.txt)| *.txt";
+            openFileDialogTransformParam.InitialDirectory = ApplicationContext.OutputPath;
+            openFileDialogTransformParam.FileName = "";
+            DialogResult result = openFileDialogTransformParam.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                foreach (string path in openFileDialogTransformParam.FileNames)
+                {
+                    ParameterFilenames.Add(path);
+                }
+            }
+
+            textBoxTransformParams.Text = string.Join(", ", ParameterFilenames.Select(it => Path.GetFileName(it).ToArray()));
+        }
+
+        private void buttonTransform_Click(object sender, EventArgs e)
+        {
+            // remove fixed image from list
+            List<string> movingImages = ImageStackToRegister.Skip(1).ToList();
+            TransformationController controller = new TransformationController(ParameterFilenames, movingImages);
+            controller.ComposeTransformsParameters(radioButtonCompose.Checked);
+            if (radioButtonLinear.Checked) controller.SetInterpolationType(Interpolator.LinearInterpolation);
+            if (radioButtonNN.Checked) controller.SetInterpolationType(Interpolator.NearestNighbour);
+            if (radioButtonBSpline.Checked) controller.SetInterpolationType(Interpolator.BSplineInterpolation, (int)comboBoxInterpolationOrder.SelectedValue);
+            controller.SetDefaultPixelValue((double)numericUpDownDefaultPixelValue.Value);
+            Cursor.Current = Cursors.WaitCursor;
+            controller.StartTransformation();
+            Cursor.Current = Cursors.Default;
         }
     }
 }

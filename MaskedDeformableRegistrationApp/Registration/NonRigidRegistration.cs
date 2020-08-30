@@ -75,6 +75,8 @@ namespace MaskedDeformableRegistrationApp.Registration
                 Console.WriteLine(bSplineTransformInitializer.GetTransformDomainMeshSize().ToString());
                 bSplineTransformInitializer.Execute(fixedImage);*/
 
+                
+
                 // set fixed and moving mask if defined
                 if(this.fixedMask != null)
                 {

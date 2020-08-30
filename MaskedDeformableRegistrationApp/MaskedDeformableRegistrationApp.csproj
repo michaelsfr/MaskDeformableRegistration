@@ -197,6 +197,7 @@
     <Compile Include="Registration\RegistrationUtils.cs" />
     <Compile Include="Registration\RigidRegistration.cs" />
     <Compile Include="Registration\Transformation.cs" />
+    <Compile Include="Registration\TransformationController.cs" />
     <Compile Include="Segmentation\InnerTissueSegmentation.cs" />
     <Compile Include="Segmentation\ISegmentation.cs" />
     <Compile Include="Segmentation\SegmentationParameters.cs" />

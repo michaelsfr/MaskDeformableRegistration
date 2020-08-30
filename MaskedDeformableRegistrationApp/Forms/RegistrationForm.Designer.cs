@@ -70,7 +70,22 @@
             this.buttonCancelNonRigidReg = new System.Windows.Forms.Button();
             this.textBoxConsoleNonRigid = new System.Windows.Forms.TextBox();
             this.progressBarNonRigid = new System.Windows.Forms.ProgressBar();
-            this.tabPageManual = new System.Windows.Forms.TabPage();
+            this.tabPageTransform = new System.Windows.Forms.TabPage();
+            this.buttonTransform = new System.Windows.Forms.Button();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.numericUpDownDefaultPixelValue = new System.Windows.Forms.NumericUpDown();
+            this.groupBoxInterpolation = new System.Windows.Forms.GroupBox();
+            this.labelOrder = new System.Windows.Forms.Label();
+            this.comboBoxInterpolationOrder = new System.Windows.Forms.ComboBox();
+            this.radioButtonBSpline = new System.Windows.Forms.RadioButton();
+            this.radioButtonNN = new System.Windows.Forms.RadioButton();
+            this.radioButtonLinear = new System.Windows.Forms.RadioButton();
+            this.groupBoxHowToCompose = new System.Windows.Forms.GroupBox();
+            this.radioButtonCompose = new System.Windows.Forms.RadioButton();
+            this.radioButtonAdd = new System.Windows.Forms.RadioButton();
+            this.buttonChooseParamFiles = new System.Windows.Forms.Button();
+            this.label2 = new System.Windows.Forms.Label();
+            this.textBoxTransformParams = new System.Windows.Forms.TextBox();
             this.buttonSegmentationInnerstructures = new System.Windows.Forms.Button();
             this.buttonSegmentationParams = new System.Windows.Forms.Button();
             this.backgroundWorkerRigid = new System.ComponentModel.BackgroundWorker();
@@ -92,6 +107,7 @@
             this.radioButtonLastInStack = new System.Windows.Forms.RadioButton();
             this.radioButtonFirstFromStack = new System.Windows.Forms.RadioButton();
             this.backgroundWorkerNonRigid = new System.ComponentModel.BackgroundWorker();
+            this.openFileDialogTransformParam = new System.Windows.Forms.OpenFileDialog();
             this.tabControlRegistration.SuspendLayout();
             this.tabPageRigid.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -116,6 +132,11 @@
             this.splitContainer5.Panel1.SuspendLayout();
             this.splitContainer5.Panel2.SuspendLayout();
             this.splitContainer5.SuspendLayout();
+            this.tabPageTransform.SuspendLayout();
+            this.groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDefaultPixelValue)).BeginInit();
+            this.groupBoxInterpolation.SuspendLayout();
+            this.groupBoxHowToCompose.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
@@ -129,7 +150,7 @@
             // 
             this.tabControlRegistration.Controls.Add(this.tabPageRigid);
             this.tabControlRegistration.Controls.Add(this.tabPageNonRigid);
-            this.tabControlRegistration.Controls.Add(this.tabPageManual);
+            this.tabControlRegistration.Controls.Add(this.tabPageTransform);
             this.tabControlRegistration.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tabControlRegistration.Location = new System.Drawing.Point(0, 0);
             this.tabControlRegistration.Name = "tabControlRegistration";
@@ -611,15 +632,173 @@
             this.progressBarNonRigid.Size = new System.Drawing.Size(569, 23);
             this.progressBarNonRigid.TabIndex = 0;
             // 
-            // tabPageManual
+            // tabPageTransform
             // 
-            this.tabPageManual.Location = new System.Drawing.Point(4, 22);
-            this.tabPageManual.Name = "tabPageManual";
-            this.tabPageManual.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPageManual.Size = new System.Drawing.Size(782, 322);
-            this.tabPageManual.TabIndex = 2;
-            this.tabPageManual.Text = "Manual registration";
-            this.tabPageManual.UseVisualStyleBackColor = true;
+            this.tabPageTransform.Controls.Add(this.buttonTransform);
+            this.tabPageTransform.Controls.Add(this.groupBox2);
+            this.tabPageTransform.Controls.Add(this.groupBoxInterpolation);
+            this.tabPageTransform.Controls.Add(this.groupBoxHowToCompose);
+            this.tabPageTransform.Controls.Add(this.buttonChooseParamFiles);
+            this.tabPageTransform.Controls.Add(this.label2);
+            this.tabPageTransform.Controls.Add(this.textBoxTransformParams);
+            this.tabPageTransform.Location = new System.Drawing.Point(4, 22);
+            this.tabPageTransform.Name = "tabPageTransform";
+            this.tabPageTransform.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageTransform.Size = new System.Drawing.Size(782, 322);
+            this.tabPageTransform.TabIndex = 2;
+            this.tabPageTransform.Text = "Transform";
+            this.tabPageTransform.UseVisualStyleBackColor = true;
+            // 
+            // buttonTransform
+            // 
+            this.buttonTransform.Location = new System.Drawing.Point(11, 287);
+            this.buttonTransform.Name = "buttonTransform";
+            this.buttonTransform.Size = new System.Drawing.Size(276, 23);
+            this.buttonTransform.TabIndex = 6;
+            this.buttonTransform.Text = "Transform";
+            this.buttonTransform.UseVisualStyleBackColor = true;
+            this.buttonTransform.Click += new System.EventHandler(this.buttonTransform_Click);
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.numericUpDownDefaultPixelValue);
+            this.groupBox2.Location = new System.Drawing.Point(11, 233);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(276, 48);
+            this.groupBox2.TabIndex = 5;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Default pixel value";
+            // 
+            // numericUpDownDefaultPixelValue
+            // 
+            this.numericUpDownDefaultPixelValue.Location = new System.Drawing.Point(6, 19);
+            this.numericUpDownDefaultPixelValue.Name = "numericUpDownDefaultPixelValue";
+            this.numericUpDownDefaultPixelValue.Size = new System.Drawing.Size(120, 20);
+            this.numericUpDownDefaultPixelValue.TabIndex = 0;
+            // 
+            // groupBoxInterpolation
+            // 
+            this.groupBoxInterpolation.Controls.Add(this.labelOrder);
+            this.groupBoxInterpolation.Controls.Add(this.comboBoxInterpolationOrder);
+            this.groupBoxInterpolation.Controls.Add(this.radioButtonBSpline);
+            this.groupBoxInterpolation.Controls.Add(this.radioButtonNN);
+            this.groupBoxInterpolation.Controls.Add(this.radioButtonLinear);
+            this.groupBoxInterpolation.Location = new System.Drawing.Point(11, 134);
+            this.groupBoxInterpolation.Name = "groupBoxInterpolation";
+            this.groupBoxInterpolation.Size = new System.Drawing.Size(276, 93);
+            this.groupBoxInterpolation.TabIndex = 4;
+            this.groupBoxInterpolation.TabStop = false;
+            this.groupBoxInterpolation.Text = "Interpolation";
+            // 
+            // labelOrder
+            // 
+            this.labelOrder.AutoSize = true;
+            this.labelOrder.Location = new System.Drawing.Point(107, 69);
+            this.labelOrder.Name = "labelOrder";
+            this.labelOrder.Size = new System.Drawing.Size(36, 13);
+            this.labelOrder.TabIndex = 4;
+            this.labelOrder.Text = "Order:";
+            // 
+            // comboBoxInterpolationOrder
+            // 
+            this.comboBoxInterpolationOrder.FormattingEnabled = true;
+            this.comboBoxInterpolationOrder.Location = new System.Drawing.Point(149, 63);
+            this.comboBoxInterpolationOrder.Name = "comboBoxInterpolationOrder";
+            this.comboBoxInterpolationOrder.Size = new System.Drawing.Size(121, 21);
+            this.comboBoxInterpolationOrder.TabIndex = 3;
+            // 
+            // radioButtonBSpline
+            // 
+            this.radioButtonBSpline.AutoSize = true;
+            this.radioButtonBSpline.Location = new System.Drawing.Point(7, 67);
+            this.radioButtonBSpline.Name = "radioButtonBSpline";
+            this.radioButtonBSpline.Size = new System.Drawing.Size(61, 17);
+            this.radioButtonBSpline.TabIndex = 2;
+            this.radioButtonBSpline.TabStop = true;
+            this.radioButtonBSpline.Text = "BSpline";
+            this.radioButtonBSpline.UseVisualStyleBackColor = true;
+            this.radioButtonBSpline.CheckedChanged += new System.EventHandler(this.radioButtonBSpline_CheckedChanged);
+            // 
+            // radioButtonNN
+            // 
+            this.radioButtonNN.AutoSize = true;
+            this.radioButtonNN.Location = new System.Drawing.Point(7, 44);
+            this.radioButtonNN.Name = "radioButtonNN";
+            this.radioButtonNN.Size = new System.Drawing.Size(108, 17);
+            this.radioButtonNN.TabIndex = 1;
+            this.radioButtonNN.TabStop = true;
+            this.radioButtonNN.Text = "Nearest Neighbor";
+            this.radioButtonNN.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonLinear
+            // 
+            this.radioButtonLinear.AutoSize = true;
+            this.radioButtonLinear.Location = new System.Drawing.Point(7, 20);
+            this.radioButtonLinear.Name = "radioButtonLinear";
+            this.radioButtonLinear.Size = new System.Drawing.Size(54, 17);
+            this.radioButtonLinear.TabIndex = 0;
+            this.radioButtonLinear.TabStop = true;
+            this.radioButtonLinear.Text = "Linear";
+            this.radioButtonLinear.UseVisualStyleBackColor = true;
+            // 
+            // groupBoxHowToCompose
+            // 
+            this.groupBoxHowToCompose.Controls.Add(this.radioButtonCompose);
+            this.groupBoxHowToCompose.Controls.Add(this.radioButtonAdd);
+            this.groupBoxHowToCompose.Location = new System.Drawing.Point(11, 55);
+            this.groupBoxHowToCompose.Name = "groupBoxHowToCompose";
+            this.groupBoxHowToCompose.Size = new System.Drawing.Size(276, 72);
+            this.groupBoxHowToCompose.TabIndex = 3;
+            this.groupBoxHowToCompose.TabStop = false;
+            this.groupBoxHowToCompose.Text = "How to compose";
+            // 
+            // radioButtonCompose
+            // 
+            this.radioButtonCompose.AutoSize = true;
+            this.radioButtonCompose.Location = new System.Drawing.Point(7, 44);
+            this.radioButtonCompose.Name = "radioButtonCompose";
+            this.radioButtonCompose.Size = new System.Drawing.Size(69, 17);
+            this.radioButtonCompose.TabIndex = 1;
+            this.radioButtonCompose.TabStop = true;
+            this.radioButtonCompose.Text = "Compose";
+            this.radioButtonCompose.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonAdd
+            // 
+            this.radioButtonAdd.AutoSize = true;
+            this.radioButtonAdd.Location = new System.Drawing.Point(7, 20);
+            this.radioButtonAdd.Name = "radioButtonAdd";
+            this.radioButtonAdd.Size = new System.Drawing.Size(44, 17);
+            this.radioButtonAdd.TabIndex = 0;
+            this.radioButtonAdd.TabStop = true;
+            this.radioButtonAdd.Text = "Add";
+            this.radioButtonAdd.UseVisualStyleBackColor = true;
+            // 
+            // buttonChooseParamFiles
+            // 
+            this.buttonChooseParamFiles.Location = new System.Drawing.Point(197, 28);
+            this.buttonChooseParamFiles.Name = "buttonChooseParamFiles";
+            this.buttonChooseParamFiles.Size = new System.Drawing.Size(90, 20);
+            this.buttonChooseParamFiles.TabIndex = 2;
+            this.buttonChooseParamFiles.Text = "Choose";
+            this.buttonChooseParamFiles.UseVisualStyleBackColor = true;
+            this.buttonChooseParamFiles.Click += new System.EventHandler(this.buttonChooseParamFiles_Click);
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(13, 12);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(128, 13);
+            this.label2.TabIndex = 1;
+            this.label2.Text = "Transform parameter files:";
+            // 
+            // textBoxTransformParams
+            // 
+            this.textBoxTransformParams.Location = new System.Drawing.Point(11, 28);
+            this.textBoxTransformParams.Name = "textBoxTransformParams";
+            this.textBoxTransformParams.Size = new System.Drawing.Size(180, 20);
+            this.textBoxTransformParams.TabIndex = 0;
             // 
             // buttonSegmentationInnerstructures
             // 
@@ -844,6 +1023,10 @@
             this.radioButtonFirstFromStack.Text = "Use first image in stack as reference";
             this.radioButtonFirstFromStack.UseVisualStyleBackColor = true;
             // 
+            // openFileDialogTransformParam
+            // 
+            this.openFileDialogTransformParam.FileName = "openFileDialog1";
+            // 
             // RegistrationForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -886,6 +1069,14 @@
             this.splitContainer5.Panel2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
             this.splitContainer5.ResumeLayout(false);
+            this.tabPageTransform.ResumeLayout(false);
+            this.tabPageTransform.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDefaultPixelValue)).EndInit();
+            this.groupBoxInterpolation.ResumeLayout(false);
+            this.groupBoxInterpolation.PerformLayout();
+            this.groupBoxHowToCompose.ResumeLayout(false);
+            this.groupBoxHowToCompose.PerformLayout();
             this.splitContainer3.Panel1.ResumeLayout(false);
             this.splitContainer3.Panel1.PerformLayout();
             this.splitContainer3.Panel2.ResumeLayout(false);
@@ -954,7 +1145,7 @@
         private System.Windows.Forms.RadioButton radioButtonOnlyFixedMask;
         private System.Windows.Forms.RadioButton radioButtonNoMask;
         private System.ComponentModel.BackgroundWorker backgroundWorkerNonRigid;
-        private System.Windows.Forms.TabPage tabPageManual;
+        private System.Windows.Forms.TabPage tabPageTransform;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.RadioButton radioButtonInnerStructures;
         private System.Windows.Forms.RadioButton radioButtonWholeTissue;
@@ -967,5 +1158,21 @@
         private System.Windows.Forms.CheckBox checkBoxJaccobian;
         private System.Windows.Forms.RadioButton radioButtonPreDefMasks;
         private System.Windows.Forms.Button buttonLoadMasks;
+        private System.Windows.Forms.GroupBox groupBoxInterpolation;
+        private System.Windows.Forms.Label labelOrder;
+        private System.Windows.Forms.ComboBox comboBoxInterpolationOrder;
+        private System.Windows.Forms.RadioButton radioButtonBSpline;
+        private System.Windows.Forms.RadioButton radioButtonNN;
+        private System.Windows.Forms.RadioButton radioButtonLinear;
+        private System.Windows.Forms.GroupBox groupBoxHowToCompose;
+        private System.Windows.Forms.RadioButton radioButtonCompose;
+        private System.Windows.Forms.RadioButton radioButtonAdd;
+        private System.Windows.Forms.Button buttonChooseParamFiles;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.TextBox textBoxTransformParams;
+        private System.Windows.Forms.OpenFileDialog openFileDialogTransformParam;
+        private System.Windows.Forms.Button buttonTransform;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.NumericUpDown numericUpDownDefaultPixelValue;
     }
 }
