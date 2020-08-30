@@ -129,13 +129,13 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            PopulateParameters(registrationParametersRigid);
-            PopulateParameters(registrationParametersNonRigid);
+            PopulateLoadingParameters(registrationParametersRigid);
+            PopulateLoadingParameters(registrationParametersNonRigid);
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        private void PopulateParameters(RegistrationParameters registrationParameters)
+        private void PopulateLoadingParameters(RegistrationParameters registrationParameters)
         {
             if (FixedMaskFilename != null && File.Exists(FixedMaskFilename))
             {
@@ -145,7 +145,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             if (MovingMasksFilenames.Count > 0)
             {
                 bool filesExist = true;
-                foreach (string filename in MovingMasksFilenames) filesExist &= File.Exists(filename);
+                MovingMasksFilenames.ForEach(it => filesExist &= File.Exists(it));
                 if (filesExist)
                 {
                     registrationParameters.UseMovingMasksFromDisk = true;
@@ -155,7 +155,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             if (MovingImageCoefficientMaps.Count > 0)
             {
                 bool filesExist = true;
-                foreach (string filename in MovingImageCoefficientMaps) filesExist &= File.Exists(filename);
+                MovingImageCoefficientMaps.ForEach(it => filesExist &= File.Exists(it));
                 if (filesExist)
                 {
                     registrationParameters.UseCoefficientMapsFromDisk = true;

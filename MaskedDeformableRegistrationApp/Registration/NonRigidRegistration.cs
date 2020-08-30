@@ -56,9 +56,6 @@ namespace MaskedDeformableRegistrationApp.Registration
             elastix.SetOutputDirectory(outputDirectory);
             elastix.SetLogFileName(outputDirectory + registrationParameters.ElastixLogFileName);
             elastix.LogToConsoleOn();
-
-            // set non rigid parameters
-            //base.SetGeneralParameters();
         }
 
         public NonRigidRegistration(RegistrationParameters parameters) : base(parameters)

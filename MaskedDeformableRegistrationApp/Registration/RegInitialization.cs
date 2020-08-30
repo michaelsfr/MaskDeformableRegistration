@@ -65,16 +65,6 @@ namespace MaskedDeformableRegistrationApp.Registration
             return null;
         }
 
-        public virtual sitk.VectorOfParameterMap GetInverseTransformationParameterMap()
-        {
-            if (elastix != null)
-            {
-                // todo
-                //return elastix.
-            }
-            return null;
-        }
-
         public virtual void SetDefaultParameterMap(RegistrationDefaultParameters type, uint numberOfResolutions)
         {
             parameterMap = elastix.GetDefaultParameterMap(type.ToString(), numberOfResolutions);

@@ -23,5 +23,6 @@ namespace MaskedDeformableRegistrationApp.Utils
         public const string cMovingImagePyramid = "MovingImagePyramid";
         public const string cMetric0Weight = "Metric0Weight";
         public const string cMetric1Weight = "Metric0Weight";
+        public const string cCoefficientFilename = "\\coefficientMap.png";
     }
 }

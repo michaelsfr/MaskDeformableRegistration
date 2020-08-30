@@ -305,6 +305,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <param name="numberOfComposedTransformations">number of components (segmented contours to register)</param>
         /// <param name="parameters">registration params</param>
         /// <returns>returns a list of transform parameter maps</returns>
+        [Obsolete("Implemented in RegistrationController")]
         public static List<sitk.VectorOfParameterMap> PerformMultipleRigidRegistrationForComponents(
             string fixedSegmentedMask, 
             string movingSegmentedMask, 

@@ -606,7 +606,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             InnerTissueSegmentation innerSegImage = GetInnerStructureSegmentation(filename);
 
-            string filenameCoefficientMap = ReadWriteUtils.GetOutputDirectory(_parameters, _parameters.Iteration) + "\\coefficientMap.png";
+            string filenameCoefficientMap = ReadWriteUtils.GetOutputDirectory(_parameters, _parameters.Iteration) + Constants.cCoefficientFilename;
             ReadWriteUtils.WriteUMatToFile(filenameCoefficientMap, innerSegImage.GetOutput().FirstOrDefault());
             innerSegImage.Dispose();
 
@@ -621,7 +621,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.Image coefficientMap = filter.Execute(img);
 
             // save as mhd
-            filenameCoefficientMap = ReadWriteUtils.GetOutputDirectory(_parameters, _parameters.Iteration) + "\\coefficientMap.mhd";
+            filenameCoefficientMap = ReadWriteUtils.GetOutputDirectory(_parameters, _parameters.Iteration) + Constants.cCoefficientFilename;
             ReadWriteUtils.WriteSitkImage(coefficientMap, filenameCoefficientMap);
             coefficientMap.Dispose();
             return filenameCoefficientMap;

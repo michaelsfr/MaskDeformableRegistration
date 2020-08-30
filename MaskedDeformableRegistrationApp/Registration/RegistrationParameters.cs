@@ -22,8 +22,6 @@ namespace MaskedDeformableRegistrationApp.Registration
             RegistrationParameters parameters = new RegistrationParameters();
             parameters.Type = RegistrationType.Rigid;
             parameters.RegistrationDefaultParams = RegistrationDefaultParameters.rigid;
-            parameters.NumberOfResolutions = 10;
-
             return parameters;
         }
 
@@ -32,9 +30,6 @@ namespace MaskedDeformableRegistrationApp.Registration
             RegistrationParameters parameters = new RegistrationParameters();
             parameters.Type = RegistrationType.NonRigid;
             parameters.RegistrationDefaultParams = RegistrationDefaultParameters.bspline;
-            parameters.NumberOfResolutions = 5;
-            parameters.RegistrationStrategy = RegistrationStrategy.MultiMetricMultiResolutionRegistration;
-            parameters.Penaltyterm = PenaltyTerm.None;
             return parameters;
         }
 
@@ -110,9 +105,6 @@ namespace MaskedDeformableRegistrationApp.Registration
         public MaskedRigidRegistrationOptions RigidOptions { get; set; } = MaskedRigidRegistrationOptions.None;
         // type
         public RegistrationDefaultParameters RegistrationDefaultParams { get; set; }
-
-        // reg strategy
-        public RegistrationStrategy RegistrationStrategy { get; set; } = RegistrationStrategy.MultiResolutionRegistration;
         public uint NumberOfResolutions { get; set; } = 5;
 
         // non rigid parameters
