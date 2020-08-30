@@ -189,6 +189,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registration\TransformationUtils.cs" />
     <Compile Include="Registration\NonRigidRegistration.cs" />
     <Compile Include="Registration\IRegistration.cs" />
     <Compile Include="Registration\RegInitialization.cs" />
@@ -197,7 +198,7 @@
     <Compile Include="Registration\RegistrationUtils.cs" />
     <Compile Include="Registration\RigidRegistration.cs" />
     <Compile Include="Registration\Transformation.cs" />
-    <Compile Include="Registration\TransformationController.cs" />
+    <Compile Include="Registration\ExtTransformation.cs" />
     <Compile Include="Segmentation\InnerTissueSegmentation.cs" />
     <Compile Include="Segmentation\ISegmentation.cs" />
     <Compile Include="Segmentation\SegmentationParameters.cs" />

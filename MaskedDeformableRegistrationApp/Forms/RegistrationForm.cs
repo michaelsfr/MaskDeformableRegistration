@@ -756,7 +756,7 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             // remove fixed image from list
             List<string> movingImages = ImageStackToRegister.Skip(1).ToList();
-            TransformationController controller = new TransformationController(ParameterFilenames, movingImages);
+            ExtTransformation controller = new ExtTransformation(ParameterFilenames, movingImages);
             controller.ComposeTransformsParameters(radioButtonCompose.Checked);
             if (radioButtonLinear.Checked) controller.SetInterpolationType(Interpolator.LinearInterpolation);
             if (radioButtonNN.Checked) controller.SetInterpolationType(Interpolator.NearestNighbour);
