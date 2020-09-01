@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,7 +20,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <returns>list with three color channels</returns>
         public static List<sitk.Image> SplitColorChannels(sitk.Image img)
         {
-            if (img.GetDimension() == 3)
+            if (img.GetNumberOfComponentsPerPixel() == 3)
             {
                 List<sitk.Image> result = new List<sitk.Image>();
                 sitk.VectorIndexSelectionCastImageFilter rgbVector = new sitk.VectorIndexSelectionCastImageFilter();
@@ -51,6 +52,21 @@ namespace MaskedDeformableRegistrationApp.Registration
             resampleImageFilter.SetOutputPixelType(pixelIDValueEnum);
             resampleImageFilter.SetDefaultPixelValue(defaultPixelType);
             return resampleImageFilter.Execute(img);
+        }
+
+        /// <summary>
+        /// Write transformed file to disk.
+        /// </summary>
+        /// <param name="imagename">filename</param>
+        public static void WriteTransformedImage(sitk.Image img, string fullFilename)
+        {
+            sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
+            castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorUInt8);
+            sitk.Image temp = castImageFilter.Execute(img);
+
+            sitk.ImageFileWriter writer = new sitk.ImageFileWriter();
+            writer.SetFileName(fullFilename);
+            writer.Execute(temp);
         }
     }
 }

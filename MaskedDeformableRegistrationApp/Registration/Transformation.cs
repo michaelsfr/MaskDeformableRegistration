@@ -97,7 +97,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.Image resultRedChannel = transformix.Execute();
             if (registrationParameters.Type == RegistrationType.NonRigid)
             {
-                resultRedChannel = InterpolateImage(resultRedChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
+                resultRedChannel = TransformationUtils.InterpolateImage(resultRedChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
             }
             //ReadWriteUtils.WriteSitkImageWithPreCast(resultRedChannel, registrationParameters.OutputDirectory + "\\red_channel.png");
 
@@ -106,7 +106,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.Image resultGreenChannel = transformix.Execute();
             if (registrationParameters.Type == RegistrationType.NonRigid)
             {
-                resultGreenChannel = InterpolateImage(resultGreenChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
+                resultGreenChannel = TransformationUtils.InterpolateImage(resultGreenChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
             }
             //ReadWriteUtils.WriteSitkImageWithPreCast(resultGreenChannel, registrationParameters.OutputDirectory + "\\green_channel.png");
             
@@ -115,7 +115,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.Image resultBlueChannel = transformix.Execute();
             if (registrationParameters.Type == RegistrationType.NonRigid)
             {
-                resultBlueChannel = InterpolateImage(resultBlueChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
+                resultBlueChannel = TransformationUtils.InterpolateImage(resultBlueChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
             }
             //ReadWriteUtils.WriteSitkImageWithPreCast(resultBlueChannel, registrationParameters.OutputDirectory + "\\blue_channel.png");
 
@@ -129,7 +129,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             if (registrationParameters.Type == RegistrationType.NonRigid)
             {
-                transformedImage = InterpolateImage(composedImage, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, composedImage.GetPixelID());
+                transformedImage = TransformationUtils.InterpolateImage(composedImage, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, composedImage.GetPixelID());
             } else
             {
                 transformedImage = composedImage;
@@ -142,19 +142,6 @@ namespace MaskedDeformableRegistrationApp.Registration
             transformedImage = expandImageFilter.Execute(composedImage);*/
 
             //transformedImage = composedImage;
-        }
-
-        public sitk.Image InterpolateImage(sitk.Image img, sitk.InterpolatorEnum interpolator, sitk.PixelIDValueEnum pixelIDValueEnum)
-        {
-            sitk.ResampleImageFilter resampleImageFilter = new sitk.ResampleImageFilter();
-            resampleImageFilter.SetSize(img.GetSize());
-            resampleImageFilter.SetOutputOrigin(img.GetOrigin());
-            resampleImageFilter.SetOutputDirection(img.GetDirection());
-            resampleImageFilter.SetOutputSpacing(img.GetSpacing());
-            resampleImageFilter.SetInterpolator(interpolator);
-            resampleImageFilter.SetOutputPixelType(pixelIDValueEnum);
-            resampleImageFilter.SetDefaultPixelValue(0.0);
-            return resampleImageFilter.Execute(img);
         }
 
         public void AddVectorOfParameterMap(sitk.VectorOfParameterMap vectorOfParametermap)

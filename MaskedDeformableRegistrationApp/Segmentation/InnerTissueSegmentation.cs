@@ -69,6 +69,8 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             Image<Gray, byte> newImage = new Image<Gray, byte>(uMatChannel.Bitmap);
             Image<Gray, byte> clusteredImage = SegmentationUtils.KMeansClustering<Gray, byte, byte>(newImage.Clone(), 3, SegmentationUtils._clusterColorsGray);
 
+
+
             // TODO
             // Find contours
             // Classificate contours
@@ -115,47 +117,7 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             Console.WriteLine("Non relevant pixel size: " + nonRelevantPixelSize);
             Console.WriteLine("Number of contours: " + contours.Size);
 
-            for (int i = 0; i < contours.Size; i++)
-            {
-                double area = CvInvoke.ContourArea(contours[i]);
-             
-                if (area > nonRelevantPixelSize)
-                {
-                    Console.WriteLine("Contour (" + i + "): " + area);
-
-                    Image<Gray, byte> tempMask = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0));
-                    tempMask.Draw(contours[i].ToArray(), new Gray(255.0), -1);
-
-                    using (VectorOfMat vm = new VectorOfMat())
-                    {
-                        vm.Push(image);
-
-                        //UMat hist = ImageUtils.CalculateHistogram(vm, tempMask);
-                        
-                        MCvScalar mean = new MCvScalar();
-                        MCvScalar stdDev = new MCvScalar();
-                        using (UMat img1 = uMatChannel.Clone())
-                        using (UMat img2 = tempMask.ToUMat().Clone())
-                        {
-                            CvInvoke.MeanStdDev(img1, ref mean, ref stdDev, img2);
-                        }
-                        double variance = Math.Sqrt(stdDev.V0);
-                        Console.WriteLine("Mean: " + mean.V0 + " | StdDev: " + stdDev.V0 + " | Var: " + Math.Sqrt(stdDev.V0));
-
-                        /*double min = 0.0, max = 0.0;
-                        Point maxP = new Point(), minP = new Point();
-                        CvInvoke.MinMaxLoc(hist, ref min, ref max, ref minP, ref maxP);
-                        Console.WriteLine("[ min: " + min + " | max: " + max + " | minP: " + minP.ToString() + " | " + maxP.ToString());*/
-
-                        // todo: when is variance to high?
-                        if (variance < 10)
-                        {
-                            contoursRelevant.Push(contours[i]);
-                        }
-                    }
-                    tempMask.Dispose();
-                }
-            }
+            ClassifyContours(uMatChannel, ref contours, ref contoursRelevant, nonRelevantPixelSize);
 
             // debug: show image with found contours
             //CvInvoke.DrawContours(image, contoursRelevant, -1, new MCvScalar(0, 255, 0));
@@ -189,6 +151,100 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             masks.Add(convertedMask);
             masks.Add(convertedMask2);
         }
+
+        /// <summary>
+        /// Classify contours by size and variance of intensities.
+        /// </summary>
+        /// <param name="uMatChannel">original image</param>
+        /// <param name="contours">all contours</param>
+        /// <param name="contoursRelevant">relevant contours</param>
+        /// <param name="nonRelevantPixelSize">non relevant contour pixel size</param>
+        private void ClassifyContours(UMat uMatChannel, ref VectorOfVectorOfPoint contours, ref VectorOfVectorOfPoint contoursRelevant, int nonRelevantPixelSize)
+        {
+            Dictionary<int, double> variances = new Dictionary<int, double>();
+            for (int i = 0; i < contours.Size; i++)
+            {
+                double area = CvInvoke.ContourArea(contours[i]);
+
+                if(area > nonRelevantPixelSize)
+                {
+                    double variance = CalculateVariance(uMatChannel, contours[i]);
+                    variances.Add(i, variance);
+                }               
+            }
+
+            // set percentile to 1.0 to account all contours
+            double variancePercentile = GetPercentile(variances.Select(it => it.Value).ToArray(), 0.85);
+
+            for (int i = 0; i < variances.Count; i++)
+            {
+                if (variances.ElementAt(i).Value < variancePercentile)
+                {
+                    contoursRelevant.Push(contours[variances.ElementAt(i).Key]);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Calculate variance of a contour.
+        /// </summary>
+        /// <param name="uMatChannel">original image</param>
+        /// <param name="contour">contour as a vector of points</param>
+        /// <returns>variance</returns>
+        private double CalculateVariance(UMat uMatChannel, VectorOfPoint contour)
+        {
+            using (Image<Gray, byte> tempMask = new Image<Gray, byte>(image.Width, image.Height, new Gray(0.0)))
+            {
+                tempMask.Draw(contour.ToArray(), new Gray(255.0), -1);
+                MCvScalar mean = new MCvScalar();
+                MCvScalar stdDev = new MCvScalar();
+
+                using (UMat img1 = uMatChannel.Clone())
+                using (UMat img2 = tempMask.ToUMat().Clone())
+                {
+                    CvInvoke.MeanStdDev(img1, ref mean, ref stdDev, img2);
+                }
+
+                /*double min = 0.0, max = 0.0;
+                Point maxP = new Point(), minP = new Point();
+                CvInvoke.MinMaxLoc(hist, ref min, ref max, ref minP, ref maxP);
+                Console.WriteLine("[ min: " + min + " | max: " + max + " | minP: " + minP.ToString() + " | " + maxP.ToString());*/
+
+                double variance = Math.Sqrt(stdDev.V0);
+                Console.WriteLine("Mean: " + mean.V0 + " | StdDev: " + stdDev.V0 + " | Var: " + Math.Sqrt(stdDev.V0));
+                return variance;
+            }
+        }
+
+        /// <summary>
+        /// Calculates a pecentile of a given list of doubles
+        /// </summary>
+        /// <param name="sequence">list of doubles</param>
+        /// <param name="percentile">percentile --> value between 0 and 1</param>
+        /// <returns></returns>
+        private double GetPercentile(IEnumerable<double> sequence, double percentile)
+        {
+            if(percentile >= 0 && percentile <= 1)
+            {
+                double[] dArray = sequence.ToArray();
+                Array.Sort(dArray);
+
+                double realIndex = percentile * (dArray.Length - 1);
+                int index = (int)realIndex;
+                double frac = realIndex - index;
+
+                if (index + 1 < dArray.Length)
+                {
+                    return dArray[index] * (1 - frac) + dArray[index + 1] * frac;
+                }
+                else
+                {
+                    return dArray[index];
+                }
+            }
+            return -1;
+        }
+
 
         public List<UMat> GetOutput()
         {

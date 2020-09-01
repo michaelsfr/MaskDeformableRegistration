@@ -760,7 +760,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             controller.ComposeTransformsParameters(radioButtonCompose.Checked);
             if (radioButtonLinear.Checked) controller.SetInterpolationType(Interpolator.LinearInterpolation);
             if (radioButtonNN.Checked) controller.SetInterpolationType(Interpolator.NearestNighbour);
-            if (radioButtonBSpline.Checked) controller.SetInterpolationType(Interpolator.BSplineInterpolation, (int)comboBoxInterpolationOrder.SelectedValue);
+            if (radioButtonBSpline.Checked) controller.SetInterpolationType(Interpolator.BSplineInterpolation, Int32.Parse(comboBoxInterpolationOrder.Text));
             controller.SetDefaultPixelValue((double)numericUpDownDefaultPixelValue.Value);
             Cursor.Current = Cursors.WaitCursor;
             controller.StartTransformation();
