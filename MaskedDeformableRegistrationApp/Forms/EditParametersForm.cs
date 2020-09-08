@@ -14,6 +14,8 @@ namespace MaskedDeformableRegistrationApp.Forms
 {
     public partial class EditParametersForm : Form
     {
+        string filename = null;
+
         public sitk.ParameterMap Parametermap { get; set; }
 
         public EditParametersForm(sitk.ParameterMap map)
@@ -23,6 +25,17 @@ namespace MaskedDeformableRegistrationApp.Forms
             Parametermap = map;
         }
 
+        public EditParametersForm(string parameterFilename)
+        {
+            InitializeComponent();
+
+            filename = parameterFilename;
+            sitk.ElastixImageFilter elx = new sitk.ElastixImageFilter();
+            elx.ReadParameterFile(filename);
+            Parametermap = elx.GetParameterMap()[0];
+            elx.Dispose();
+        }
+
         private void buttonCancel_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -30,27 +43,35 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonSave_Click(object sender, EventArgs e)
         {
-            string[] parameters = richTextBox1.Text.Split('\n');
-
-            foreach(var param in parameters)
+            if (filename == null)
             {
-                string[] splitted = param.Split(' ');
-                sitk.VectorString vec = GetVectorFromString(param);
-                if(vec != null)
+                string[] parameters = richTextBox1.Text.Split('\n');
+
+                foreach (var param in parameters)
                 {
-                    if (Parametermap.ContainsKey(splitted[0]))
+                    string[] splitted = param.Split(' ');
+                    sitk.VectorString vec = GetVectorFromString(param);
+                    if (vec != null)
                     {
-                        Parametermap[splitted[0]] = vec;
-                    }
-                    else
-                    {
-                        Parametermap.Add(splitted[0], vec);
+                        if (Parametermap.ContainsKey(splitted[0]))
+                        {
+                            Parametermap[splitted[0]] = vec;
+                        }
+                        else
+                        {
+                            Parametermap.Add(splitted[0], vec);
+                        }
                     }
                 }
-            }
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+                this.DialogResult = DialogResult.OK;
+                this.Close();
+            } else
+            {
+                sitk.ElastixImageFilter elx = new sitk.ElastixImageFilter();
+                elx.WriteParameterFile(Parametermap, filename);
+                elx.Dispose();
+            }
         }
 
         private sitk.VectorString GetVectorFromString(string parameter)

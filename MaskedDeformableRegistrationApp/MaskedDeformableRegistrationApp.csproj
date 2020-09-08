@@ -87,7 +87,7 @@
     </Reference>
     <Reference Include="SimpleITKCSharpManaged, Version=2.0.33676.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\SimpleITK\wDiff\SimpleITKCSharpManaged.dll</HintPath>
+      <HintPath>..\packages\SimpleITK\SimpleITKCSharpManaged.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -189,6 +189,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registration\MultipleParameterFileRegistration.cs" />
     <Compile Include="Registration\TransformationUtils.cs" />
     <Compile Include="Registration\NonRigidRegistration.cs" />
     <Compile Include="Registration\IRegistration.cs" />
@@ -276,7 +277,6 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="..\packages\SimpleITK\SimpleITKCSharpNative.dll">
       <Link>SimpleITKCSharpNative.dll</Link>

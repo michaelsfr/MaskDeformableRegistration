@@ -51,6 +51,8 @@ namespace MaskedDeformableRegistrationApp.Forms
             comboBoxMovingImage.ValueMember = "key";
             comboBoxSegmentationParams.Items.Insert(0, "Whole Particle Segmentation");
             comboBoxSegmentationParams.Items.Insert(1, "Inner Structure Segmentation");
+            numericUpDownCheckerSize.Minimum = 1;
+            numericUpDownCheckerSize.Maximum = 1000;
             numericUpDownCheckerSize.Value = 50;
         }
 

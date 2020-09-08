@@ -77,5 +77,18 @@ namespace MaskedDeformableRegistrationApp.WSIExtraction
                 return m;
             }
         }
+
+        public static Bitmap ExtractImageFromWSIFullSize(string filename)
+        {
+            using (VMscope.InteropCore.ImageStreaming.IStreamingImage image = VMscope.VirtualSlideAccess.Sdk.GetImage(filename))
+            {
+                
+                Console.WriteLine("Width: " + image.Size.Height + " | Width: " + image.Size.Width + " | Level: " + image.Levels);
+                Bitmap bmp1 = image.GetImagePart(0, 0, image.Size.Width, image.Size.Height, image.Size.Width/2, image.Size.Height/2);
+                //Bitmap bmp1 = image.GetGlassSlideImage();
+                Console.WriteLine("Width: " + bmp1.Height + " | Width: " + bmp1.Width);
+                return bmp1;
+            }
+        }
     }
 }

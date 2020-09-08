@@ -47,39 +47,43 @@ namespace MaskedDeformableRegistrationApp.Registration
             sitk.Image greenChannel = rgbVector.Execute(movingImage, 1, sitk.PixelIDValueEnum.sitkFloat32);
             sitk.Image blueChannel = rgbVector.Execute(movingImage, 2, sitk.PixelIDValueEnum.sitkFloat32);
 
-            foreach (var parameterMap in parameterMaps)
+            foreach (var parameter in parameterMaps[0])
             {
-                foreach (var parameter in parameterMap.AsEnumerable())
+                parameter["DefaultPixelValue"][0] = "255.0";
+                parameter["ResultImagePixelType"][0] = "short";
+
+                if (parameter.ContainsKey("UseBinaryFormatForTransformationParameters"))
+                    parameter.Remove("UseBinaryFormatForTransformationParameters");
+
+                if (interpolationOrder != -1)
                 {
-                    parameter["DefaultPixelValue"][0] = "255.0";
-                    parameter["ResultImagePixelType"][0] = "short";
+                    parameter["FinalBSplineInterpolationOrder"][0] = interpolationOrder.ToString();
+                }
+                else
+                {
+                    parameter["FinalBSplineInterpolationOrder"][0] = "3";
+                }
 
-                    if(parameter.ContainsKey("UseBinaryFormatForTransformationParameters"))
-                        parameter.Remove("UseBinaryFormatForTransformationParameters");
-
-                    if (interpolationOrder != -1)
-                    {
-                        parameter["FinalBSplineInterpolationOrder"][0] = interpolationOrder.ToString();
-                    } else
-                    {
-                        parameter["FinalBSplineInterpolationOrder"][0] = "3";
-                    }
+                if (parameter["Transform"][0] == "SimilarityTransform" 
+                    || registrationParameters.RegistrationDefaultParams == RegistrationDefaultParameters.similarity)
+                {
+                    sitk.VectorString vec = new sitk.VectorString();
+                    vec.Add((registrationParameters.LargestImageWidth / 2).ToString()); // fixed image width / 2
+                    vec.Add((registrationParameters.LargestImageHeight / 2).ToString()); // fixed image height / 2
+                    parameter.Add("CenterOfRotationPoint", vec);
                 }
             }
-            
+
             // initialize transformix
             transformix.SetOutputDirectory(outputDir);
             transformix.SetTransformParameterMap(parameterMaps.First());
             // add further transform parameters
-            if (parameterMaps.Count > 1)
+            if (parameterMaps[0].Count > 1)
             {
-                for (int i = 1; i < parameterMaps.Count; i++)
+                for (int i = 1; i < parameterMaps[0].Count; i++)
                 {
-                    var vectorParameterMap = parameterMaps[i];
-                    foreach (var paramMap in vectorParameterMap.AsEnumerable())
-                    {
-                        transformix.AddTransformParameterMap(paramMap);
-                    }
+                    var vectorParameterMap = parameterMaps[0][i];
+                    transformix.AddTransformParameterMap(vectorParameterMap);
                 }
             }
 
@@ -91,6 +95,8 @@ namespace MaskedDeformableRegistrationApp.Registration
                 transformix.ComputeSpatialJacobianOn();
                 transformix.ComputeDeterminantOfSpatialJacobianOn();
             }
+
+            transformix.PrintParameterMap();
 
             // red
             transformix.SetMovingImage(redChannel);
@@ -176,6 +182,10 @@ namespace MaskedDeformableRegistrationApp.Registration
             this.interpolationOrder = order;
         }
 
+        /// <summary>
+        /// Write transformed image to disk.
+        /// </summary>
+        /// <param name="imagename">image filename</param>
         public void WriteTransformedImage(string imagename)
         {
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
@@ -187,6 +197,9 @@ namespace MaskedDeformableRegistrationApp.Registration
             writer.Execute(temp);
         }
 
+        /// <summary>
+        /// Dispose used instances.
+        /// </summary>
         public void Dispose()
         {
             transformix.Dispose();

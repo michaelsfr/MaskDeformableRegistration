@@ -13,15 +13,14 @@ namespace MaskedDeformableRegistrationApp.Registration
     {
         public NonRigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
         {
-            // cast images to from pixel type uint to float
+            // cast images to from pixel type uint to vector of float
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
             castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
             sitk.Image vector1 = castImageFilter.Execute(fixedImage);
             sitk.Image vector2 = castImageFilter.Execute(movingImage);
 
-            sitk.VectorIndexSelectionCastImageFilter vectorFilter = new sitk.VectorIndexSelectionCastImageFilter();
-            sitk.Image tempImage1 = vectorFilter.Execute(vector1, 0, sitk.PixelIDValueEnum.sitkFloat32);
-            sitk.Image tempImage2 = vectorFilter.Execute(vector2, 0, sitk.PixelIDValueEnum.sitkFloat32);
+            sitk.Image tempImage1 = TransformationUtils.GetColorChannelAsImage(vector1, ColorChannel.R);
+            sitk.Image tempImage2 = TransformationUtils.GetColorChannelAsImage(vector2, ColorChannel.R);
 
             this.fixedImage = tempImage1;
             this.movingImage = tempImage2;
@@ -74,8 +73,6 @@ namespace MaskedDeformableRegistrationApp.Registration
                 // todo: calculate mesh size here
                 Console.WriteLine(bSplineTransformInitializer.GetTransformDomainMeshSize().ToString());
                 bSplineTransformInitializer.Execute(fixedImage);*/
-
-                
 
                 // set fixed and moving mask if defined
                 if(this.fixedMask != null)

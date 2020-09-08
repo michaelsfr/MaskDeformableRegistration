@@ -199,5 +199,20 @@ namespace MaskedDeformableRegistrationApp.Utils
             binaryFilter1.SetOutsideValue(0);
             return binaryFilter1.Execute(img);
         }
+
+        public static sitk.Image CastImage(sitk.Image img)
+        {
+            sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
+            castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
+            sitk.Image vector = castImageFilter.Execute(img);
+
+            sitk.VectorIndexSelectionCastImageFilter vectorFilter = new sitk.VectorIndexSelectionCastImageFilter();
+            sitk.Image tempImage = vectorFilter.Execute(vector, 0, sitk.PixelIDValueEnum.sitkFloat32);
+
+            castImageFilter.Dispose();
+            vector.Dispose();
+
+            return tempImage;
+        }
     }
 }

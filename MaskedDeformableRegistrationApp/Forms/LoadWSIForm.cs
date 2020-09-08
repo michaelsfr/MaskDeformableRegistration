@@ -17,8 +17,8 @@ namespace MaskedDeformableRegistrationApp
     {
         private List<string> Filenames { get; set; } = new List<string>();
 
-        private const string _dialogFilter = "WSI files (*.svs)|*.svs|(*.vsf)|*.vsf|(*.ndpi)|*.ndpi";
-        private const string _dirDialogFilter = "*.svs|*.vsf|*.ndpi";
+        private const string _dialogFilter = "WSI files (*.svs)|*.svs|(*.vsf)|*.vsf|(*.ndpi)|*.ndpi|(*.mrxs)|*.mrxs";
+        private const string _dirDialogFilter = "*.svs|*.vsf|*.ndpi|*.mrxs";
 
         private string _initDir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
 

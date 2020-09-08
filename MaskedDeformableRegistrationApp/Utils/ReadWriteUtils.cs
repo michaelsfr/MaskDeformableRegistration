@@ -70,6 +70,25 @@ namespace MaskedDeformableRegistrationApp.Utils
             return reader.Execute();
         }
 
+        public static sitk.Image ReadITKImageAsGrayscaleFromFile(string file, sitk.PixelIDValueEnum outputType, ColorChannel channel)
+        {
+            sitk.ImageFileReader reader = new sitk.ImageFileReader();
+            reader.SetFileName(file);
+            reader.SetOutputPixelType(outputType);
+            sitk.Image temp = reader.Execute();
+
+            sitk.Image result = null;
+            sitk.VectorIndexSelectionCastImageFilter rgbVector = new sitk.VectorIndexSelectionCastImageFilter();
+            switch (channel)
+            {
+                case ColorChannel.R: result = rgbVector.Execute(temp, 0, sitk.PixelIDValueEnum.sitkFloat32); break;
+                case ColorChannel.G: result = rgbVector.Execute(temp, 1, sitk.PixelIDValueEnum.sitkFloat32); break;
+                case ColorChannel.B: result = rgbVector.Execute(temp, 2, sitk.PixelIDValueEnum.sitkFloat32); break;
+            }
+
+            return result;
+        }
+
         /// <summary>
         /// Write a bitmap as Png.
         /// </summary>

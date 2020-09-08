@@ -33,6 +33,13 @@ namespace MaskedDeformableRegistrationApp.Registration
             return parameters;
         }
 
+        public static RegistrationParameters GetMultipleRegistrationParameters()
+        {
+            RegistrationParameters parameters = new RegistrationParameters();
+            parameters.Type = RegistrationType.Multiple;
+            return parameters;
+        }
+
         public void SetTransformPenaltyTerm(string coefficientMapFilename = null, int orthonormality = 1, int linearity = 1, int properness = 1)
         {
             this.Penaltyterm = PenaltyTerm.TransformRigidityPenalty;
@@ -132,5 +139,9 @@ namespace MaskedDeformableRegistrationApp.Registration
         // segmentaion
         public SegmentationParameters WholeTissueSegParams { get; set; } = new SegmentationParameters();
         public SegmentationParameters InnerStructuresSegParams { get; set; } = new SegmentationParameters();
-    }
+
+        // multiple parameter file registration
+        public bool IsMultipleParamFileReg { get; set; } = false;
+        public List<string> ParameterFiles { get; set; } = null;
+     }
 }

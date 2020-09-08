@@ -26,6 +26,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private RegistrationParameters RegistrationParametersRigid { get; set; } = RegistrationParameters.GetRigidRegistrationParameters();
         private RegistrationParameters RegistrationParametersNonRigid { get; set; } = RegistrationParameters.GetNonRigidRegistrationParameters();
+        private RegistrationParameters RegistrationParametersMultiple { get; set; } = RegistrationParameters.GetMultipleRegistrationParameters();
 
         private uint LargestImageWidth { get; set; } = 0;
         private uint LargestImageHeight { get; set; } = 0;
@@ -85,6 +86,12 @@ namespace MaskedDeformableRegistrationApp.Forms
             backgroundWorkerNonRigid.DoWork += new DoWorkEventHandler(backgroundWorkerNonRigid_DoWork);
             backgroundWorkerNonRigid.ProgressChanged += new ProgressChangedEventHandler(backgroundWorkerNonRigid_ProgressChanged);
             backgroundWorkerNonRigid.RunWorkerCompleted += new RunWorkerCompletedEventHandler(backgroundWorkerNonRigid_RunWorkerCompleted);
+
+            backgroundWorkerSequential.WorkerReportsProgress = true;
+            backgroundWorkerSequential.WorkerSupportsCancellation = true;
+            backgroundWorkerSequential.DoWork += new DoWorkEventHandler(BackgroundWorkerSequential_DoWork);
+            backgroundWorkerSequential.ProgressChanged += new ProgressChangedEventHandler(BackgroundWorkerSequential_ProgressChanged);
+            backgroundWorkerSequential.RunWorkerCompleted += new RunWorkerCompletedEventHandler(BackgroundWorkerSequential_RunWorkerCompleted);
         }
 
         private void RegistrationForm_Load(object sender, EventArgs e)
@@ -256,6 +263,34 @@ namespace MaskedDeformableRegistrationApp.Forms
             // clean up?
         }
 
+
+        private void buttonStartRegSequential_Click(object sender, EventArgs e)
+        {
+            GatherMultipleRegParameters();
+            if (!backgroundWorkerSequential.IsBusy)
+            {
+                textBoxRegSequential.Clear();
+                progressBarRegSequential.Value = 0;
+                buttonStartRegSequential.Enabled = false;
+                buttonCancelRegSequential.Enabled = true;
+                backgroundWorkerSequential.RunWorkerAsync();
+            }
+        }
+
+        private void buttonCancelRegSequential_Click(object sender, EventArgs e)
+        {
+            // TODO
+            MessageBox.Show("TODO");
+        }
+
+        private void buttonEvaluateRegSequential_Click(object sender, EventArgs e)
+        {
+            using (EvaluationForm form = new EvaluationForm(RegistrationParametersMultiple))
+            {
+                form.ShowDialog();
+            }
+        }
+
         private void radioButtonTranslation_CheckedChanged(object sender, EventArgs e)
         {
             if (radioButtonTranslation.Checked)
@@ -370,6 +405,44 @@ namespace MaskedDeformableRegistrationApp.Forms
             controller.RunRegistration(ImageStackToRegister);
         }
 
+        private void BackgroundWorkerSequential_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
+        {
+            if (e.Error != null)
+            {
+                MessageBox.Show(e.Error.Message);
+            }
+            else if (e.Cancelled)
+            {
+                MessageBox.Show("Registration cancelled");
+            }
+            else
+            {
+                MessageBox.Show("Registration done. See results and elastix log in result directory.");
+                buttonEvaluateRegSequential.Enabled = true;
+            }
+
+            // enable disable buttons
+            buttonStartRegSequential.Enabled = true;
+            buttonCancelRegSequential.Enabled = false;
+        }
+
+        private void BackgroundWorkerSequential_ProgressChanged(object sender, ProgressChangedEventArgs e)
+        {
+            this.progressBarRegSequential.Value = e.ProgressPercentage;
+            if (e.UserState != null)
+            {
+                AppendLine(this.textBoxRegSequential, e.UserState as string);
+            }
+        }
+
+        private void BackgroundWorkerSequential_DoWork(object sender, DoWorkEventArgs e)
+        {
+            BackgroundWorker worker = sender as BackgroundWorker;
+            RegistrationController controller = new RegistrationController(RegistrationParametersMultiple, worker);
+            controller.RunRegistration(ImageStackToRegister);
+        }
+
+
         #endregion
 
         #region Methods
@@ -405,8 +478,8 @@ namespace MaskedDeformableRegistrationApp.Forms
                     }
                 }
             }
-            RegistrationParametersRigid.LargestImageWidth = RegistrationParametersNonRigid.LargestImageWidth = LargestImageWidth;
-            RegistrationParametersRigid.LargestImageHeight = RegistrationParametersNonRigid.LargestImageHeight = LargestImageHeight;
+            RegistrationParametersRigid.LargestImageWidth = RegistrationParametersNonRigid.LargestImageWidth = RegistrationParametersMultiple.LargestImageWidth = LargestImageWidth;
+            RegistrationParametersRigid.LargestImageHeight = RegistrationParametersNonRigid.LargestImageHeight = RegistrationParametersMultiple.LargestImageHeight = LargestImageHeight;
         }
 
         /// <summary>
@@ -468,6 +541,13 @@ namespace MaskedDeformableRegistrationApp.Forms
                     RegistrationParametersNonRigid.InnerStructuresSegParams = (SegmentationParameters)form.segmentationParameters.Clone();
                 }
             }
+        }
+
+        private void GatherMultipleRegParameters()
+        {
+            GatherGeneralParameters(RegistrationParametersMultiple);
+            RegistrationParametersMultiple.IsMultipleParamFileReg = true;
+            RegistrationParametersMultiple.ParameterFiles = MultipleParameterFiles.Select(it => it.Value).ToList();
         }
 
         private void GatherRigidParameters()
@@ -766,5 +846,66 @@ namespace MaskedDeformableRegistrationApp.Forms
             controller.StartTransformation();
             Cursor.Current = Cursors.Default;
         }
+
+        private Dictionary<string, string> MultipleParameterFiles = new Dictionary<string, string>();
+
+        private void buttonAddParamFile_Click(object sender, EventArgs e)
+        {
+            openFileDialogParamFile.Filter = "Text files (*.txt) | *txt";
+            openFileDialogParamFile.InitialDirectory = ApplicationContext.OutputPath;
+
+            DialogResult result = openFileDialogParamFile.ShowDialog();
+
+            if (result == DialogResult.OK)
+            {
+                string[] filenames = openFileDialogParamFile.FileNames;
+
+                foreach (string filename in filenames)
+                {
+                    string nameWithoutExtension = Path.GetFileNameWithoutExtension(filename);
+                    if (!MultipleParameterFiles.ContainsKey(nameWithoutExtension))
+                    {
+                        MultipleParameterFiles.Add(nameWithoutExtension, filename);
+                        treeViewParamFiles.Nodes.Add(nameWithoutExtension);
+                    }
+                }
+            }
+        }
+
+        private void buttonShowFile_Click(object sender, EventArgs e)
+        {
+            if (treeViewParamFiles.SelectedNode != null)
+            {
+                string name = treeViewParamFiles.SelectedNode.Text;
+
+                if(MultipleParameterFiles.ContainsKey(name))
+                {
+                    string path = MultipleParameterFiles[name];
+                    
+                    if(File.Exists(path))
+                    {
+                        using (EditParametersForm form = new EditParametersForm(path))
+                        {
+                            form.ShowDialog();
+                        }
+                    }
+                }
+            }
+        }
+
+        private void buttonRemoveParamFile_Click(object sender, EventArgs e)
+        {
+            if (treeViewParamFiles.SelectedNode != null)
+            {
+                string name = treeViewParamFiles.SelectedNode.Text;
+
+                if (MultipleParameterFiles.ContainsKey(name))
+                {
+                    MultipleParameterFiles.Remove(name);
+                    treeViewParamFiles.Nodes.Remove(treeViewParamFiles.SelectedNode);
+                }
+            }
+        }
+
     }
 }

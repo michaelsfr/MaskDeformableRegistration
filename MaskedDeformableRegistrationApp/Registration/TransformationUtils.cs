@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MaskedDeformableRegistrationApp.Utils;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -32,6 +33,30 @@ namespace MaskedDeformableRegistrationApp.Registration
             {
                 return null;
             }
+        }
+
+        /// <summary>
+        /// Get given color channel as a grayscale image.
+        /// </summary>
+        /// <param name="img">image</param>
+        /// <param name="channel">color channel (r, g, b)</param>
+        /// <returns>grayscale image</returns>
+        public static sitk.Image GetColorChannelAsImage(sitk.Image img, ColorChannel channel)
+        {
+            sitk.Image result = null;
+            sitk.VectorIndexSelectionCastImageFilter rgbVector = new sitk.VectorIndexSelectionCastImageFilter();
+
+            switch (channel)
+            {
+                case ColorChannel.R:
+                    result = rgbVector.Execute(img, 0, sitk.PixelIDValueEnum.sitkFloat32); break;
+                case ColorChannel.G:
+                    result = rgbVector.Execute(img, 1, sitk.PixelIDValueEnum.sitkFloat32); break;
+                case ColorChannel.B:
+                    result = rgbVector.Execute(img, 2, sitk.PixelIDValueEnum.sitkFloat32); break;
+            }
+
+            return result == null? img : result;
         }
 
         /// <summary>

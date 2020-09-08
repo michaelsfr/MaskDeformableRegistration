@@ -163,16 +163,23 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <returns>simpleitk image</returns>
         private sitk.Image LoadAndResizeImage(string filename, string writeFilename = null)
         {
-            sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filename, sitk.PixelIDValueEnum.sitkUInt8);
-            sitk.Image refResized = ImageUtils.ResizeImage(refImage, _parameters.LargestImageWidth, _parameters.LargestImageHeight);
+            sitk.Image refImage = ReadWriteUtils.ReadITKImageFromFile(filename, sitk.PixelIDValueEnum.sitkVectorUInt8);
 
-            // write image if output filename is defined
-            if (writeFilename != null)
+            if (refImage.GetWidth() == _parameters.LargestImageWidth && refImage.GetHeight() == _parameters.LargestImageHeight)
             {
-                ReadWriteUtils.WriteSitkImage(refResized, Path.Combine(_parameters.OutputDirectory, Path.GetFileName(writeFilename)));
-            }
+                return refImage;
+            } else
+            {
+                sitk.Image refResized = ImageUtils.ResizeImage(refImage, _parameters.LargestImageWidth, _parameters.LargestImageHeight);
 
-            return refResized;
+                // write image if output filename is defined
+                if (writeFilename != null)
+                {
+                    ReadWriteUtils.WriteSitkImage(refResized, Path.Combine(_parameters.OutputDirectory, Path.GetFileName(writeFilename)));
+                }
+
+                return refResized;
+            }
         }
 
         /// <summary>
@@ -195,15 +202,20 @@ namespace MaskedDeformableRegistrationApp.Registration
                 ReadWriteUtils.WriteSitkImage(movingMask, _parameters.OutputDirectory + "\\moving_mask.png");
             }
 
-            if (_parameters.Type == RegistrationType.Rigid)
+            if(_parameters.Type == RegistrationType.Multiple)
+            {
+                return PerformMultipleParamFilesRegistration(refImage, movImage, fixedMask, movingMask, movingImageFilename);
+            }
+            else if (_parameters.Type == RegistrationType.Rigid)
             {
                 // do rigid registration
                 return PerformRigidRegistration(refImage, movImage, fixedMask, movingMask, movingImageFilename);
-            } else
+            }
+            else
             {
                 // do non rigid registration
                 return PerformNonRigidRegistration(refImage, movImage, fixedMask, movingMask, movingImageFilename);
-            }
+            }           
         }
 
         /// <summary>
@@ -223,6 +235,33 @@ namespace MaskedDeformableRegistrationApp.Registration
                 // segmentation of the whole particle
                 return GetWholeParticleMask(filename);
             }
+        }
+
+
+        private List<sitk.VectorOfParameterMap> PerformMultipleParamFilesRegistration(sitk.Image refImage, sitk.Image movImage, sitk.Image fixedMask, sitk.Image movingMask, string movingImageFilename)
+        {
+            MultipleParameterFileRegistration regRigid = new MultipleParameterFileRegistration(refImage, movImage, _parameters);
+
+            // set fixed mask if defined
+            if (fixedMask != null)
+            {
+                regRigid.SetFixedMask(fixedMask);
+            }
+
+            // set moving mask if defined
+            if (movingMask != null)
+            {
+                regRigid.SetMovingMask(movingMask);
+            }
+
+            ExecuteRegistration(regRigid);
+            sitk.VectorOfParameterMap transformparams = regRigid.GetTransformationParameterMap();
+            regRigid.Dispose();
+
+            List<sitk.VectorOfParameterMap> resultList = new List<sitk.VectorOfParameterMap>();
+            resultList.Add(transformparams);
+
+            return resultList;
         }
 
         /// <summary>
@@ -251,6 +290,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                     break;
                 case MaskedRigidRegistrationOptions.BinaryRegistrationWholeTissue:
                 case MaskedRigidRegistrationOptions.BinaryRegistrationInnerStructures:
+                    _parameters.IsBinaryTransform = true;
                     resultMapList.Add(DefaultRigidRegistration(fixedMask, movingMask, null, null, imageFilename));
                     break;
                 case MaskedRigidRegistrationOptions.ComponentwiseRegistration:

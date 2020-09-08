@@ -13,8 +13,8 @@ namespace MaskedDeformableRegistrationApp.Registration
     {
         public RigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
         {
-            this.fixedImage = CastImage(fixedImage);
-            this.movingImage = CastImage(movingImage);
+            this.fixedImage = ImageUtils.CastImage(fixedImage);
+            this.movingImage = ImageUtils.CastImage(movingImage);
             this.registrationParameters = parameters;
             
             elastix = new sitk.ElastixImageFilter();
@@ -36,23 +36,9 @@ namespace MaskedDeformableRegistrationApp.Registration
             //base.SetGeneralParameters();
         }
 
-        private sitk.Image CastImage(sitk.Image img)
-        {
-            sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
-            castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);
-            sitk.Image vector = castImageFilter.Execute(img);
-
-            sitk.VectorIndexSelectionCastImageFilter vectorFilter = new sitk.VectorIndexSelectionCastImageFilter();
-            sitk.Image tempImage = vectorFilter.Execute(vector, 0, sitk.PixelIDValueEnum.sitkFloat32);
-
-            castImageFilter.Dispose();
-            vector.Dispose();
-
-            return tempImage;
-        }
-
         public RigidRegistration(RegistrationParameters parameters) : base(parameters)
         {
+
             elastix = new sitk.ElastixImageFilter();
             parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationDefaultParams);
         }

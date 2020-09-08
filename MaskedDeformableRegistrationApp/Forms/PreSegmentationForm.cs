@@ -135,7 +135,8 @@ namespace MaskedDeformableRegistrationApp.Forms
             {
                 try
                 {
-                    Image<Bgr, byte> image = WSIExtraction.Extraction.ExtractImageFromWSI(path, 7);
+                    Image<Bgr, byte> image = WSIExtraction.Extraction.ExtractImageFromWSI(path, (int)numericUpDown1.Value);
+                    ReadWriteUtils.WriteBitmapAsPng(image.Bitmap, ApplicationContext.OutputPath + "\\" + Path.GetFileNameWithoutExtension(path) + ".png");
                     int minContourSize = ImageUtils.GetPercentualImagePixelCount(image, ((float)this.hScrollBarMinContourSize.Value / 100.0f));
                     List<Rectangle> extracted = WSIExtraction.Extraction.ExtractObjects(image, this.hScrollBarThreshold.Value, minContourSize, out Image<Bgr, byte> image_debug);
                     obj_contours.Add(extracted);

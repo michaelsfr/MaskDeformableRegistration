@@ -9,7 +9,8 @@ namespace MaskedDeformableRegistrationApp.Utils
     public enum RegistrationType
     {
         Rigid,
-        NonRigid
+        NonRigid,
+        Multiple
     }
 
     public enum RegistrationStrategy
@@ -136,5 +137,13 @@ namespace MaskedDeformableRegistrationApp.Utils
         BsplineWithPenaltyTermAndCoefficientMap,
         ComposeIndependantRegistrations,
         DiffuseRegistration
+    }
+
+    public enum ColorChannel
+    {
+        R = 0,
+        G = 1,
+        B = 2,
+        //Average = 3
     }
 }
