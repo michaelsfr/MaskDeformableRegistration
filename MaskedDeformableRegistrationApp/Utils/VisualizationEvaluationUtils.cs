@@ -5,6 +5,7 @@ using MaskedDeformableRegistrationApp.Registration;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -251,6 +252,57 @@ namespace MaskedDeformableRegistrationApp.Utils
                 Console.WriteLine(ex);
                 return null;
             } finally
+            {
+                transformix.Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Transform a pointset for given transform parameters.
+        /// </summary>
+        /// <param name="transformParameters"></param>
+        /// <param name="pointSetFilename"></param>
+        /// <param name="outputDir"></param>
+        /// <param name="movingImageName"></param>
+        public static void TransfromPointSet(List<sitk.VectorOfParameterMap> transformParameters, string pointSetFilename, string outputDir, string movingImageName = null)
+        {
+            sitk.TransformixImageFilter transformix = null;
+            try
+            {
+                transformix = new sitk.TransformixImageFilter();
+                transformix.SetTransformParameterMap(transformParameters.First());
+                transformix.LogToConsoleOn();
+                transformix.LogToFileOn();
+                transformix.SetLogFileName("transformix.log");
+
+                if (transformParameters.Count > 1)
+                {
+                    for (int i = 1; i < transformParameters.Count; i++)
+                    {
+                        var vectorParameterMap = transformParameters[i];
+                        foreach (var paramMap in vectorParameterMap.AsEnumerable())
+                        {
+                            transformix.AddTransformParameterMap(paramMap);
+                        }
+                    }
+                }
+
+                transformix.SetFixedPointSetFileName(pointSetFilename);
+                transformix.SetOutputDirectory(Path.GetDirectoryName(pointSetFilename));
+
+                if (movingImageName != null)
+                {
+                    sitk.Image movImg = ReadWriteUtils.ReadITKImageFromFile(movingImageName, sitk.PixelIDValueEnum.sitkFloat32);
+                    transformix.SetMovingImage(movImg);
+                }
+
+                sitk.Image image = transformix.Execute();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            finally
             {
                 transformix.Dispose();
             }

@@ -31,8 +31,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             filename = parameterFilename;
             sitk.ElastixImageFilter elx = new sitk.ElastixImageFilter();
-            elx.ReadParameterFile(filename);
-            Parametermap = elx.GetParameterMap()[0];
+            Parametermap = elx.ReadParameterFile(filename);
             elx.Dispose();
         }
 

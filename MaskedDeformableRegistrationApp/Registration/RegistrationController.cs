@@ -237,21 +237,39 @@ namespace MaskedDeformableRegistrationApp.Registration
             }
         }
 
-
+        /// <summary>
+        /// Perform registration with multiple parameter files.
+        /// </summary>
+        /// <param name="refImage"></param>
+        /// <param name="movImage"></param>
+        /// <param name="fixedMask"></param>
+        /// <param name="movingMask"></param>
+        /// <param name="movingImageFilename"></param>
+        /// <returns></returns>
         private List<sitk.VectorOfParameterMap> PerformMultipleParamFilesRegistration(sitk.Image refImage, sitk.Image movImage, sitk.Image fixedMask, sitk.Image movingMask, string movingImageFilename)
         {
-            MultipleParameterFileRegistration regRigid = new MultipleParameterFileRegistration(refImage, movImage, _parameters);
+            MultipleParameterFileRegistration regRigid = null;
 
-            // set fixed mask if defined
-            if (fixedMask != null)
+            if (_parameters.RigidOptions == MaskedRigidRegistrationOptions.BinaryRegistrationWholeTissue
+                || _parameters.RigidOptions == MaskedRigidRegistrationOptions.BinaryRegistrationInnerStructures)
             {
-                regRigid.SetFixedMask(fixedMask);
-            }
+                _parameters.IsBinaryTransform = true;
+                regRigid = new MultipleParameterFileRegistration(fixedMask, movingMask, _parameters);
+            } else
+            {
+                regRigid = new MultipleParameterFileRegistration(refImage, movImage, _parameters);
 
-            // set moving mask if defined
-            if (movingMask != null)
-            {
-                regRigid.SetMovingMask(movingMask);
+                // set fixed mask if defined
+                if (fixedMask != null)
+                {
+                    regRigid.SetFixedMask(fixedMask);
+                }
+
+                // set moving mask if defined
+                if (movingMask != null)
+                {
+                    regRigid.SetMovingMask(movingMask);
+                }
             }
 
             ExecuteRegistration(regRigid);

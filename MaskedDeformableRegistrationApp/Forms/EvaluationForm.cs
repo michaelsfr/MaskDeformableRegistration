@@ -262,5 +262,22 @@ namespace MaskedDeformableRegistrationApp.Forms
 
             Cursor.Current = Cursors.Default;
         }
+
+        private void buttonTransformFixed_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            try
+            {
+                string key = comboBoxMoving.SelectedValue.ToString();
+                List<sitk.VectorOfParameterMap> map = registrationParameters.TransformationParameterMap[key];
+
+                VisualizationEvaluationUtils.TransfromPointSet(map, filenameFixedPointSet, ApplicationContext.OutputPath);
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            } 
+
+            Cursor.Current = Cursors.Default;
+        }
     }
 }

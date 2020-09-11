@@ -76,7 +76,7 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             // initialize transformix
             transformix.SetOutputDirectory(outputDir);
-            transformix.SetTransformParameterMap(parameterMaps.First());
+            transformix.SetTransformParameterMap(parameterMaps.First()[0]);
             // add further transform parameters
             if (parameterMaps[0].Count > 1)
             {

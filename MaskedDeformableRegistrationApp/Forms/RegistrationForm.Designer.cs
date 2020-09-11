@@ -123,6 +123,10 @@
             this.radioButtonRigidNoMasking = new System.Windows.Forms.RadioButton();
             this.buttonEditParameters = new System.Windows.Forms.Button();
             this.tabControlRegistration = new System.Windows.Forms.TabControl();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.radioButtonSeqNoMasking = new System.Windows.Forms.RadioButton();
+            this.radioButtonSeqInnerMasks = new System.Windows.Forms.RadioButton();
+            this.radioButtonSeqWholeMasks = new System.Windows.Forms.RadioButton();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
             this.splitContainer3.Panel1.SuspendLayout();
             this.splitContainer3.Panel2.SuspendLayout();
@@ -168,6 +172,7 @@
             this.groupBoxTransformationRigid.SuspendLayout();
             this.groupBoxMaskRigid.SuspendLayout();
             this.tabControlRegistration.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // buttonSegmentationInnerstructures
@@ -419,6 +424,7 @@
             // 
             // splitContainer6.Panel1
             // 
+            this.splitContainer6.Panel1.Controls.Add(this.groupBox3);
             this.splitContainer6.Panel1.Controls.Add(this.treeViewParamFiles);
             this.splitContainer6.Panel1.Controls.Add(this.buttonRemoveParamFile);
             this.splitContainer6.Panel1.Controls.Add(this.buttonShowFile);
@@ -1134,6 +1140,7 @@
             // radioButtonMaskWhole
             // 
             this.radioButtonMaskWhole.AutoSize = true;
+            this.radioButtonMaskWhole.Checked = true;
             this.radioButtonMaskWhole.Location = new System.Drawing.Point(7, 44);
             this.radioButtonMaskWhole.Name = "radioButtonMaskWhole";
             this.radioButtonMaskWhole.Size = new System.Drawing.Size(169, 17);
@@ -1149,7 +1156,6 @@
             this.radioButtonMaskInner.Name = "radioButtonMaskInner";
             this.radioButtonMaskInner.Size = new System.Drawing.Size(180, 17);
             this.radioButtonMaskInner.TabIndex = 12;
-            this.radioButtonMaskInner.TabStop = true;
             this.radioButtonMaskInner.Text = "Do registration of inner structures";
             this.radioButtonMaskInner.UseVisualStyleBackColor = true;
             // 
@@ -1160,7 +1166,6 @@
             this.radioButtonComponent.Name = "radioButtonComponent";
             this.radioButtonComponent.Size = new System.Drawing.Size(173, 17);
             this.radioButtonComponent.TabIndex = 13;
-            this.radioButtonComponent.TabStop = true;
             this.radioButtonComponent.Text = "Do component-wise registration";
             this.radioButtonComponent.UseVisualStyleBackColor = true;
             // 
@@ -1171,7 +1176,6 @@
             this.radioButtonRigidNoMasking.Name = "radioButtonRigidNoMasking";
             this.radioButtonRigidNoMasking.Size = new System.Drawing.Size(51, 17);
             this.radioButtonRigidNoMasking.TabIndex = 14;
-            this.radioButtonRigidNoMasking.TabStop = true;
             this.radioButtonRigidNoMasking.Text = "None";
             this.radioButtonRigidNoMasking.UseVisualStyleBackColor = true;
             // 
@@ -1197,6 +1201,50 @@
             this.tabControlRegistration.SelectedIndex = 0;
             this.tabControlRegistration.Size = new System.Drawing.Size(790, 348);
             this.tabControlRegistration.TabIndex = 0;
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.radioButtonSeqNoMasking);
+            this.groupBox3.Controls.Add(this.radioButtonSeqInnerMasks);
+            this.groupBox3.Controls.Add(this.radioButtonSeqWholeMasks);
+            this.groupBox3.Location = new System.Drawing.Point(384, 10);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(194, 95);
+            this.groupBox3.TabIndex = 7;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Masking Rigid";
+            // 
+            // radioButtonSeqNoMasking
+            // 
+            this.radioButtonSeqNoMasking.AutoSize = true;
+            this.radioButtonSeqNoMasking.Location = new System.Drawing.Point(7, 21);
+            this.radioButtonSeqNoMasking.Name = "radioButtonSeqNoMasking";
+            this.radioButtonSeqNoMasking.Size = new System.Drawing.Size(51, 17);
+            this.radioButtonSeqNoMasking.TabIndex = 14;
+            this.radioButtonSeqNoMasking.Text = "None";
+            this.radioButtonSeqNoMasking.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonSeqInnerMasks
+            // 
+            this.radioButtonSeqInnerMasks.AutoSize = true;
+            this.radioButtonSeqInnerMasks.Location = new System.Drawing.Point(7, 68);
+            this.radioButtonSeqInnerMasks.Name = "radioButtonSeqInnerMasks";
+            this.radioButtonSeqInnerMasks.Size = new System.Drawing.Size(180, 17);
+            this.radioButtonSeqInnerMasks.TabIndex = 12;
+            this.radioButtonSeqInnerMasks.Text = "Do registration of inner structures";
+            this.radioButtonSeqInnerMasks.UseVisualStyleBackColor = true;
+            // 
+            // radioButtonSeqWholeMasks
+            // 
+            this.radioButtonSeqWholeMasks.AutoSize = true;
+            this.radioButtonSeqWholeMasks.Checked = true;
+            this.radioButtonSeqWholeMasks.Location = new System.Drawing.Point(7, 44);
+            this.radioButtonSeqWholeMasks.Name = "radioButtonSeqWholeMasks";
+            this.radioButtonSeqWholeMasks.Size = new System.Drawing.Size(169, 17);
+            this.radioButtonSeqWholeMasks.TabIndex = 11;
+            this.radioButtonSeqWholeMasks.TabStop = true;
+            this.radioButtonSeqWholeMasks.Text = "Do registration of whole masks";
+            this.radioButtonSeqWholeMasks.UseVisualStyleBackColor = true;
             // 
             // RegistrationForm
             // 
@@ -1270,6 +1318,8 @@
             this.groupBoxMaskRigid.ResumeLayout(false);
             this.groupBoxMaskRigid.PerformLayout();
             this.tabControlRegistration.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1370,5 +1420,9 @@
         private System.Windows.Forms.Button buttonCancelRegSequential;
         private System.Windows.Forms.TextBox textBoxRegSequential;
         private System.Windows.Forms.ProgressBar progressBarRegSequential;
+        private System.Windows.Forms.GroupBox groupBox3;
+        private System.Windows.Forms.RadioButton radioButtonSeqNoMasking;
+        private System.Windows.Forms.RadioButton radioButtonSeqInnerMasks;
+        private System.Windows.Forms.RadioButton radioButtonSeqWholeMasks;
     }
 }

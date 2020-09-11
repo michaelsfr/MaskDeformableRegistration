@@ -51,6 +51,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             radioButtonNoPenalties.Checked = true;
             radioButtonWholeTissue.Checked = true;
             radioButtonRigidNoMasking.Checked = true;
+            radioButtonSeqNoMasking.Checked = true;
             buttonCancel.Enabled = false;
             buttonEvaluation.Enabled = false;
             buttonSegmentationInnerstructures.Enabled = true;
@@ -548,6 +549,21 @@ namespace MaskedDeformableRegistrationApp.Forms
             GatherGeneralParameters(RegistrationParametersMultiple);
             RegistrationParametersMultiple.IsMultipleParamFileReg = true;
             RegistrationParametersMultiple.ParameterFiles = MultipleParameterFiles.Select(it => it.Value).ToList();
+
+            if (radioButtonSeqNoMasking.Checked)
+            {
+                RegistrationParametersMultiple.RigidOptions = MaskedRigidRegistrationOptions.None;
+            }
+            else if (radioButtonSeqWholeMasks.Checked)
+            {
+                RegistrationParametersMultiple.RigidOptions = MaskedRigidRegistrationOptions.BinaryRegistrationWholeTissue;
+                RegistrationParametersMultiple.UseInnerStructuresSegmentation = false;
+            }
+            else if (radioButtonSeqInnerMasks.Checked)
+            {
+                RegistrationParametersMultiple.RigidOptions = MaskedRigidRegistrationOptions.BinaryRegistrationInnerStructures;
+                RegistrationParametersMultiple.UseInnerStructuresSegmentation = true;
+            }
         }
 
         private void GatherRigidParameters()

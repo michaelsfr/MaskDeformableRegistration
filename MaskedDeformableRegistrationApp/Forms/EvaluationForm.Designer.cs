@@ -40,6 +40,7 @@
             this.openFileDialogMoving = new System.Windows.Forms.OpenFileDialog();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBoxEuclidDist = new System.Windows.Forms.GroupBox();
+            this.buttonTransformFixed = new System.Windows.Forms.Button();
             this.labelMax = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.labelStdDev = new System.Windows.Forms.Label();
@@ -64,10 +65,10 @@
             this.label7 = new System.Windows.Forms.Label();
             this.comboBoxMovingImage = new System.Windows.Forms.ComboBox();
             this.groupBoxMisc = new System.Windows.Forms.GroupBox();
+            this.numericUpDownCheckerSize = new System.Windows.Forms.NumericUpDown();
+            this.label6 = new System.Windows.Forms.Label();
             this.buttonCheckerBoard = new System.Windows.Forms.Button();
             this.buttonDiffImage = new System.Windows.Forms.Button();
-            this.label6 = new System.Windows.Forms.Label();
-            this.numericUpDownCheckerSize = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -119,7 +120,7 @@
             this.comboBoxMoving.FormattingEnabled = true;
             this.comboBoxMoving.Location = new System.Drawing.Point(16, 89);
             this.comboBoxMoving.Name = "comboBoxMoving";
-            this.comboBoxMoving.Size = new System.Drawing.Size(129, 21);
+            this.comboBoxMoving.Size = new System.Drawing.Size(222, 21);
             this.comboBoxMoving.TabIndex = 4;
             // 
             // buttonChooseFixedPS
@@ -180,6 +181,7 @@
             // 
             // groupBoxEuclidDist
             // 
+            this.groupBoxEuclidDist.Controls.Add(this.buttonTransformFixed);
             this.groupBoxEuclidDist.Controls.Add(this.labelMax);
             this.groupBoxEuclidDist.Controls.Add(this.label9);
             this.groupBoxEuclidDist.Controls.Add(this.labelStdDev);
@@ -200,6 +202,16 @@
             this.groupBoxEuclidDist.TabIndex = 8;
             this.groupBoxEuclidDist.TabStop = false;
             this.groupBoxEuclidDist.Text = "Euclidean distance";
+            // 
+            // buttonTransformFixed
+            // 
+            this.buttonTransformFixed.Location = new System.Drawing.Point(163, 9);
+            this.buttonTransformFixed.Name = "buttonTransformFixed";
+            this.buttonTransformFixed.Size = new System.Drawing.Size(75, 23);
+            this.buttonTransformFixed.TabIndex = 14;
+            this.buttonTransformFixed.Text = "Transf. fix";
+            this.buttonTransformFixed.UseVisualStyleBackColor = true;
+            this.buttonTransformFixed.Click += new System.EventHandler(this.buttonTransformFixed_Click);
             // 
             // labelMax
             // 
@@ -444,6 +456,22 @@
             this.groupBoxMisc.TabStop = false;
             this.groupBoxMisc.Text = "Misc";
             // 
+            // numericUpDownCheckerSize
+            // 
+            this.numericUpDownCheckerSize.Location = new System.Drawing.Point(13, 100);
+            this.numericUpDownCheckerSize.Name = "numericUpDownCheckerSize";
+            this.numericUpDownCheckerSize.Size = new System.Drawing.Size(95, 20);
+            this.numericUpDownCheckerSize.TabIndex = 3;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(10, 81);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(98, 13);
+            this.label6.TabIndex = 2;
+            this.label6.Text = "Checkerboard size:";
+            // 
             // buttonCheckerBoard
             // 
             this.buttonCheckerBoard.Location = new System.Drawing.Point(10, 126);
@@ -463,22 +491,6 @@
             this.buttonDiffImage.Text = "Create Difference-Image";
             this.buttonDiffImage.UseVisualStyleBackColor = true;
             this.buttonDiffImage.Click += new System.EventHandler(this.buttonDiffImage_Click);
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(10, 81);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(98, 13);
-            this.label6.TabIndex = 2;
-            this.label6.Text = "Checkerboard size:";
-            // 
-            // numericUpDownCheckerSize
-            // 
-            this.numericUpDownCheckerSize.Location = new System.Drawing.Point(13, 100);
-            this.numericUpDownCheckerSize.Name = "numericUpDownCheckerSize";
-            this.numericUpDownCheckerSize.Size = new System.Drawing.Size(95, 20);
-            this.numericUpDownCheckerSize.TabIndex = 3;
             // 
             // EvaluationForm
             // 
@@ -550,5 +562,6 @@
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.NumericUpDown numericUpDownCheckerSize;
+        private System.Windows.Forms.Button buttonTransformFixed;
     }
 }

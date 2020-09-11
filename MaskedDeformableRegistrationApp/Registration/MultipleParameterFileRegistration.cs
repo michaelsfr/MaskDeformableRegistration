@@ -52,7 +52,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                     elastix.SetMovingMask(movingMask);
                 }
 
-                //elastix.WriteParameterFile(parameterMap, Path.Combine(outputDirectory, "parameters.txt"));
+                elastix.WriteParameterFile(parameterMap, Path.Combine(outputDirectory, "parameters.txt"));
 
                 try
                 {
