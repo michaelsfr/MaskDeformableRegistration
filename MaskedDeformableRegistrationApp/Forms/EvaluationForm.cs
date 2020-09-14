@@ -178,34 +178,29 @@ namespace MaskedDeformableRegistrationApp.Forms
             Image<Bgr, byte> img02 = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(movingImageFilename);
 
             // whole particle seg
-            WholeTissueSegmentation seg01 = new WholeTissueSegmentation(img01, registrationParameters.WholeTissueSegParams);
-            seg01.Execute();
-            var mask01w = seg01.GetOutput().Clone();
-            seg01.Dispose();
-            string mask01wFn = registrationParameters.OutputDirectory + "\\mask01w.png";
-            ReadWriteUtils.WriteUMatToFile(mask01wFn, mask01w.ToUMat());
+            Image<Gray, byte> mask01w;
+            string mask01wFn = DoWholeTissueSegmentation(img01, out mask01w, "\\mask01w.png");
 
-            WholeTissueSegmentation seg02 = new WholeTissueSegmentation(img02, registrationParameters.WholeTissueSegParams);
-            seg02.Execute();
-            var mask02w = seg02.GetOutput().Clone();
-            seg02.Dispose();
-            string mask02wFn = registrationParameters.OutputDirectory + "\\mask02w.png";
-            ReadWriteUtils.WriteUMatToFile(mask02wFn, mask02w.ToUMat());
+            Image<Gray, byte> mask02w;
+            string mask02wFn = DoWholeTissueSegmentation(img02, out mask02w, "\\mask02w.png");
 
             sitk.LabelOverlapMeasuresImageFilter overlapFilter = null;
             if (isInnerSeg)
             {
-                // inner structure seg
-                // todo
+                string mask01iFn = DoInnerTissueSegmentation(img01, mask01w, "\\mask01i.png");
+                string mask02iFn = DoInnerTissueSegmentation(img02, mask02w, "\\mask02i.png");
 
-            } else
+                overlapFilter = GetOverlapImageFilter(mask01iFn, mask02iFn);
+
+                DeleteFile(mask01iFn);
+                DeleteFile(mask02iFn);
+            }
+            else
             {
-                sitk.Image sImg01 = ReadWriteUtils.ReadITKImageFromFile(mask01wFn);
-                sitk.Image sImg02 = ReadWriteUtils.ReadITKImageFromFile(mask02wFn);
-                overlapFilter = VisualizationEvaluationUtils.GetOverlapImageFilter(sImg01, sImg02);
+                overlapFilter = GetOverlapImageFilter(mask01wFn, mask02wFn);
             }
 
-            if(overlapFilter != null)
+            if (overlapFilter != null)
             {
                 double diceCoef = overlapFilter.GetDiceCoefficient();
                 double falseNegative = overlapFilter.GetFalseNegativeError();
@@ -221,7 +216,51 @@ namespace MaskedDeformableRegistrationApp.Forms
                 labelUnionOverlap.Text = unionOverlap.ToString("0.###");
             }
 
+            DeleteFile(mask01wFn);
+            DeleteFile(mask02wFn);
+
             Cursor.Current = Cursors.Default;
+        }
+
+        private string DoWholeTissueSegmentation(Image<Bgr, byte> img, out Image<Gray, byte> mask, string filename)
+        {
+            WholeTissueSegmentation seg = new WholeTissueSegmentation(img, registrationParameters.WholeTissueSegParams);
+            seg.Execute();
+            mask = seg.GetOutput().Clone();
+            seg.Dispose();
+            string filepathMask = registrationParameters.OutputDirectory + filename;
+            ReadWriteUtils.WriteUMatToFile(filepathMask, mask.ToUMat());
+            return filepathMask;
+        }
+
+        private string DoInnerTissueSegmentation(Image<Bgr, byte> img, Image<Gray, byte> mask, string filename)
+        {
+            InnerTissueSegmentation seg = new InnerTissueSegmentation(img.Clone(), mask.Clone(), registrationParameters.InnerStructuresSegParams);
+            seg.Execute();
+            UMat innerMask = seg.GetOutput()[0].Clone();
+            seg.Dispose();
+            string filepathResult = registrationParameters.OutputDirectory + filename;
+            ReadWriteUtils.WriteUMatToFile(filepathResult, innerMask);
+            return filepathResult;
+        }
+
+        private static sitk.LabelOverlapMeasuresImageFilter GetOverlapImageFilter(string mask01iFn, string mask02iFn)
+        {
+            sitk.LabelOverlapMeasuresImageFilter overlapFilter;
+            sitk.Image sImg01 = ReadWriteUtils.ReadITKImageFromFile(mask01iFn);
+            sitk.Image sImg02 = ReadWriteUtils.ReadITKImageFromFile(mask02iFn);
+            overlapFilter = VisualizationEvaluationUtils.GetOverlapImageFilter(sImg01, sImg02);
+            sImg01.Dispose();
+            sImg02.Dispose();
+            return overlapFilter;
+        }
+
+        private void DeleteFile(string filename)
+        {
+            if(File.Exists(filename))
+            {
+                File.Delete(filename);
+            }
         }
 
         private void buttonDiffImage_Click(object sender, EventArgs e)
