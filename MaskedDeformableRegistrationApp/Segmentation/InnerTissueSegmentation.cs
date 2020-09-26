@@ -229,17 +229,20 @@ namespace MaskedDeformableRegistrationApp.Segmentation
                 double[] dArray = sequence.ToArray();
                 Array.Sort(dArray);
 
-                double realIndex = percentile * (dArray.Length - 1);
-                int index = (int)realIndex;
-                double frac = realIndex - index;
+                if (dArray.Length > 0)
+                {
+                    double realIndex = percentile * (dArray.Length - 1);
+                    int index = (int)realIndex;
+                    double frac = realIndex - index;
 
-                if (index + 1 < dArray.Length)
-                {
-                    return dArray[index] * (1 - frac) + dArray[index + 1] * frac;
-                }
-                else
-                {
-                    return dArray[index];
+                    if (index + 1 < dArray.Length)
+                    {
+                        return dArray[index] * (1 - frac) + dArray[index + 1] * frac;
+                    }
+                    else
+                    {
+                        return dArray[index];
+                    }
                 }
             }
             return -1;

@@ -8,7 +8,7 @@ using sitk = itk.simple;
 
 namespace MaskedDeformableRegistrationApp.Registration
 {
-    public abstract class RegInitialization : IRegistration<sitk.Image, sitk.ParameterMap, sitk.VectorOfParameterMap>, IDisposable
+    public abstract class RegInitialization : IRegistration<sitk.Image>, IDisposable
     {
         protected sitk.ElastixImageFilter elastix = null;
         protected sitk.ParameterMap parameterMap = null;

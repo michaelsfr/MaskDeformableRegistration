@@ -21,7 +21,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <returns>list with three color channels</returns>
         public static List<sitk.Image> SplitColorChannels(sitk.Image img)
         {
-            if (img.GetNumberOfComponentsPerPixel() == 3)
+            if (img.GetNumberOfComponentsPerPixel() >= 3)
             {
                 List<sitk.Image> result = new List<sitk.Image>();
                 sitk.VectorIndexSelectionCastImageFilter rgbVector = new sitk.VectorIndexSelectionCastImageFilter();

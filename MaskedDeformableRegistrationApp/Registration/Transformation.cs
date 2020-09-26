@@ -101,28 +101,19 @@ namespace MaskedDeformableRegistrationApp.Registration
             // red
             transformix.SetMovingImage(redChannel);
             sitk.Image resultRedChannel = transformix.Execute();
-            if (registrationParameters.Type == RegistrationType.NonRigid)
-            {
-                resultRedChannel = TransformationUtils.InterpolateImage(resultRedChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
-            }
+            resultRedChannel = TransformationUtils.InterpolateImage(resultRedChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
             //ReadWriteUtils.WriteSitkImageWithPreCast(resultRedChannel, registrationParameters.OutputDirectory + "\\red_channel.png");
 
             // green
             transformix.SetMovingImage(greenChannel);
             sitk.Image resultGreenChannel = transformix.Execute();
-            if (registrationParameters.Type == RegistrationType.NonRigid)
-            {
-                resultGreenChannel = TransformationUtils.InterpolateImage(resultGreenChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
-            }
+            resultGreenChannel = TransformationUtils.InterpolateImage(resultGreenChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
             //ReadWriteUtils.WriteSitkImageWithPreCast(resultGreenChannel, registrationParameters.OutputDirectory + "\\green_channel.png");
-            
+
             // blue
             transformix.SetMovingImage(blueChannel);
             sitk.Image resultBlueChannel = transformix.Execute();
-            if (registrationParameters.Type == RegistrationType.NonRigid)
-            {
-                resultBlueChannel = TransformationUtils.InterpolateImage(resultBlueChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
-            }
+            resultBlueChannel = TransformationUtils.InterpolateImage(resultBlueChannel, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, sitk.PixelIDValueEnum.sitkUInt8);
             //ReadWriteUtils.WriteSitkImageWithPreCast(resultBlueChannel, registrationParameters.OutputDirectory + "\\blue_channel.png");
 
             // compose image channels
@@ -135,11 +126,14 @@ namespace MaskedDeformableRegistrationApp.Registration
 
             if (registrationParameters.Type == RegistrationType.NonRigid)
             {
-                transformedImage = TransformationUtils.InterpolateImage(composedImage, sitk.InterpolatorEnum.sitkBSplineResamplerOrder3, composedImage.GetPixelID());
-            } else
+                transformedImage = TransformationUtils.InterpolateImage(composedImage, sitk.InterpolatorEnum.sitkBSplineResamplerOrder5, composedImage.GetPixelID());
+            }
+            else
             {
                 transformedImage = composedImage;
             }
+
+            transformedImage = composedImage;
 
             // interpolation of output image (needs to be improved -> currently theres a little loss in quality)
             // possible solution: interpolate grayscale images and compose afterwards

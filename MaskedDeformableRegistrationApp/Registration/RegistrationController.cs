@@ -59,6 +59,9 @@ namespace MaskedDeformableRegistrationApp.Registration
             // TO CHECK
             for (int i = 1; i < imageStack.Count; i++)
             {
+                Stopwatch stopWatch = new Stopwatch();
+                string elapsed;
+
                 _parameters.Iteration = i - 1;
                 _parameters.FixedImageFilename = imageStack[_parameters.Iteration];
                 _worker.ReportProgress(0, "Load reference image...");
@@ -69,9 +72,12 @@ namespace MaskedDeformableRegistrationApp.Registration
                 sitk.Image fixedMask = null;
                 if (_parameters.UseFixedMask)
                 {
-                    fixedMask = GetMask(_parameters.FixedImageFilename);
+                    stopWatch.Start();
+                    fixedMask = GetMask(_parameters.FixedImageFilename, true);
                     ReadWriteUtils.WriteSitkImage(fixedMask, _parameters.OutputDirectory + "\\fixed_mask.png");
-
+                    stopWatch.Stop();
+                    elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
+                    _worker.ReportProgress(0, string.Format("Created fixed mask (Elapsed time: {0}) ..."));
                 }
 
                 _worker.ReportProgress(0, "Load template image...");
@@ -79,19 +85,23 @@ namespace MaskedDeformableRegistrationApp.Registration
                 sitk.Image templateImage = LoadAndResizeImage(imageStack[i], imageStack[i]);
 
                 _worker.ReportProgress(0, "Start registration.");
-                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Reset();
                 stopWatch.Start();
 
                 // start actual registration
                 List<sitk.VectorOfParameterMap> transformparams = PerformRegistration(referenceImage, templateImage, fixedMask, imageStack[i]);
 
                 stopWatch.Stop();
-                string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
+                elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
                 _worker.ReportProgress((99/imageStack.Count)/2, string.Format("Registration done (Elapsed time: {0}). Writing transform file...", elapsed));
 
+                stopWatch.Reset();
+                stopWatch.Start();
                 // transform moving image according to the transformation parameters
                 WriteTransform(imageStack[i], transformparams);
-                _worker.ReportProgress((99 / imageStack.Count) / 2, "Transformed image was written to output directory.");
+                stopWatch.Stop();
+                elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
+                _worker.ReportProgress((99 / imageStack.Count) / 2, string.Format("Transformed image was written to output directory. (Elaspsed time: {0})", elapsed));
             }
             _worker.ReportProgress(100, "Registration done.");
         }
@@ -103,8 +113,11 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// <param name="firstAsReference">flag to specify if first or last image is taken as reference image</param>
         private void RunRegistrationFirstOrLastInStackOrder(List<string> imageStack, bool firstAsReference)
         {
+            Stopwatch stopWatch = new Stopwatch();
+            string elapsed;
+
             // set fixed image filename
-            if(firstAsReference)
+            if (firstAsReference)
             {
                 _parameters.FixedImageFilename = imageStack.First();
             } else
@@ -123,8 +136,11 @@ namespace MaskedDeformableRegistrationApp.Registration
                 || _parameters.RigidOptions == MaskedRigidRegistrationOptions.BinaryRegistrationWholeTissue
                 || _parameters.RigidOptions == MaskedRigidRegistrationOptions.ComponentwiseRegistration)
             {
-                fixedMask = GetMask(_parameters.FixedImageFilename);
+                stopWatch.Start();
+                fixedMask = GetMask(_parameters.FixedImageFilename, true);
                 ReadWriteUtils.WriteSitkImage(fixedMask, _parameters.OutputDirectory + "\\fixed_mask.png");
+                elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
+                _worker.ReportProgress(0, string.Format("Created fixed mask (Elapsed time: {0}) ...", elapsed));
             }
 
             int i = 0;
@@ -138,19 +154,23 @@ namespace MaskedDeformableRegistrationApp.Registration
                 sitk.Image templateImage = LoadAndResizeImage(filename, filename);
 
                 _worker.ReportProgress(0, "Start registration.");
-                Stopwatch stopWatch = new Stopwatch();
+                stopWatch.Reset();
                 stopWatch.Start();
 
                 // start actual registration
                 List<sitk.VectorOfParameterMap> transformparams = PerformRegistration(referenceImage, templateImage, fixedMask, filename);
 
                 stopWatch.Stop();
-                string elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
+                elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
                 _worker.ReportProgress((99 / imageStack.Count) / 2, string.Format("Registration done (Elapsed time: {0}). Writing transform file...", elapsed));
 
                 // transform moving image according to the transformation parameters
+                stopWatch.Reset();
+                stopWatch.Start();
                 WriteTransform(filename, transformparams);
-                _worker.ReportProgress((99 / imageStack.Count) / 2, "Transformed image was written to output directory.");
+                stopWatch.Stop();
+                elapsed = string.Format("[{0}m {1}s]", stopWatch.Elapsed.Minutes, stopWatch.Elapsed.Seconds);
+                _worker.ReportProgress((99 / imageStack.Count) / 2, string.Format("Transformed image was written to output directory. (Elaspsed time: {0})", elapsed));
             }
             _worker.ReportProgress(100, "Registration done.");
         }
@@ -187,7 +207,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// </summary>
         /// <param name="refImage">reference image</param>
         /// <param name="movImage">template image</param>
-        /// <param name="fixedMask">fixed mask (can be null)</param>
+        /// <param name="fixedMask">fixd mask (can be null)</param>
         /// <param name="movingImageFilename">filename of the template image</param>
         /// <returns></returns>
         private List<sitk.VectorOfParameterMap> PerformRegistration(sitk.Image refImage, sitk.Image movImage, sitk.Image fixedMask, string movingImageFilename)
@@ -198,7 +218,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 || _parameters.RigidOptions == MaskedRigidRegistrationOptions.BinaryRegistrationWholeTissue
                 || _parameters.RigidOptions == MaskedRigidRegistrationOptions.ComponentwiseRegistration)
             {
-                movingMask = GetMask(movingImageFilename);
+                movingMask = GetMask(movingImageFilename, false);
                 ReadWriteUtils.WriteSitkImage(movingMask, _parameters.OutputDirectory + "\\moving_mask.png");
             }
 
@@ -223,17 +243,28 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// </summary>
         /// <param name="filename">filename</param>
         /// <returns>mask of given image</returns>
-        private sitk.Image GetMask(string filename)
+        private sitk.Image GetMask(string filename, bool isFixed)
         {
-            if (_parameters.UseInnerStructuresSegmentation)
+            if(isFixed && _parameters.UseFixedMaskFromDisk)
             {
-                // segmentation of the inner structures of the particle
-                return GetInnerStructureMask(filename);
-            }
-            else
+                sitk.Image img = ReadWriteUtils.ReadITKImageFromFile(_parameters.FixedMaskFromDisk);
+                return img;
+            } else if (!isFixed && _parameters.UseMovingMasksFromDisk)
             {
-                // segmentation of the whole particle
-                return GetWholeParticleMask(filename);
+                sitk.Image img = ReadWriteUtils.ReadITKImageFromFile(_parameters.MovingMasksFromDisk.FirstOrDefault());
+                return img;
+            } else
+            {
+                if (_parameters.UseInnerStructuresSegmentation)
+                {
+                    // segmentation of the inner structures of the particle
+                    return GetInnerStructureMask(filename);
+                }
+                else
+                {
+                    // segmentation of the whole particle
+                    return GetWholeParticleMask(filename);
+                }
             }
         }
 
@@ -613,7 +644,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             return transformparams;
         }
 
-        private void ExecuteRegistration<T>(T registration) where T : IRegistration<sitk.Image, sitk.ParameterMap, sitk.VectorOfParameterMap>
+        private void ExecuteRegistration<T>(T registration) where T : IRegistration<sitk.Image>
         {
             object result = registration.Execute();
             if (result != null)

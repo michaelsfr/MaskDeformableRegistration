@@ -123,7 +123,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             using(RegistrationForm form = new RegistrationForm(Filenames))
             {
                 this.Hide();
-                form.ShowDialog();
+               form.ShowDialog();
             }
         }
 

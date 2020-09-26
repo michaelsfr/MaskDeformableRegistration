@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -19,14 +20,20 @@ namespace MaskedDeformableRegistrationApp.Forms
         private Image<Bgr, byte> image = null;
         private Image<Gray, byte> mask = null;
 
-        public SegmentationParameters segmentationParameters;
+        private string selectedFile;
+        private List<string> filenames;
 
-        public SegParamsInnerStructuresForm(Image<Bgr, byte> image, Image<Gray, byte> mask, SegmentationParameters parameters)
+        public SegmentationParameters segmentationParametersWholeTissue;
+        public SegmentationParameters segmentationParametersInnerTissue;
+
+        public SegParamsInnerStructuresForm(List<string> imageFilenames, SegmentationParameters parametersWholeTissue, SegmentationParameters parametersInnerTissue)
         {
             InitializeComponent();
-            this.image = image;
-            this.mask = mask;
-            this.segmentationParameters = parameters;
+            this.filenames = imageFilenames;
+            this.selectedFile = imageFilenames.FirstOrDefault();
+            this.image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(this.selectedFile);
+            this.segmentationParametersInnerTissue = parametersInnerTissue;
+            this.segmentationParametersWholeTissue = parametersWholeTissue;
         }
 
         private void SegmentationParameterForm_Load(object sender, EventArgs e)
@@ -42,28 +49,28 @@ namespace MaskedDeformableRegistrationApp.Forms
             comboBoxColorspace.SelectedIndexChanged -= comboBoxColorspace_SelectedIndexChanged;
             int[] channels = { 1, 2, 3 };
             comboBoxChannel.DataSource = channels;
-            comboBoxChannel.SelectedIndex = segmentationParameters.Channel;
+            comboBoxChannel.SelectedIndex = segmentationParametersInnerTissue.Channel;
             comboBoxColorspace.DataSource = Enum.GetValues(typeof(ColorSpace));
-            comboBoxColorspace.SelectedIndex = (int)segmentationParameters.Colorspace;
+            comboBoxColorspace.SelectedIndex = (int)segmentationParametersInnerTissue.Colorspace;
             comboBoxChannel.SelectedIndexChanged += comboBoxChannel_SelectedIndexChanged;
             comboBoxColorspace.SelectedIndexChanged += comboBoxColorspace_SelectedIndexChanged;
 
             trackBar1.ValueChanged -= trackBar1_ValueChanged;
             trackBar1.Minimum = 0;
             trackBar1.Maximum = 255;
-            trackBar1.Value = segmentationParameters.Threshold;
-            labelThreshold.Text = segmentationParameters.Threshold.ToString();
+            trackBar1.Value = segmentationParametersInnerTissue.Threshold;
+            labelThreshold.Text = segmentationParametersInnerTissue.Threshold.ToString();
             trackBar1.ValueChanged += trackBar1_ValueChanged;
 
             radioButtonOtsu.CheckedChanged -= radioButtonOtsu_CheckedChanged;
             radioButtonThresholdManually.CheckedChanged -= radioButtonThresholdManually_CheckedChanged;
-            radioButtonOtsu.Checked = segmentationParameters.UseOtsu;
-            radioButtonThresholdManually.Checked = !segmentationParameters.UseOtsu;
+            radioButtonOtsu.Checked = segmentationParametersInnerTissue.UseOtsu;
+            radioButtonThresholdManually.Checked = !segmentationParametersInnerTissue.UseOtsu;
             radioButtonOtsu.CheckedChanged += radioButtonOtsu_CheckedChanged;
             radioButtonThresholdManually.CheckedChanged += radioButtonThresholdManually_CheckedChanged;
 
             checkBoxKmeans.CheckedChanged -= checkBoxKmeans_CheckedChanged;
-            checkBoxKmeans.Checked = segmentationParameters.UseKmeans;
+            checkBoxKmeans.Checked = segmentationParametersInnerTissue.UseKmeans;
             checkBoxKmeans.CheckedChanged += checkBoxKmeans_CheckedChanged;
 
             pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
@@ -91,39 +98,49 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void buttonPreview_Click(object sender, EventArgs e)
         {
-            if(image != null && mask != null)
+            Cursor.Current = Cursors.WaitCursor;
+
+            if (image != null)
             {
-                Cursor.Current = Cursors.WaitCursor;
+                WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, segmentationParametersWholeTissue);
+                segImage.Execute();
+                Image<Gray, byte> mask = segImage.GetOutput().Clone();
+                segImage.Dispose();
 
-                InnerTissueSegmentation seg = new InnerTissueSegmentation(image.Clone(), mask.Clone(), segmentationParameters);
-                seg.Execute();
-                List<UMat> result = seg.GetOutput();
-                UMat a = new UMat();
-                result[0].Clone().ConvertTo(a, Emgu.CV.CvEnum.DepthType.Cv8U);
-                UMat b = new UMat();
-                result[1].Clone().ConvertTo(b, Emgu.CV.CvEnum.DepthType.Cv8U);
-                seg.Dispose();
-
-                Cursor.Current = Cursors.Default;
-
-                if (pictureBoxSegmentation1.Image != null)
+                if (mask != null)
                 {
-                    this.Invoke(new MethodInvoker(delegate () {
-                        pictureBoxSegmentation1.Image.Dispose();
-                        pictureBoxSegmentation1.Image = null;
-                    }));
-                }
-                pictureBoxSegmentation1.Image = a.Bitmap;
 
-                if (pictureBoxSegmentation2.Image != null)
-                {
-                    this.Invoke(new MethodInvoker(delegate () {
-                        pictureBoxSegmentation2.Image.Dispose();
-                        pictureBoxSegmentation2.Image = null;
-                    }));
+
+                    InnerTissueSegmentation seg = new InnerTissueSegmentation(image.Clone(), mask.Clone(), segmentationParametersInnerTissue);
+                    seg.Execute();
+                    List<UMat> result = seg.GetOutput();
+                    UMat a = new UMat();
+                    result[0].Clone().ConvertTo(a, Emgu.CV.CvEnum.DepthType.Cv8U);
+                    UMat b = new UMat();
+                    result[1].Clone().ConvertTo(b, Emgu.CV.CvEnum.DepthType.Cv8U);
+                    seg.Dispose();
+
+                    if (pictureBoxSegmentation1.Image != null)
+                    {
+                        this.Invoke(new MethodInvoker(delegate () {
+                            pictureBoxSegmentation1.Image.Dispose();
+                            pictureBoxSegmentation1.Image = null;
+                        }));
+                    }
+                    pictureBoxSegmentation1.Image = a.Bitmap;
+
+                    if (pictureBoxSegmentation2.Image != null)
+                    {
+                        this.Invoke(new MethodInvoker(delegate () {
+                            pictureBoxSegmentation2.Image.Dispose();
+                            pictureBoxSegmentation2.Image = null;
+                        }));
+                    }
+                    pictureBoxSegmentation2.Image = b.Bitmap;
                 }
-                pictureBoxSegmentation2.Image = b.Bitmap;
             }
+
+            Cursor.Current = Cursors.Default;
         }
 
         private void buttonSaveParameters_Click(object sender, EventArgs e)
@@ -135,19 +152,19 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void comboBoxColorspace_SelectedIndexChanged(object sender, EventArgs e)
         {
             int index = comboBoxColorspace.SelectedIndex;
-            segmentationParameters.Colorspace = (ColorSpace)index;
+            segmentationParametersInnerTissue.Colorspace = (ColorSpace)index;
         }
 
         private void comboBoxChannel_SelectedIndexChanged(object sender, EventArgs e)
         {
-            segmentationParameters.Channel = comboBoxChannel.SelectedIndex;
+            segmentationParametersInnerTissue.Channel = comboBoxChannel.SelectedIndex;
         }
 
         private void buttonPreviewColorSpace_Click(object sender, EventArgs e)
         {
             using(Image<Bgr, byte> copy = image.Clone())
             {
-                var imageColorChannel = SegmentationUtils.GetColorChannelAsUMat(segmentationParameters.Colorspace, copy, segmentationParameters.Channel);
+                var imageColorChannel = SegmentationUtils.GetColorChannelAsUMat(segmentationParametersInnerTissue.Colorspace, copy, segmentationParametersInnerTissue.Channel);
                 if(imageColorChannel != null)
                 {
                     if (pictureBoxColorChannel.Image != null)
@@ -164,8 +181,8 @@ namespace MaskedDeformableRegistrationApp.Forms
 
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
-            segmentationParameters.Threshold = trackBar1.Value;
-            labelThreshold.Text = segmentationParameters.Threshold.ToString();
+            segmentationParametersInnerTissue.Threshold = trackBar1.Value;
+            labelThreshold.Text = segmentationParametersInnerTissue.Threshold.ToString();
         }
 
         private void radioButtonOtsu_CheckedChanged(object sender, EventArgs e)
@@ -175,7 +192,7 @@ namespace MaskedDeformableRegistrationApp.Forms
             if (rb != null && rb == this.radioButtonOtsu)
             {
                 this.trackBar1.Enabled = false;
-                segmentationParameters.UseOtsu = true;
+                segmentationParametersInnerTissue.UseOtsu = true;
             }
         }
 
@@ -186,14 +203,73 @@ namespace MaskedDeformableRegistrationApp.Forms
             if (rb != null && rb == this.radioButtonThresholdManually)
             {
                 this.trackBar1.Enabled = true;
-                segmentationParameters.UseOtsu = false;
+                segmentationParametersInnerTissue.UseOtsu = false;
             }
         }
 
         private void checkBoxKmeans_CheckedChanged(object sender, EventArgs e)
         {
             CheckBox cb = sender as CheckBox;
-            segmentationParameters.UseKmeans = cb.Checked;
+            segmentationParametersInnerTissue.UseKmeans = cb.Checked;
+        }
+
+        private void buttonPreviousSlice_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            int index = filenames.IndexOf(selectedFile) - 1;
+
+            selectedFile = filenames.ElementAt(index);
+            image.Dispose();
+            image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(selectedFile);
+
+            ReloadForm();
+
+            buttonPreviousSlice.Enabled = index > 0;
+            buttonNextSlice.Enabled = index < filenames.Count - 1;
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void ReloadForm()
+        {
+            splitContainer2.SplitterDistance = this.Height / 2;
+            splitContainer3.SplitterDistance = splitContainer2.Width / 2;
+            splitContainer4.SplitterDistance = splitContainer2.Width / 2;
+            pictureBoxOriginal.Image = image.Bitmap;
+        }
+
+        private void buttonNextSlice_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            int index = filenames.IndexOf(selectedFile) + 1;
+
+            selectedFile = filenames.ElementAt(index);
+            image.Dispose();
+            image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(selectedFile);
+
+            ReloadForm();
+
+            buttonPreviousSlice.Enabled = index > 0;
+            buttonNextSlice.Enabled = index < filenames.Count - 1;
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void buttonSaveMask_Click(object sender, EventArgs e)
+        {
+            if (mask != null)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.InitialDirectory = ApplicationContext.OutputPath;
+                saveFileDialog.FileName = "mask_innerTissue_" + Path.GetFileNameWithoutExtension(selectedFile) + ".png";
+                DialogResult result = saveFileDialog.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    Cursor.Current = Cursors.WaitCursor;
+                    string fn = saveFileDialog.FileName;
+                    mask.Save(fn);
+                    Cursor.Current = Cursors.Default;
+                }
+            }
         }
     }
 }

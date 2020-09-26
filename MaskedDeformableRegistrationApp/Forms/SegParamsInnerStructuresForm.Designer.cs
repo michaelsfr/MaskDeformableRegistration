@@ -52,6 +52,13 @@
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.pictureBoxSegmentation1 = new System.Windows.Forms.PictureBox();
             this.pictureBoxSegmentation2 = new System.Windows.Forms.PictureBox();
+            this.numericUpDownMax = new System.Windows.Forms.NumericUpDown();
+            this.numericUpDownMin = new System.Windows.Forms.NumericUpDown();
+            this.label3 = new System.Windows.Forms.Label();
+            this.buttonSaveMask = new System.Windows.Forms.Button();
+            this.buttonNextSlice = new System.Windows.Forms.Button();
+            this.buttonPreviousSlice = new System.Windows.Forms.Button();
+            this.labelFilename = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -76,6 +83,8 @@
             this.splitContainer3.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSegmentation1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSegmentation2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMax)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMin)).BeginInit();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -87,6 +96,9 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.buttonSaveMask);
+            this.splitContainer1.Panel1.Controls.Add(this.buttonNextSlice);
+            this.splitContainer1.Panel1.Controls.Add(this.buttonPreviousSlice);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox3);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox2);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox1);
@@ -102,11 +114,14 @@
             // 
             // groupBox3
             // 
+            this.groupBox3.Controls.Add(this.numericUpDownMax);
+            this.groupBox3.Controls.Add(this.numericUpDownMin);
+            this.groupBox3.Controls.Add(this.label3);
             this.groupBox3.Controls.Add(this.checkBoxContourSize);
             this.groupBox3.Controls.Add(this.checkBoxKmeans);
             this.groupBox3.Location = new System.Drawing.Point(13, 266);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(220, 154);
+            this.groupBox3.Size = new System.Drawing.Size(220, 98);
             this.groupBox3.TabIndex = 8;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Misc";
@@ -121,11 +136,11 @@
             this.checkBoxContourSize.Text = "Set contour min/max size manually";
             this.checkBoxContourSize.UseVisualStyleBackColor = true;
             // 
-            // checkBox1
+            // checkBoxKmeans
             // 
             this.checkBoxKmeans.AutoSize = true;
             this.checkBoxKmeans.Location = new System.Drawing.Point(12, 19);
-            this.checkBoxKmeans.Name = "checkBox1";
+            this.checkBoxKmeans.Name = "checkBoxKmeans";
             this.checkBoxKmeans.Size = new System.Drawing.Size(129, 17);
             this.checkBoxKmeans.TabIndex = 0;
             this.checkBoxKmeans.Text = "Use Kmeas-Clustering";
@@ -249,9 +264,9 @@
             // 
             // buttonPreview
             // 
-            this.buttonPreview.Location = new System.Drawing.Point(12, 426);
+            this.buttonPreview.Location = new System.Drawing.Point(13, 423);
             this.buttonPreview.Name = "buttonPreview";
-            this.buttonPreview.Size = new System.Drawing.Size(220, 23);
+            this.buttonPreview.Size = new System.Drawing.Size(107, 23);
             this.buttonPreview.TabIndex = 1;
             this.buttonPreview.Text = "Preview";
             this.buttonPreview.UseVisualStyleBackColor = true;
@@ -259,7 +274,7 @@
             // 
             // buttonSaveParameters
             // 
-            this.buttonSaveParameters.Location = new System.Drawing.Point(12, 455);
+            this.buttonSaveParameters.Location = new System.Drawing.Point(13, 452);
             this.buttonSaveParameters.Name = "buttonSaveParameters";
             this.buttonSaveParameters.Size = new System.Drawing.Size(220, 23);
             this.buttonSaveParameters.TabIndex = 0;
@@ -294,6 +309,7 @@
             // 
             // splitContainer4.Panel1
             // 
+            this.splitContainer4.Panel1.Controls.Add(this.labelFilename);
             this.splitContainer4.Panel1.Controls.Add(this.pictureBoxOriginal);
             // 
             // splitContainer4.Panel2
@@ -358,6 +374,68 @@
             this.pictureBoxSegmentation2.TabIndex = 0;
             this.pictureBoxSegmentation2.TabStop = false;
             // 
+            // numericUpDownMax
+            // 
+            this.numericUpDownMax.Location = new System.Drawing.Point(113, 65);
+            this.numericUpDownMax.Name = "numericUpDownMax";
+            this.numericUpDownMax.Size = new System.Drawing.Size(64, 20);
+            this.numericUpDownMax.TabIndex = 9;
+            // 
+            // numericUpDownMin
+            // 
+            this.numericUpDownMin.Location = new System.Drawing.Point(30, 65);
+            this.numericUpDownMin.Name = "numericUpDownMin";
+            this.numericUpDownMin.Size = new System.Drawing.Size(67, 20);
+            this.numericUpDownMin.TabIndex = 8;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(100, 68);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(10, 13);
+            this.label3.TabIndex = 7;
+            this.label3.Text = "-";
+            // 
+            // buttonSaveMask
+            // 
+            this.buttonSaveMask.Location = new System.Drawing.Point(126, 423);
+            this.buttonSaveMask.Name = "buttonSaveMask";
+            this.buttonSaveMask.Size = new System.Drawing.Size(106, 23);
+            this.buttonSaveMask.TabIndex = 17;
+            this.buttonSaveMask.Text = "Save mask";
+            this.buttonSaveMask.UseVisualStyleBackColor = true;
+            this.buttonSaveMask.Click += new System.EventHandler(this.buttonSaveMask_Click);
+            // 
+            // buttonNextSlice
+            // 
+            this.buttonNextSlice.Location = new System.Drawing.Point(126, 396);
+            this.buttonNextSlice.Name = "buttonNextSlice";
+            this.buttonNextSlice.Size = new System.Drawing.Size(106, 23);
+            this.buttonNextSlice.TabIndex = 16;
+            this.buttonNextSlice.Text = "Next slice";
+            this.buttonNextSlice.UseVisualStyleBackColor = true;
+            this.buttonNextSlice.Click += new System.EventHandler(this.buttonNextSlice_Click);
+            // 
+            // buttonPreviousSlice
+            // 
+            this.buttonPreviousSlice.Location = new System.Drawing.Point(13, 396);
+            this.buttonPreviousSlice.Name = "buttonPreviousSlice";
+            this.buttonPreviousSlice.Size = new System.Drawing.Size(107, 23);
+            this.buttonPreviousSlice.TabIndex = 15;
+            this.buttonPreviousSlice.Text = "Previous slice";
+            this.buttonPreviousSlice.UseVisualStyleBackColor = true;
+            this.buttonPreviousSlice.Click += new System.EventHandler(this.buttonPreviousSlice_Click);
+            // 
+            // labelFilename
+            // 
+            this.labelFilename.AutoSize = true;
+            this.labelFilename.Location = new System.Drawing.Point(3, 5);
+            this.labelFilename.Name = "labelFilename";
+            this.labelFilename.Size = new System.Drawing.Size(28, 13);
+            this.labelFilename.TabIndex = 1;
+            this.labelFilename.Text = "###";
+            // 
             // SegParamsInnerStructuresForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -383,6 +461,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
             this.splitContainer4.Panel1.ResumeLayout(false);
+            this.splitContainer4.Panel1.PerformLayout();
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
@@ -394,6 +473,8 @@
             this.splitContainer3.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSegmentation1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxSegmentation2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMax)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownMin)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -424,5 +505,12 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.CheckBox checkBoxKmeans;
         private System.Windows.Forms.CheckBox checkBoxContourSize;
+        private System.Windows.Forms.NumericUpDown numericUpDownMax;
+        private System.Windows.Forms.NumericUpDown numericUpDownMin;
+        private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Button buttonSaveMask;
+        private System.Windows.Forms.Button buttonNextSlice;
+        private System.Windows.Forms.Button buttonPreviousSlice;
+        private System.Windows.Forms.Label labelFilename;
     }
 }

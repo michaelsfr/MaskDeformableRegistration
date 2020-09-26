@@ -456,6 +456,11 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             foreach (string filename in ImageStackToRegister)
             {
+                if(filename.EndsWith(".tif"))
+                {
+                    return;
+                }
+
                 using (FileStream file = new FileStream(filename, FileMode.Open, FileAccess.Read))
                 {
                     using (Image img = Image.FromStream(stream: file,
@@ -502,9 +507,9 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void SegmentationParamsWholeTissue()
         {
             Cursor.Current = Cursors.WaitCursor;
-            Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(ImageStackToRegister.FirstOrDefault());
+            //Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(ImageStackToRegister.FirstOrDefault());
 
-            using (SegParamsWholeTissueForm form = new SegParamsWholeTissueForm(image, RegistrationParametersRigid.WholeTissueSegParams))
+            using (SegParamsWholeTissueForm form = new SegParamsWholeTissueForm(ImageStackToRegister, RegistrationParametersRigid.WholeTissueSegParams))
             {
                 Cursor.Current = Cursors.Default;
                 DialogResult result = form.ShowDialog();
@@ -524,22 +529,25 @@ namespace MaskedDeformableRegistrationApp.Forms
         {
             Cursor.Current = Cursors.WaitCursor;
 
-            Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(ImageStackToRegister.FirstOrDefault());
+            //Image<Bgr, byte> image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(ImageStackToRegister.FirstOrDefault());
 
-            WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, RegistrationParametersRigid.WholeTissueSegParams);
-            segImage.Execute();
-            Image<Gray, byte> mask = segImage.GetOutput().Clone();
-            segImage.Dispose();
+            //WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, RegistrationParametersRigid.WholeTissueSegParams);
+            //segImage.Execute();
+            //Image<Gray, byte> mask = segImage.GetOutput().Clone();
+            //segImage.Dispose();
 
-            using (SegParamsInnerStructuresForm form = new SegParamsInnerStructuresForm(image, mask, RegistrationParametersNonRigid.InnerStructuresSegParams))
+            using (SegParamsInnerStructuresForm form = new SegParamsInnerStructuresForm(
+                ImageStackToRegister, 
+                RegistrationParametersRigid.WholeTissueSegParams, 
+                RegistrationParametersNonRigid.InnerStructuresSegParams))
             {
                 Cursor.Current = Cursors.Default;
                 DialogResult result = form.ShowDialog();
 
                 if (result == DialogResult.OK)
                 {
-                    RegistrationParametersRigid.InnerStructuresSegParams = (SegmentationParameters)form.segmentationParameters.Clone();
-                    RegistrationParametersNonRigid.InnerStructuresSegParams = (SegmentationParameters)form.segmentationParameters.Clone();
+                    RegistrationParametersRigid.InnerStructuresSegParams = (SegmentationParameters)form.segmentationParametersInnerTissue.Clone();
+                    RegistrationParametersNonRigid.InnerStructuresSegParams = (SegmentationParameters)form.segmentationParametersInnerTissue.Clone();
                 }
             }
         }

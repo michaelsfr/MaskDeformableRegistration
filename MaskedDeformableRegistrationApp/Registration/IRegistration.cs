@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using sitk = itk.simple;
 
 namespace MaskedDeformableRegistrationApp.Registration
 {
-    public interface IRegistration<T, U, N>
+    public interface IRegistration<T>
     {
         object Execute();
         void SetFixedMask(T fixedMask);
@@ -15,8 +16,8 @@ namespace MaskedDeformableRegistrationApp.Registration
         void SetDefaultParameterMap(RegistrationDefaultParameters type, uint numberOfResolutions);
         void SetParameterMap(string file);
         T GetOutput();
-        U GetParameterMap();
-        N GetTransformationParameterMap();
+        sitk.ParameterMap GetParameterMap();
+        sitk.VectorOfParameterMap GetTransformationParameterMap();
         void Dispose();
     }
 }

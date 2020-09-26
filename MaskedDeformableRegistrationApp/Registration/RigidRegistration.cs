@@ -15,6 +15,7 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             this.fixedImage = ImageUtils.CastImage(fixedImage);
             this.movingImage = ImageUtils.CastImage(movingImage);
+
             this.registrationParameters = parameters;
             
             elastix = new sitk.ElastixImageFilter();
@@ -47,8 +48,10 @@ namespace MaskedDeformableRegistrationApp.Registration
         {
             if(fixedImage != null && movingImage != null)
             {
+                //ReadWriteUtils.WriteSitkImage(fixedImage, ApplicationContext.OutputPath + "\\beforeBin_fixed.png");
+                //ReadWriteUtils.WriteSitkImage(movingImage, ApplicationContext.OutputPath + "\\beforeBin_moving.png");
                 // set parameter vector here?
-               elastix.SetParameterMap(parameterMap);
+                elastix.SetParameterMap(parameterMap);
 
                 // only use when kappa statistics is used as metric
                 if (registrationParameters.RigidOptions != MaskedRigidRegistrationOptions.None)

@@ -26,12 +26,12 @@ namespace MaskedDeformableRegistrationApp.Registration
                 // rigid registration types
                 if (type == RegistrationDefaultParameters.similarity)
                 {
-                    sitk.ParameterMap parameterMap = GetParameterMap(RegistrationDefaultParameters.translation);
+                    sitk.ParameterMap parameterMap = GetDefaultRigidParameterMap(RegistrationDefaultParameters.translation);
                     parameterMap["Transform"][0] = "SimilarityTransform";
                     return parameterMap;
                 } else
                 {
-                    return GetParameterMap(type);
+                    return GetDefaultRigidParameterMap(type);
                 }
             } else
             {
@@ -96,11 +96,25 @@ namespace MaskedDeformableRegistrationApp.Registration
         /// </summary>
         /// <param name="registrationType">registration type</param>
         /// <returns>default params</returns>
-        private static sitk.ParameterMap GetParameterMap(RegistrationDefaultParameters registrationType)
+        private static sitk.ParameterMap GetDefaultRigidParameterMap(RegistrationDefaultParameters registrationType)
         {
             using (sitk.ElastixImageFilter elastix = new sitk.ElastixImageFilter())
             {
-                return elastix.GetDefaultParameterMap(registrationType.ToString());
+                sitk.ParameterMap map = elastix.GetDefaultParameterMap(registrationType.ToString());
+                ChangeOrAddParamIfNotExist(ref map, "Interpolator", GetVectorString("BSplineInterpolator"));
+                ChangeOrAddParamIfNotExist(ref map, "ResampleInterpolator", GetVectorString("FinalBSplineInterpolator"));
+                ChangeOrAddParamIfNotExist(ref map, "FixedImagePyramid", GetVectorString("FixedRecursiveImagePyramid"));
+                ChangeOrAddParamIfNotExist(ref map, "MovingImagePyramid", GetVectorString("MovingRecursiveImagePyramid"));
+                ChangeOrAddParamIfNotExist(ref map, "AutomaticTransformInitialization", GetVectorString("true"));
+                ChangeOrAddParamIfNotExist(ref map, "NumberOfResolutions", GetVectorString("8"));
+                ChangeOrAddParamIfNotExist(ref map, "MaximumNumberOfIterations", GetVectorString("1024"));
+                ChangeOrAddParamIfNotExist(ref map, "NumberOfSpatialSamples", GetVectorString("2048"));
+                ChangeOrAddParamIfNotExist(ref map, "NumberOfSamplesForExactGradient", GetVectorString("4096"));
+                ChangeOrAddParamIfNotExist(ref map, "ImageSampler", GetVectorString("Random"));
+                ChangeOrAddParamIfNotExist(ref map, "BSplineInterpolationOrder", GetVectorString("1"));
+                ChangeOrAddParamIfNotExist(ref map, "FinalBSplineInterpolationOrder", GetVectorString("3"));
+                ChangeOrAddParamIfNotExist(ref map, "Metric", GetVectorString("AdvancedMeanSquares"));
+                return map;
             }
         }
 
@@ -134,7 +148,7 @@ namespace MaskedDeformableRegistrationApp.Registration
             paramMap.Add("NumberOfSpatialSamples", GetVectorString("2048"));
             paramMap.Add("NewSamplesEveryIteration", GetVectorString("true"));
             paramMap.Add("ImageSampler", GetVectorString("Random"));
-            paramMap.Add("BSplineInterpolationOrder", GetVectorString("1"));
+            paramMap.Add("BSplineInterpolationOrder", GetVectorString("3"));
             paramMap.Add("FinalBSplineInterpolationOrder", GetVectorString("3"));
             paramMap.Add("DefaultPixelValue", GetVectorString("255.0"));
             paramMap.Add("WriteResultImage", GetVectorString("true"));

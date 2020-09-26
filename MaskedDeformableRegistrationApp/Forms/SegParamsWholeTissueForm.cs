@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,14 +19,20 @@ namespace MaskedDeformableRegistrationApp.Forms
     {
         public SegmentationParameters segmentationParameters;
 
-        private Image<Bgr, byte> image;
+        private string selectedFile;
+        private List<string> filenames;
 
-        public SegParamsWholeTissueForm(Image<Bgr, byte> image, SegmentationParameters parameters)
+        private Image<Bgr, byte> image;
+        private Image<Gray, byte> mask;
+
+        public SegParamsWholeTissueForm(List<string> imageFilnames, SegmentationParameters parameters)
         {
             InitializeComponent();
 
             this.segmentationParameters = parameters;
-            this.image = image;
+            this.filenames = imageFilnames;
+            this.selectedFile = imageFilnames.FirstOrDefault();
+            this.image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(this.selectedFile);
 
             InitializeButtons();
         }
@@ -61,10 +68,18 @@ namespace MaskedDeformableRegistrationApp.Forms
             pictureBoxOriginal.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBoxMask.SizeMode = PictureBoxSizeMode.Zoom;
             pictureBoxOriginal.Image = image.Bitmap;
+
+            buttonPreviousSlice.Enabled = false;
+            labelFilename.Text = Path.GetFileNameWithoutExtension(selectedFile);
         }
 
         private void buttonPreview_Click(object sender, EventArgs e)
         {
+            if(mask != null)
+            {
+                mask.Dispose();
+            }
+
             if(image != null)
             {
                 Cursor.Current = Cursors.WaitCursor;
@@ -73,7 +88,7 @@ namespace MaskedDeformableRegistrationApp.Forms
 
                 WholeTissueSegmentation segImage = new WholeTissueSegmentation(image, segmentationParameters);
                 segImage.Execute();
-                Image<Gray, byte> mask = segImage.GetOutput().Clone();
+                mask = segImage.GetOutput().Clone();
                 segImage.Dispose();
 
                 pictureBoxMask.Image = mask.Bitmap;
@@ -125,6 +140,66 @@ namespace MaskedDeformableRegistrationApp.Forms
         private void trackBar1_ValueChanged(object sender, EventArgs e)
         {
             labelThreshold.Text = trackBar1.Value.ToString();
+        }
+
+        private void buttonPreviousSlice_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            int index = filenames.IndexOf(selectedFile) - 1;
+
+            selectedFile = filenames.ElementAt(index);
+            image.Dispose();
+            image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(selectedFile);
+
+            ReloadForm();
+
+            buttonPreviousSlice.Enabled = index > 0;
+            buttonNextSlice.Enabled = index < filenames.Count - 1;
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void buttonNextSlice_Click(object sender, EventArgs e)
+        {
+            Cursor.Current = Cursors.WaitCursor;
+            int index = filenames.IndexOf(selectedFile) + 1;
+
+            selectedFile = filenames.ElementAt(index);
+            image.Dispose();
+            image = ReadWriteUtils.ReadOpenCVImageFromFile<Bgr, byte>(selectedFile);
+
+            ReloadForm();
+
+            buttonPreviousSlice.Enabled = index > 0;
+            buttonNextSlice.Enabled = index < filenames.Count - 1;
+            Cursor.Current = Cursors.Default;
+        }
+
+        private void ReloadForm()
+        {
+            numericUpDownMax.Maximum = ImageUtils.GetImagePixelCount(image);
+            splitContainer2.SplitterDistance = this.Height / 2;
+            splitContainer1.IsSplitterFixed = true;
+            pictureBoxOriginal.Image = image.Bitmap;
+            labelFilename.Text = Path.GetFileNameWithoutExtension(selectedFile);
+        }
+
+        private void buttonSaveMask_Click(object sender, EventArgs e)
+        {
+            if (mask != null)
+            {
+                SaveFileDialog saveFileDialog = new SaveFileDialog();
+                saveFileDialog.InitialDirectory = ApplicationContext.OutputPath;
+                saveFileDialog.FileName = "mask_" + Path.GetFileNameWithoutExtension(selectedFile) + ".png";
+                DialogResult result = saveFileDialog.ShowDialog();
+
+                if (result == DialogResult.OK)
+                {
+                    Cursor.Current = Cursors.WaitCursor;
+                    string fn = saveFileDialog.FileName;
+                    mask.Save(fn);
+                    Cursor.Current = Cursors.Default;
+                }
+            }
         }
     }
 }

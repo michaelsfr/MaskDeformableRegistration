@@ -29,6 +29,8 @@
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
+            this.buttonNextSlice = new System.Windows.Forms.Button();
+            this.buttonPreviousSlice = new System.Windows.Forms.Button();
             this.buttonPreview = new System.Windows.Forms.Button();
             this.buttonSaveParameters = new System.Windows.Forms.Button();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
@@ -49,6 +51,8 @@
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
             this.pictureBoxOriginal = new System.Windows.Forms.PictureBox();
             this.pictureBoxMask = new System.Windows.Forms.PictureBox();
+            this.buttonSaveMask = new System.Windows.Forms.Button();
+            this.labelFilename = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -75,6 +79,9 @@
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.buttonSaveMask);
+            this.splitContainer1.Panel1.Controls.Add(this.buttonNextSlice);
+            this.splitContainer1.Panel1.Controls.Add(this.buttonPreviousSlice);
             this.splitContainer1.Panel1.Controls.Add(this.buttonPreview);
             this.splitContainer1.Panel1.Controls.Add(this.buttonSaveParameters);
             this.splitContainer1.Panel1.Controls.Add(this.groupBox3);
@@ -84,15 +91,35 @@
             // splitContainer1.Panel2
             // 
             this.splitContainer1.Panel2.Controls.Add(this.splitContainer2);
-            this.splitContainer1.Size = new System.Drawing.Size(523, 421);
+            this.splitContainer1.Size = new System.Drawing.Size(523, 433);
             this.splitContainer1.SplitterDistance = 205;
             this.splitContainer1.TabIndex = 0;
             // 
+            // buttonNextSlice
+            // 
+            this.buttonNextSlice.Location = new System.Drawing.Point(112, 344);
+            this.buttonNextSlice.Name = "buttonNextSlice";
+            this.buttonNextSlice.Size = new System.Drawing.Size(87, 23);
+            this.buttonNextSlice.TabIndex = 13;
+            this.buttonNextSlice.Text = "Next slice";
+            this.buttonNextSlice.UseVisualStyleBackColor = true;
+            this.buttonNextSlice.Click += new System.EventHandler(this.buttonNextSlice_Click);
+            // 
+            // buttonPreviousSlice
+            // 
+            this.buttonPreviousSlice.Location = new System.Drawing.Point(12, 344);
+            this.buttonPreviousSlice.Name = "buttonPreviousSlice";
+            this.buttonPreviousSlice.Size = new System.Drawing.Size(87, 23);
+            this.buttonPreviousSlice.TabIndex = 12;
+            this.buttonPreviousSlice.Text = "Previous slice";
+            this.buttonPreviousSlice.UseVisualStyleBackColor = true;
+            this.buttonPreviousSlice.Click += new System.EventHandler(this.buttonPreviousSlice_Click);
+            // 
             // buttonPreview
             // 
-            this.buttonPreview.Location = new System.Drawing.Point(12, 362);
+            this.buttonPreview.Location = new System.Drawing.Point(12, 373);
             this.buttonPreview.Name = "buttonPreview";
-            this.buttonPreview.Size = new System.Drawing.Size(187, 23);
+            this.buttonPreview.Size = new System.Drawing.Size(87, 23);
             this.buttonPreview.TabIndex = 11;
             this.buttonPreview.Text = "Preview";
             this.buttonPreview.UseVisualStyleBackColor = true;
@@ -100,7 +127,7 @@
             // 
             // buttonSaveParameters
             // 
-            this.buttonSaveParameters.Location = new System.Drawing.Point(12, 391);
+            this.buttonSaveParameters.Location = new System.Drawing.Point(12, 402);
             this.buttonSaveParameters.Name = "buttonSaveParameters";
             this.buttonSaveParameters.Size = new System.Drawing.Size(187, 23);
             this.buttonSaveParameters.TabIndex = 10;
@@ -265,13 +292,14 @@
             // 
             // splitContainer2.Panel1
             // 
+            this.splitContainer2.Panel1.Controls.Add(this.labelFilename);
             this.splitContainer2.Panel1.Controls.Add(this.pictureBoxOriginal);
             // 
             // splitContainer2.Panel2
             // 
             this.splitContainer2.Panel2.Controls.Add(this.pictureBoxMask);
-            this.splitContainer2.Size = new System.Drawing.Size(314, 421);
-            this.splitContainer2.SplitterDistance = 203;
+            this.splitContainer2.Size = new System.Drawing.Size(314, 433);
+            this.splitContainer2.SplitterDistance = 208;
             this.splitContainer2.TabIndex = 0;
             // 
             // pictureBoxOriginal
@@ -279,7 +307,7 @@
             this.pictureBoxOriginal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxOriginal.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxOriginal.Name = "pictureBoxOriginal";
-            this.pictureBoxOriginal.Size = new System.Drawing.Size(314, 203);
+            this.pictureBoxOriginal.Size = new System.Drawing.Size(314, 208);
             this.pictureBoxOriginal.TabIndex = 0;
             this.pictureBoxOriginal.TabStop = false;
             // 
@@ -288,15 +316,34 @@
             this.pictureBoxMask.Dock = System.Windows.Forms.DockStyle.Fill;
             this.pictureBoxMask.Location = new System.Drawing.Point(0, 0);
             this.pictureBoxMask.Name = "pictureBoxMask";
-            this.pictureBoxMask.Size = new System.Drawing.Size(314, 214);
+            this.pictureBoxMask.Size = new System.Drawing.Size(314, 221);
             this.pictureBoxMask.TabIndex = 0;
             this.pictureBoxMask.TabStop = false;
+            // 
+            // buttonSaveMask
+            // 
+            this.buttonSaveMask.Location = new System.Drawing.Point(112, 373);
+            this.buttonSaveMask.Name = "buttonSaveMask";
+            this.buttonSaveMask.Size = new System.Drawing.Size(87, 23);
+            this.buttonSaveMask.TabIndex = 14;
+            this.buttonSaveMask.Text = "Save mask";
+            this.buttonSaveMask.UseVisualStyleBackColor = true;
+            this.buttonSaveMask.Click += new System.EventHandler(this.buttonSaveMask_Click);
+            // 
+            // labelFilename
+            // 
+            this.labelFilename.AutoSize = true;
+            this.labelFilename.Location = new System.Drawing.Point(4, 4);
+            this.labelFilename.Name = "labelFilename";
+            this.labelFilename.Size = new System.Drawing.Size(28, 13);
+            this.labelFilename.TabIndex = 1;
+            this.labelFilename.Text = "###";
             // 
             // SegParamsWholeTissueForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(523, 421);
+            this.ClientSize = new System.Drawing.Size(523, 433);
             this.Controls.Add(this.splitContainer1);
             this.Name = "SegParamsWholeTissueForm";
             this.Text = "Segmentaion of the whole tissue";
@@ -314,6 +361,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.splitContainer2.Panel1.ResumeLayout(false);
+            this.splitContainer2.Panel1.PerformLayout();
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
@@ -346,5 +394,9 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.NumericUpDown numericUpDownMax;
         private System.Windows.Forms.NumericUpDown numericUpDownMin;
+        private System.Windows.Forms.Button buttonNextSlice;
+        private System.Windows.Forms.Button buttonPreviousSlice;
+        private System.Windows.Forms.Button buttonSaveMask;
+        private System.Windows.Forms.Label labelFilename;
     }
 }

@@ -153,7 +153,7 @@ namespace MaskedDeformableRegistrationApp.Utils
         }
 
         /// <summary>
-        /// Create a label map image for givben image.
+        /// Create a label map image for a given image.
         /// </summary>
         /// <param name="img">image</param>
         /// <returns>label map</returns>
