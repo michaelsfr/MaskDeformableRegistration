@@ -213,7 +213,6 @@
     <Compile Include="Utils\ReadWriteUtils.cs" />
     <Compile Include="Utils\VisualizationEvaluationUtils.cs" />
     <Compile Include="WSIExtraction\Extraction.cs" />
-    <Compile Include="WSIExtraction\ReadWriteStack.cs" />
     <Compile Include="WSIExtraction\Stack.cs" />
     <Compile Include="WSIExtraction\Slice.cs" />
     <EmbeddedResource Include="Forms\BitmapViewer.resx">

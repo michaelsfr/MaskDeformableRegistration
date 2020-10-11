@@ -14,6 +14,14 @@ namespace MaskedDeformableRegistrationApp.WSIExtraction
 {
     class Extraction
     {
+        /// <summary>
+        /// Method extracts objects from an image depending on a given threshold and minimum contour size.
+        /// </summary>
+        /// <param name="image">input image as bgr image</param>
+        /// <param name="threshold">threshold</param>
+        /// <param name="minContourSize">minimum contour size</param>
+        /// <param name="image_debug">debug image</param>
+        /// <returns>list of objects as rectangles</returns>
         public static List<Rectangle> ExtractObjects(Image<Bgr, byte> image, double threshold, double minContourSize, out Image<Bgr, byte> image_debug)
         {
             double[] average_background_color = new double[] { 0, 0, 0 };
@@ -47,11 +55,16 @@ namespace MaskedDeformableRegistrationApp.WSIExtraction
             }
 
             gray.Dispose();
-            // todo: calculate background color?
+            // todo: calculate average background color (for later registration: default pixel value)
 
             return contours;
         }
 
+        /// <summary>
+        /// Fill holes in a grayscale image.
+        /// </summary>
+        /// <param name="image">input image as grayscale</param>
+        /// <returns>modified image</returns>
         private static Image<Gray, byte> FillHoles(Image<Gray, byte> image)
         {
             var resultImage = image.CopyBlank();
@@ -65,6 +78,12 @@ namespace MaskedDeformableRegistrationApp.WSIExtraction
             return resultImage;
         }
 
+        /// <summary>
+        /// Extract image from wsi with given resolution level.
+        /// </summary>
+        /// <param name="filename">wsi filename</param>
+        /// <param name="resolution">resolution level (2^level)</param>
+        /// <returns>whole wsi image downsampled</returns>
         public static Image<Bgr, byte> ExtractImageFromWSI(string filename, int resolution)
         {
             using (VMscope.InteropCore.ImageStreaming.IStreamingImage image = VMscope.VirtualSlideAccess.Sdk.GetImage(filename))
@@ -78,6 +97,11 @@ namespace MaskedDeformableRegistrationApp.WSIExtraction
             }
         }
 
+        /// <summary>
+        /// Extraxct wsi in full size. [Might possibly fail due to memory access violations]
+        /// </summary>
+        /// <param name="filename">filename of wsi</param>
+        /// <returns>image as bitmap</returns>
         public static Bitmap ExtractImageFromWSIFullSize(string filename)
         {
             using (VMscope.InteropCore.ImageStreaming.IStreamingImage image = VMscope.VirtualSlideAccess.Sdk.GetImage(filename))

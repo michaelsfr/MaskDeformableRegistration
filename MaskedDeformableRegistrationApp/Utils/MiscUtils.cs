@@ -9,6 +9,12 @@ namespace MaskedDeformableRegistrationApp.Utils
 {
     public static class MiscUtils
     {
+        /// <summary>
+        /// Cast a double value from string considering cultural conventions.
+        /// </summary>
+        /// <param name="value">string double value</param>
+        /// <param name="defaultValue">default value</param>
+        /// <returns>double value</returns>
         public static double GetDouble(string value, double defaultValue)
         {
             double result;

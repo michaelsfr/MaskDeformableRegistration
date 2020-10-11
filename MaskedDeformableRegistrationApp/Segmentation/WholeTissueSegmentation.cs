@@ -27,6 +27,9 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             this.segmentationParameters = parameters;
         }
 
+        /// <summary>
+        /// Execute segmentation process.
+        /// </summary>
         public void Execute()
         {
             if(image != null)
@@ -77,6 +80,13 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             }
         }
 
+        /// <summary>
+        /// Method checks if a given contour is relevant for the segmentation process.
+        /// </summary>
+        /// <param name="area">area size</param>
+        /// <param name="autoMaxPixelSize">max area size</param>
+        /// <param name="segmentationParameters">params</param>
+        /// <returns>true if contour is relevant</returns>
         private bool IsContourRelevant(double area, int autoMaxPixelSize, SegmentationParameters segmentationParameters)
         {
             if (segmentationParameters.ManualContourSizeRestriction)
@@ -99,11 +109,18 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             }
         }
 
+        /// <summary>
+        /// Return created masks.
+        /// </summary>
+        /// <returns>mask as grayscale image</returns>
         public Image<Gray, byte> GetOutput()
         {
             return mask;
         }
 
+        /// <summary>
+        /// Dispose images.
+        /// </summary>
         public void Dispose()
         {
             image.Dispose();

@@ -64,6 +64,10 @@ namespace MaskedDeformableRegistrationApp.Registration
             //base.SetGeneralParameters();
         }
 
+        /// <summary>
+        /// Execute non-rigid registration process.
+        /// </summary>
+        /// <returns></returns>
         public override object Execute()
         {
             if (fixedImage != null && movingImage != null)

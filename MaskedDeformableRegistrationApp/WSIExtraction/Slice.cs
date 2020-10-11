@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace MaskedDeformableRegistrationApp.WSIExtraction
 {
+    /// <summary>
+    /// Class represents data of wsi images.
+    /// </summary>
     class Slice
     {
         public string Path { get; set; }

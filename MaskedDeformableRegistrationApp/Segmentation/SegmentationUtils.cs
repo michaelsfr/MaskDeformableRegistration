@@ -20,10 +20,10 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         // cluster colors / intensities
         public static Bgr[] _clusterColors = new Bgr[] 
         {
-            new Bgr(0,0,255),
-            new Bgr(0, 255, 0),
-            new Bgr(255, 100, 100),
-            new Bgr(255,0,255),
+            new Bgr(102, 102, 255),
+            new Bgr(0, 204, 102),
+            new Bgr(255, 80, 80),
+            new Bgr(255, 255, 102),
         };
 
         public static Gray[] _clusterColorsGray = new Gray[]

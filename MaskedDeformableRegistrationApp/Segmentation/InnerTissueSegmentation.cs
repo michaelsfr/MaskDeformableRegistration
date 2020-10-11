@@ -30,6 +30,9 @@ namespace MaskedDeformableRegistrationApp.Segmentation
             this.segmentationParameters = segmentationParameters;
         }
 
+        /// <summary>
+        /// Execute segmentation process of inner structures.
+        /// </summary>
         public void Execute()
         {
             if (image != null)
@@ -66,14 +69,19 @@ namespace MaskedDeformableRegistrationApp.Segmentation
         /// <param name="uMatChannel"></param>
         private void KmeansSegmentation(UMat uMatChannel)
         {
-            Image<Gray, byte> newImage = new Image<Gray, byte>(uMatChannel.Bitmap);
-            Image<Gray, byte> clusteredImage = SegmentationUtils.KMeansClustering<Gray, byte, byte>(newImage.Clone(), 3, SegmentationUtils._clusterColorsGray);
+            if(false)
+            {
+                Image<Bgr, byte> newImage = new Image<Bgr, byte>(uMatChannel.Bitmap);
+                Image<Bgr, byte> clusteredImage = SegmentationUtils.KMeansClustering<Bgr, byte, byte>(newImage.Clone(), 3, SegmentationUtils._clusterColors);
 
+                ReadWriteUtils.WriteUMatToFile(@"D:\testdata\_temp\kmeans.png", clusteredImage.ToUMat());
 
+                // TODO
+                // Find contours
+                // Classificate contours
+            }
 
-            // TODO
-            // Find contours
-            // Classificate contours
+            throw new NotImplementedException();
         }
 
         /// <summary>

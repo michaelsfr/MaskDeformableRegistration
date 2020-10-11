@@ -108,7 +108,7 @@ namespace MaskedDeformableRegistrationApp.Registration
                 ChangeOrAddParamIfNotExist(ref map, "AutomaticTransformInitialization", GetVectorString("true"));
                 ChangeOrAddParamIfNotExist(ref map, "NumberOfResolutions", GetVectorString("8"));
                 ChangeOrAddParamIfNotExist(ref map, "MaximumNumberOfIterations", GetVectorString("1024"));
-                ChangeOrAddParamIfNotExist(ref map, "NumberOfSpatialSamples", GetVectorString("2048"));
+                ChangeOrAddParamIfNotExist(ref map, "NumberOfSpatialSamples", GetVectorString("4096"));
                 ChangeOrAddParamIfNotExist(ref map, "NumberOfSamplesForExactGradient", GetVectorString("4096"));
                 ChangeOrAddParamIfNotExist(ref map, "ImageSampler", GetVectorString("Random"));
                 ChangeOrAddParamIfNotExist(ref map, "BSplineInterpolationOrder", GetVectorString("1"));
@@ -145,10 +145,11 @@ namespace MaskedDeformableRegistrationApp.Registration
             paramMap.Add("ErodeMask", GetVectorString("false"));
             paramMap.Add("NumberOfResolutions", GetVectorString("5"));
             paramMap.Add("MaximumNumberOfIterations", GetVectorString("1024"));
-            paramMap.Add("NumberOfSpatialSamples", GetVectorString("2048"));
+            paramMap.Add("NumberOfSpatialSamples", GetVectorString("4096"));
+            paramMap.Add("NumberOfSamplesForExactGradient", GetVectorString("4096"));
             paramMap.Add("NewSamplesEveryIteration", GetVectorString("true"));
             paramMap.Add("ImageSampler", GetVectorString("Random"));
-            paramMap.Add("BSplineInterpolationOrder", GetVectorString("3"));
+            paramMap.Add("BSplineInterpolationOrder", GetVectorString("1"));
             paramMap.Add("FinalBSplineInterpolationOrder", GetVectorString("3"));
             paramMap.Add("DefaultPixelValue", GetVectorString("255.0"));
             paramMap.Add("WriteResultImage", GetVectorString("true"));

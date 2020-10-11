@@ -33,6 +33,9 @@ namespace MaskedDeformableRegistrationApp.Registration
             transformix = new sitk.TransformixImageFilter();
         }
 
+        /// <summary>
+        /// Execute transformation of rgb image.
+        /// </summary>
         public void Execute()
         {
             string outputDir = ReadWriteUtils.GetOutputDirectory(registrationParameters, registrationParameters.Iteration);
@@ -144,6 +147,10 @@ namespace MaskedDeformableRegistrationApp.Registration
             //transformedImage = composedImage;
         }
 
+        /// <summary>
+        /// Add vector of parameter maps to transformix.
+        /// </summary>
+        /// <param name="vectorOfParametermap">vector of parameter maps</param>
         public void AddVectorOfParameterMap(sitk.VectorOfParameterMap vectorOfParametermap)
         {
             foreach (sitk.ParameterMap map in vectorOfParametermap.AsEnumerable())
@@ -152,11 +159,19 @@ namespace MaskedDeformableRegistrationApp.Registration
             }
         }
 
+        /// <summary>
+        /// Get transformed image.
+        /// </summary>
+        /// <returns></returns>
         public sitk.Image GetOutput()
         {
             return this.transformedImage;
         }
 
+        /// <summary>
+        /// Get deformation field.
+        /// </summary>
+        /// <returns></returns>
         public sitk.Image GetDeformationField()
         {
             if(transformix != null)
@@ -166,6 +181,10 @@ namespace MaskedDeformableRegistrationApp.Registration
             return null;
         }
 
+        /// <summary>
+        /// Set interpolation type manually.
+        /// </summary>
+        /// <param name="interpolationType">interpolation method</param>
         public void SetInterpolationType(sitk.InterpolatorEnum interpolationType)
         {
             this.interpolationType = interpolationType;

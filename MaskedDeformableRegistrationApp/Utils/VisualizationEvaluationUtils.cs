@@ -15,6 +15,11 @@ namespace MaskedDeformableRegistrationApp.Utils
 {
     public static class VisualizationEvaluationUtils
     {
+        /// <summary>
+        /// Show Umat in EmguCV-Viewer.
+        /// </summary>
+        /// <param name="mat">matrix</param>
+        /// <param name="text">name of image viewer window</param>
         public static void ShowUMat(UMat mat, string text = "")
         {
             Image<Bgr, byte> toConv = mat.ToImage<Bgr, byte>();
@@ -48,6 +53,7 @@ namespace MaskedDeformableRegistrationApp.Utils
         /// <param name="img02">image 2</param>
         /// <param name="size">grid size of the checker board</param>
         /// <returns>checker board image</returns>
+        [Obsolete("Use V2 below")]
         public static sitk.Image GetCheckerBoard(sitk.Image img01, sitk.Image img02, uint size = 0)
         {
             uint width = img01.GetWidth() > img02.GetWidth() ? img01.GetWidth() : img02.GetWidth();
@@ -77,6 +83,13 @@ namespace MaskedDeformableRegistrationApp.Utils
             return result;
         }
 
+        /// <summary>
+        /// Create a checkerboard image of two corresponding images. 
+        /// </summary>
+        /// <param name="fImg01">image 1</param>
+        /// <param name="fImg02">image 2</param>
+        /// <param name="size">grid size of the checker boar</param>
+        /// <returns>checker board image</returns>
         public static sitk.Image GetCheckerBoardV2(string fImg01, string fImg02, uint size = 0)
         {
             sitk.Image img01 = ReadWriteUtils.ReadITKImageFromFile(fImg01);
@@ -384,6 +397,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             }
         }
 
+        /// <summary>
+        /// Calculate euclidean sum by coordinates.
+        /// </summary>
+        /// <param name="coords01">coord 1</param>
+        /// <param name="coords02">coord 2</param>
+        /// <returns>sum as double</returns>
         private static double GetEuclideanSum(List<CoordPoint> coords01, List<CoordPoint> coords02)
         {
             double sum = 0;
@@ -441,6 +460,9 @@ namespace MaskedDeformableRegistrationApp.Utils
         }
     }
 
+    /// <summary>
+    /// Class representing a coordinate.
+    /// </summary>
     public class CoordPoint
     {
         public CoordPoint(double x, double y)

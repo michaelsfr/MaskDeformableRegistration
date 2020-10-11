@@ -10,6 +10,11 @@ namespace MaskedDeformableRegistrationApp.Utils
 {
     public static class FileUtils
     {
+        /// <summary>
+        /// Retrieve path strings from the textbox input.
+        /// </summary>
+        /// <param name="textBoxInput">input as string</param>
+        /// <returns>list of all paths as string</returns>
         public static List<string> GetPathsFromTextBoxInput(string textBoxInput)
         {
             List<string> wsi = new List<string>();
@@ -27,6 +32,11 @@ namespace MaskedDeformableRegistrationApp.Utils
             return wsi;
         }
 
+        /// <summary>
+        /// Copy a file with delete if it exists.
+        /// </summary>
+        /// <param name="src">src address</param>
+        /// <param name="dest">dest address</param>
         public static void CopyFile(string src, string dest)
         {
             if (File.Exists(src))

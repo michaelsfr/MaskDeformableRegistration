@@ -109,8 +109,6 @@ namespace MaskedDeformableRegistrationApp.Forms
 
                 if (mask != null)
                 {
-
-
                     InnerTissueSegmentation seg = new InnerTissueSegmentation(image.Clone(), mask.Clone(), segmentationParametersInnerTissue);
                     seg.Execute();
                     List<UMat> result = seg.GetOutput();

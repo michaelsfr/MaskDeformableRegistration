@@ -38,5 +38,7 @@ Thumbs.db
 
 #dir
 /packages
-/.vs/MaskedDeformableRegistrationApp/v15/Server/sqlite3/db.lock
-/.vs/MaskedDeformableRegistrationApp/v15/Server/sqlite3
+/.vs/MaskedDeformableRegistrationApp/v15
+/.vs/MaskedDeformableRegistrationApp/v16
+/MaskedDeformableRegistrationApp/obj
+/MaskedDeformableRegistrationApp/bin

@@ -13,8 +13,8 @@ namespace MaskedDeformableRegistrationApp.Registration
     {
         public RigidRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
         {
-            this.fixedImage = ImageUtils.CastImage(fixedImage);
-            this.movingImage = ImageUtils.CastImage(movingImage);
+            this.fixedImage = ImageUtils.CastImageToFloat32(fixedImage);
+            this.movingImage = ImageUtils.CastImageToFloat32(movingImage);
 
             this.registrationParameters = parameters;
             
@@ -44,6 +44,10 @@ namespace MaskedDeformableRegistrationApp.Registration
             parameterMap = RegistrationUtils.GetDefaultParameterMap(parameters.RegistrationDefaultParams);
         }
 
+        /// <summary>
+        /// Execute rigid registration.
+        /// </summary>
+        /// <returns></returns>
         public override object Execute()
         {
             if(fixedImage != null && movingImage != null)

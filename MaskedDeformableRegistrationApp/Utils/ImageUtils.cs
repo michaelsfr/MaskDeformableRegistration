@@ -15,6 +15,13 @@ namespace MaskedDeformableRegistrationApp.Utils
 {
     public class ImageUtils
     {
+        /// <summary>
+        /// Method returns the count of pixels for a specific percentage in perspective to the whole image size.
+        /// </summary>
+        /// <typeparam name="T">generic image type</typeparam>
+        /// <param name="image">image</param>
+        /// <param name="percentage">percentage as a float value</param>
+        /// <returns></returns>
         public static int GetPercentualImagePixelCount<T>(T image, float percentage)
         {
             if(percentage >= 1.0)
@@ -29,6 +36,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             }
         }
 
+        /// <summary>
+        /// Method returns the count of all pixels for an image.
+        /// </summary>
+        /// <typeparam name="T">generic image type</typeparam>
+        /// <param name="image">image</param>
+        /// <returns>amount of pixels</returns>
         public static int GetImagePixelCount<T>(T image)
         {
             Size size = new Size();
@@ -55,17 +68,13 @@ namespace MaskedDeformableRegistrationApp.Utils
             }   
         }
 
-        public static Bitmap GetImageFromITK(itk.simple.Image image)
-        {
-            // todo
-            return null;
-        }
-
-        public static sitk.Image GetSITKImageFromOpenCV(Image<Bgr, byte> image)
-        {
-            return GetITKImageFromBitmap(image.Bitmap);
-        }
-
+        /// <summary>
+        /// Resize image by new width and height.
+        /// </summary>
+        /// <param name="image">input image</param>
+        /// <param name="newWidth">width</param>
+        /// <param name="newHeight">height</param>
+        /// <returns>resized image</returns>
         public static sitk.Image ResizeImage(sitk.Image image, uint newWidth, uint newHeight)
         {
             if (image.GetWidth() == newWidth && image.GetHeight() == newHeight)
@@ -87,6 +96,11 @@ namespace MaskedDeformableRegistrationApp.Utils
             return resultImage;
         }
 
+        /// <summary>
+        /// Cast bitmap to sitk image.
+        /// </summary>
+        /// <param name="image">bitmap</param>
+        /// <returns>sitk image</returns>
         public static sitk.Image GetITKImageFromBitmap(Bitmap image)
         {
             BitmapData bitmapData = image.LockBits(new Rectangle(0, 0, image.Width, image.Height), ImageLockMode.ReadOnly, PixelFormat.Format8bppIndexed/*image.PixelFormat*/);
@@ -105,6 +119,14 @@ namespace MaskedDeformableRegistrationApp.Utils
             return sitkImage;
         }
 
+        /// <summary>
+        /// Resize image by width and height and set output pixel type.
+        /// </summary>
+        /// <param name="img">input image</param>
+        /// <param name="width">width</param>
+        /// <param name="height">height</param>
+        /// <param name="pixelType">output pixel type</param>
+        /// <returns>resampled image</returns>
         public static sitk.Image ResizeImage(sitk.Image img, uint width, uint height, sitk.PixelIDValueEnum pixelType)
         {
             sitk.VectorUInt32 vec = new sitk.VectorUInt32();
@@ -124,6 +146,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             return resultImage;
         }
 
+        /// <summary>
+        /// Resize image depending on a reference image.
+        /// </summary>
+        /// <param name="toResize">image</param>
+        /// <param name="referenceImage">reference image</param>
+        /// <returns>resampled image</returns>
         public static sitk.Image ResizeImage(sitk.Image toResize, sitk.Image referenceImage)
         {
             if (toResize.GetWidth() == referenceImage.GetWidth() && toResize.GetHeight() == referenceImage.GetHeight())
@@ -147,6 +175,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             return resultImage;
         }
 
+        /// <summary>
+        /// Calculate histogram for given vector of matrices, allowing masking.
+        /// </summary>
+        /// <param name="vm">matrices</param>
+        /// <param name="tempMask">mask</param>
+        /// <returns>histogram as umat</returns>
         public static UMat CalculateHistogram(VectorOfMat vm, Image<Gray, byte> tempMask)
         {
             UMat hist = new UMat();
@@ -157,6 +191,14 @@ namespace MaskedDeformableRegistrationApp.Utils
             return hist;
         }
 
+        /// <summary>
+        /// Resize image an get image transform.
+        /// </summary>
+        /// <param name="image">image</param>
+        /// <param name="newWidth">width</param>
+        /// <param name="newHeight">height</param>
+        /// <param name="transform">out param transform</param>
+        /// <returns>resampled image</returns>
         public static sitk.Image ResizeImage(sitk.Image image, uint newWidth, uint newHeight, out sitk.Transform transform)
         {
             transform = null;
@@ -180,6 +222,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             return resultImage;
         }
 
+        /// <summary>
+        /// Resample image output pixel type.
+        /// </summary>
+        /// <param name="img">image</param>
+        /// <param name="pixelIDValue">output pixel type</param>
+        /// <returns>sitk image</returns>
         public static sitk.Image ResampleImage(sitk.Image img, sitk.PixelIDValueEnum pixelIDValue)
         {
             sitk.ResampleImageFilter resampleImageFilter = new sitk.ResampleImageFilter();
@@ -189,7 +237,14 @@ namespace MaskedDeformableRegistrationApp.Utils
             resampleImageFilter.SetOutputSpacing(img.GetSpacing());
             return resampleImageFilter.Execute(img);
         }
-
+        
+        /// <summary>
+        /// Binarize image by a lower and upper threshold.
+        /// </summary>
+        /// <param name="img">image</param>
+        /// <param name="lowerT">lower threshold</param>
+        /// <param name="upperT">upper threshold</param>
+        /// <returns></returns>
         public static sitk.Image Binarize(sitk.Image img, int lowerT = 127, int upperT = 255)
         {
             sitk.BinaryThresholdImageFilter binaryFilter1 = new sitk.BinaryThresholdImageFilter();
@@ -200,7 +255,12 @@ namespace MaskedDeformableRegistrationApp.Utils
             return binaryFilter1.Execute(img);
         }
 
-        public static sitk.Image CastImage(sitk.Image img)
+        /// <summary>
+        /// Cast image to float 32.
+        /// </summary>
+        /// <param name="img">image</param>
+        /// <returns>casted image</returns>
+        public static sitk.Image CastImageToFloat32(sitk.Image img)
         {
             sitk.CastImageFilter castImageFilter = new sitk.CastImageFilter();
             castImageFilter.SetOutputPixelType(sitk.PixelIDValueEnum.sitkVectorFloat32);

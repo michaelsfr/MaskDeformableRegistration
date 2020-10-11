@@ -13,8 +13,8 @@ namespace MaskedDeformableRegistrationApp.Registration
     {
         public MultipleParameterFileRegistration(sitk.Image fixedImage, sitk.Image movingImage, RegistrationParameters parameters) : base(parameters)
         {
-            this.fixedImage = ImageUtils.CastImage(fixedImage);
-            this.movingImage = ImageUtils.CastImage(movingImage);
+            this.fixedImage = ImageUtils.CastImageToFloat32(fixedImage);
+            this.movingImage = ImageUtils.CastImageToFloat32(movingImage);
 
             elastix = new sitk.ElastixImageFilter();
 
@@ -35,6 +35,11 @@ namespace MaskedDeformableRegistrationApp.Registration
             elastix.LogToFileOn();
         }
 
+
+        /// <summary>
+        /// Execute multiple parameter file registration process.
+        /// </summary>
+        /// <returns></returns>
         public override object Execute()
         {
             if (fixedImage != null && movingImage != null)

@@ -53,7 +53,15 @@ namespace MaskedDeformableRegistrationApp.Utils
         /// <returns>image</returns>
         public static sitk.Image ReadITKImageFromFile(string file)
         {
-            return sitk.SimpleITK.ReadImage(file);
+            try
+            {
+                return sitk.SimpleITK.ReadImage(file);
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                return null;
+            }
+            
         }
 
         /// <summary>
@@ -70,6 +78,13 @@ namespace MaskedDeformableRegistrationApp.Utils
             return reader.Execute();
         }
 
+        /// <summary>
+        /// Reads an ITK image as a grayscale image.
+        /// </summary>
+        /// <param name="file">filename</param>
+        /// <param name="outputType">output datatype</param>
+        /// <param name="channel">channel to extract</param>
+        /// <returns>grayscale ITK image</returns>
         public static sitk.Image ReadITKImageAsGrayscaleFromFile(string file, sitk.PixelIDValueEnum outputType, ColorChannel channel)
         {
             sitk.ImageFileReader reader = new sitk.ImageFileReader();
