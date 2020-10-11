@@ -38,7 +38,7 @@ Thumbs.db
 
 #dir
 /packages
-/.vs/MaskedDeformableRegistrationApp/v15
-/.vs/MaskedDeformableRegistrationApp/v16
-/MaskedDeformableRegistrationApp/obj
-/MaskedDeformableRegistrationApp/bin
+/.vs/MaskedDeformableRegistrationApp/v15/
+/.vs/MaskedDeformableRegistrationApp/v16/
+**/obj/
+**/bin/
